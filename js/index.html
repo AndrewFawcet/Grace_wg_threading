@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>WG-Grace-JS</title>
+        <style type="text/css">
+            :root {
+                background: black;
+                color: white;
+            }
+            :link {
+                color: cyan;
+            }
+        </style>
+    </head>
+    <body>
+        <textarea id="source" rows="20" style="width: 100%">print "Hello, world!"</textarea>
+        <button id="parse">Produce AST</button><button id="run">Execute</button>
+        <button id="java">Standalone Java</button>
+        <div id="status" style="display: inline-block"></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr">
+            <textarea id="ast" rows="10"></textarea>
+            <div id="output"></div>
+        </div>
+        <script type="module" src="main.js"></script>
+    </body>
+</html>
