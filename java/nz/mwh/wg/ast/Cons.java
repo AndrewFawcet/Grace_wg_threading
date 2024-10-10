@@ -39,6 +39,18 @@ public class Cons<T> {
         return ret;
     }
 
+    // Check if the Cons contains the given element
+    public boolean contains(T element) {
+        Cons<T> current = this;
+        while (!current.isNil) {
+            if (current.head.equals(element)) {
+                return true;
+            }
+            current = current.tail;
+        }
+        return false;
+    }
+
     public String toString() {
         if (isNil)
             return "nil";

@@ -7,10 +7,13 @@ import nz.mwh.wg.Visitor;
 public class ObjectConstructor extends ASTNode {
     List<ASTNode> body;
     List<String> annotations;
+    private boolean isIsolated;
+
 
     public ObjectConstructor(Cons<ASTNode> body, Cons<String> annotations) {
         this.body = body.toList();
         this.annotations = annotations.toList();
+        this.isIsolated = annotations.contains("isolated");  //not sure about this bit, is it necessary?
     }
 
     public <T> T accept(T context, Visitor<T> visitor) {
@@ -27,5 +30,9 @@ public class ObjectConstructor extends ASTNode {
 
     public List<String> getAnnotations() {
         return annotations;
+    }
+
+    public boolean isIsolated() {
+        return this.isIsolated;
     }
 }

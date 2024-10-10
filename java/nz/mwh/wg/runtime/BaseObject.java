@@ -50,7 +50,7 @@ public class BaseObject implements GraceObject {
     //     }
     // }
 
-    // New constructor that accepts isIso as a parameter
+    // New constructor that accepts isIsolated as a parameter
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isIsolated) {
         this.lexicalParent = lexicalParent;
         this.returns = returns;
