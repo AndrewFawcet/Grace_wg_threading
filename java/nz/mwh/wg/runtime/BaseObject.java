@@ -15,7 +15,7 @@ public class BaseObject implements GraceObject {
     private Map<String, GraceObject> fields = new HashMap<>();
     private Map<String, Function<Request, GraceObject>> methods = new HashMap<>();
     private int referenceCount = 0; // Reference count field
-    private boolean isIso = false;
+    private boolean isIsolated = false;
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
@@ -31,7 +31,7 @@ public class BaseObject implements GraceObject {
     }
 
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf) {
-        this(lexicalParent, returns, bindSelf, false); // Pass false for isIso by default
+        this(lexicalParent, returns, bindSelf, false); // Pass false for isIsolated by default
     }
 
     // public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf) {
@@ -51,10 +51,10 @@ public class BaseObject implements GraceObject {
     // }
 
     // New constructor that accepts isIso as a parameter
-    public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isIso) {
+    public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isIsolated) {
         this.lexicalParent = lexicalParent;
         this.returns = returns;
-        this.isIso = isIso; // Set the isolation capability
+        this.isIsolated = isIsolated; // Set the isolation capability
 
         // Add basic methods
         addMethod("==(1)", request -> {
@@ -70,13 +70,12 @@ public class BaseObject implements GraceObject {
         }
     }
 
-    // Getter and setter for isIso
     public boolean isIsolated() {
-        return isIso;
+        return isIsolated;
     }
 
-    public void setIsolated(boolean isIso) {
-        this.isIso = isIso;
+    public void setIsolated(boolean isIsolated) {
+        this.isIsolated = isIsolated;
     }
 
     // New method to increment reference count

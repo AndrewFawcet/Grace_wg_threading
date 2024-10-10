@@ -45,6 +45,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         // object.incrementReferenceCount();
         // now incrementReferenceCount in GraceObject visit(GraceObject context, DefDecl node)
         System.out.println("New Object reference count is " + object.getReferenceCount());
+        System.out.println("-------------------------------------------------------------------------------");
 
         List<ASTNode> body = node.getBody();
         for (ASTNode part : body) {

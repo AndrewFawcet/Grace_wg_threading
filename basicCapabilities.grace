@@ -1,6 +1,6 @@
 
 print "Hello beautiful world-----------------------------------------------------------------"
-var xxxObject := object (GraceCapability.TRACK_REFERENCES, GraceCapability.ISOLATED){
+var xxxObject := ISOLATED object {
     var xxxField := 123456
     
     method foo {
