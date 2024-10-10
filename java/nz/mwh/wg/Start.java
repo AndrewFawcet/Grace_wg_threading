@@ -16,7 +16,7 @@ import nz.mwh.wg.ast.ObjectConstructor;
 public class Start {
     public static void main(String[] args) {
         String filename = "basic.grace";
-//        String filename = "basicVariable4.grace";
+//        String filename = "basicCapabilites.grace";
         boolean printAST = false;
         String updateFile = null;
         boolean inlineImports = false;

@@ -15,6 +15,7 @@ public class BaseObject implements GraceObject {
     private Map<String, GraceObject> fields = new HashMap<>();
     private Map<String, Function<Request, GraceObject>> methods = new HashMap<>();
     private int referenceCount = 0; // Reference count field
+    private boolean isIso = false;
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
@@ -30,8 +31,32 @@ public class BaseObject implements GraceObject {
     }
 
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf) {
+        this(lexicalParent, returns, bindSelf, false); // Pass false for isIso by default
+    }
+
+    // public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf) {
+    //     this.lexicalParent = lexicalParent;
+    //     this.returns = returns;
+    //     addMethod("==(1)", request -> {
+    //         GraceObject other = request.getParts().get(0).getArgs().get(0);
+    //         return new GraceBoolean(this == other);
+    //     });
+    //     addMethod("!=(1)", request -> {
+    //         GraceObject other = request.getParts().get(0).getArgs().get(0);
+    //         return new GraceBoolean(this != other);
+    //     });
+    //     if (bindSelf) {
+    //         addMethod("self(0)", request -> this);
+    //     }
+    // }
+
+    // New constructor that accepts isIso as a parameter
+    public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isIso) {
         this.lexicalParent = lexicalParent;
         this.returns = returns;
+        this.isIso = isIso; // Set the isolation capability
+
+        // Add basic methods
         addMethod("==(1)", request -> {
             GraceObject other = request.getParts().get(0).getArgs().get(0);
             return new GraceBoolean(this == other);
@@ -43,6 +68,15 @@ public class BaseObject implements GraceObject {
         if (bindSelf) {
             addMethod("self(0)", request -> this);
         }
+    }
+
+    // Getter and setter for isIso
+    public boolean isIsolated() {
+        return isIso;
+    }
+
+    public void setIsolated(boolean isIso) {
+        this.isIso = isIso;
     }
 
     // New method to increment reference count
