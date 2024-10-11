@@ -1,6 +1,6 @@
 
 print "Hello beautiful world-----------------------------------------------------------------"
-var xxxObject := ISOLATED object {
+var xxxObject := isolated object {
     var xxxField := 123456
     
     method foo {

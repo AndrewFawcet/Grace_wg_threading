@@ -7,6 +7,16 @@ import nz.mwh.wg.ast.grace.*;
 
 public class GraceASTHelps extends nz.mwh.wg.ast.grace.ASTConstructors {
         
+//  TODO how to add a capability thing to be passed on when the object is made???
+    // public static void addIsolatedKeyword(BaseObject lexicalParent) {
+    //     lexicalParent.addMethod("isolated(2)", request -> {
+    //         // Handle the isolated keyword logic here
+    //         // You can adjust the ASTNode creation as needed for your specific grammar
+    //         Cons<ASTNode> args = (Cons<ASTNode>) request.getParts().get(0).getArgs().get(0);
+    //         return new IsolatedNode(args); // Create an appropriate AST node for isolated
+    //     });
+    // }
+
     @SuppressWarnings("unchecked")
     public static BaseObject astModule(boolean withPrelude) {
         BaseObject lexicalParent;
@@ -14,6 +24,8 @@ public class GraceASTHelps extends nz.mwh.wg.ast.grace.ASTConstructors {
             lexicalParent = Evaluator.basePrelude();
         else
             lexicalParent = new BaseObject(null);
+
+        
         lexicalParent.addMethod("cons(2)", request -> {
             return cons(request.getParts().get(0).getArgs().get(0), (Cons<GraceObject>) request.getParts().get(0).getArgs().get(1));
         });

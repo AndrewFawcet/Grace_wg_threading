@@ -497,18 +497,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         System.out.println("----------------------String name, GraceObject module");
 
-
-        // // note this is all stuff for counting aliases if counting names bound to graceObjects  going in 'modules' hashmap is important
-        // // checks if the module exists
-        // if (modules.containsValue(module)) {
-        //     System.out.println("Module (the Grace Object) is already in the hashmap under a different name");
-        // }
-        // // prints the number of references for the object
-        // if (module instanceof BaseObject) {
-        //     ((BaseObject)module).incrementReferenceCount();
-        //     System.out.println("module " + name + " is the " + ((BaseObject)module).getReferenceCount() + " to the referenced object");
-        // }
-
         modules.put(name, module);
     }
 
