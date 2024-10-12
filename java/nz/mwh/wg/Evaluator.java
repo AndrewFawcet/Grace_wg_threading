@@ -43,9 +43,17 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         BaseObject object = new BaseObject(context, false, true, isIsolated);
 
-        // a new BaseObject is created, initialize its reference count to 0 
+        // a new BaseObject is created, initialize its reference count to 0
         // object.incrementReferenceCount();
-        // now incrementReferenceCount in GraceObject visit(GraceObject context, DefDecl node)
+        // now incrementReferenceCount in GraceObject visit(GraceObject context, DefDecl
+        // node)
+        // Increment reference count if the value is an instance of BaseObject
+        if (object instanceof BaseObject) {
+            object.incrementReferenceCount();
+            // System.out.println("Object " + object.toString() + " is the " + object.getReferenceCount()
+                    // + "reference to the referenced object");
+        }
+
         System.out.println("New Object reference count is " + object.getReferenceCount());
         System.out.println("-------------------------------------------------------------------------------");
 
@@ -101,7 +109,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, StringNode node) {
 
-        // System.out.println("GraceObject context, StringNode node  " + node.getValue());
+        // System.out.println("GraceObject context, StringNode node " +
+        // node.getValue());
 
         return new GraceString(node.getValue());
     }
@@ -159,13 +168,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         if (node.getValue() != null) {
             // System.out.println("GraceObject context, VarDecl node " + node.getValue());
-
-            // Increment reference count if the value is an instance of BaseObject
-            if (context instanceof BaseObject) {
-                BaseObject baseValue = (BaseObject) context;
-                baseValue.incrementReferenceCount();
-                System.out.println("Variable " + node.getName() + " is the " + baseValue.getReferenceCount() + "reference to the referenced object");
-            }
 
             new LexicalRequest(new Cons<Part>(
                     new Part(node.getName() + ":=", new Cons<ASTNode>(node.getValue(), Cons.<ASTNode>nil())),
@@ -516,6 +518,11 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         Evaluator evaluator = new Evaluator();
         return evaluator.visit(lexicalParent, program);
+    }
+
+
+    public static void log(String message) {
+        System.out.println(" >" + message);
     }
 
 }

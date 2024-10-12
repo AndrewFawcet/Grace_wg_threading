@@ -76,9 +76,5 @@ var y := yyyObject
 print "after x y"
 print ""
 
-xxxObject.foo()
-xxxObject.foo()
-xxxObject.foo()
-y.foo()
 
 print "Goodbye cruel world"
