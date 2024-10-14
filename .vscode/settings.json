@@ -1,6 +1,16 @@
 {
     "java.project.sourcePaths": [
-        "java"
+        "test/java",
+        "java",
+        "lib"
     ],
-    "java.project.referencedLibraries": []
+    "java.project.referencedLibraries": [
+        "lib/apiguardian-api-1.1.2.jar",
+        "lib/junit-jupiter-api-5.8.1.jar",
+        "lib/junit-jupiter-engine-5.8.1.jar",
+        "lib/junit-jupiter-params-5.8.1.jar",
+        "lib/junit-platform-commons-1.8.1.jar",
+        "lib/junit-platform-engine-1.8.1.jar",
+        "lib/opentest4j-1.2.0.jar"
+    ]
 }

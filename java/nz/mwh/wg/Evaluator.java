@@ -43,20 +43,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         BaseObject object = new BaseObject(context, false, true, isIsolated);
 
-        // a new BaseObject is created, initialize its reference count to 0
-        // object.incrementReferenceCount();
-        // now incrementReferenceCount in GraceObject visit(GraceObject context, DefDecl
-        // node)
-        // Increment reference count if the value is an instance of BaseObject
-        if (object instanceof BaseObject) {
-            object.incrementReferenceCount();
-            // System.out.println("Object " + object.toString() + " is the " + object.getReferenceCount()
-                    // + "reference to the referenced object");
-        }
-
+        // Increment reference count if the value is an instance of BaseObject, (now done in fieldWriter)
+        // if (object instanceof BaseObject) {
+        //     object.incrementReferenceCount();
+        // }
         System.out.println("New Object reference count is " + object.getReferenceCount());
-        System.out.println("-------------------------------------------------------------------------------");
-
+    
         List<ASTNode> body = node.getBody();
         for (ASTNode part : body) {
             if (part instanceof DefDecl) {

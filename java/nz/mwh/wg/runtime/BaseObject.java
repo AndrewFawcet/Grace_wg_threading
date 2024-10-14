@@ -149,6 +149,17 @@ public class BaseObject implements GraceObject {
     public void addFieldWriter(String name) {
         methods.put(name + ":=(1)", request -> {
             fields.put(name, request.getParts().get(0).getArgs().get(0));
+
+            // reference counter boooo yaaaaa. 
+            // incrementing the BaseObject being referenced.
+            fields.put(name, request.getParts().get(0).getArgs().get(0));
+            GraceObject newValue = request.getParts().get(0).getArgs().get(0); // Get the object being assigned
+            if (newValue instanceof BaseObject) {
+                System.out.println(name + " assigned to a baseObject ----------");
+                BaseObject baseObject = (BaseObject) newValue; // Safe cast after instanceof check
+                baseObject.incrementReferenceCount(); // Increment the reference count
+            }
+
             return done;
         });
     }
