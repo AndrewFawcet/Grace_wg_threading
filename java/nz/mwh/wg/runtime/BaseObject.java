@@ -84,7 +84,7 @@ public class BaseObject implements GraceObject {
         referenceCount++;
 
         System.out.println("Reference count incremented to " + referenceCount);
-        System.out.println( " the isolated bool is " + isIsolated);
+        System.out.println( " -& the isolated bool is " + isIsolated);
     }
 
     // New method to decrement reference count
@@ -156,11 +156,18 @@ public class BaseObject implements GraceObject {
             // reference counter boooo yaaaaa. 
             // incrementing the BaseObject being referenced.
             fields.put(name, request.getParts().get(0).getArgs().get(0));
-            GraceObject newValue = request.getParts().get(0).getArgs().get(0); // Get the object being assigned
-            if (newValue instanceof BaseObject) {
+            GraceObject object = request.getParts().get(0).getArgs().get(0); // Get the object being assigned
+            if (object instanceof BaseObject) {
                 System.out.println(name + " assigned to a baseObject ----------");
-                BaseObject baseObject = (BaseObject) newValue; // Safe cast after instanceof check
+                BaseObject baseObject = (BaseObject) object; // Safe cast after instanceof check
                 baseObject.incrementReferenceCount(); // Increment the reference count
+
+                if (baseObject.isIsolated()){
+                    if (baseObject.getReferenceCount() > 1){
+                        throw new RuntimeException("Violation: Isolated object '" + name + "' cannot have more than one reference.");
+                    }
+                }
+
             }
 
             return done;

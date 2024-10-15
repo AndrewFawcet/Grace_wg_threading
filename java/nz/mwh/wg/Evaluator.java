@@ -274,7 +274,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             Request request = new Request(this, parts);
             System.out.println("request name " + request.getName());
             GraceObject receiver = target.getReceiver().accept(context, this);
+            
             // Print reference count if receiver is an instance of BaseObject
+            // TODO remove?
             if (receiver instanceof BaseObject) {
                 int refCount = ((BaseObject) receiver).getReferenceCount();
                 System.out.println("Receiver's reference count: " + refCount);
