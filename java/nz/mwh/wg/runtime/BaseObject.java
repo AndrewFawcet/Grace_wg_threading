@@ -180,12 +180,41 @@ public class BaseObject implements GraceObject {
 
             }
 
+            // this looks at the current object and checks if the fields that it holds if they are being changed is it:
+            // -immutable
+            //  -does it have one or more references (less than one indicates in construction)
+            if (isImmutable){
+                System.out.println("This might be an error, does it have more than one reference?");
+                if(getReferenceCount()!= 0){
+                    System.out.println("this is printing an errrrr-----------------------------------");
+                    throw new RuntimeException(
+                        "Violation: Immutable object '" + name + "' cannot mutate immutable object fields.");
+                }else{
+                    System.out.println("all ok, in construction as no references ");
+                }
+            }
+
             return done;
         });
     }
 
     public void setField(String name, GraceObject value) {
-        fields.put(name, value);
+
+        // this will probably need an immutability check as well
+
+        if (isImmutable){
+            System.out.println("This might be an error, does it have more than one reference?");
+            if(getReferenceCount()!= 0){
+                System.out.println("this is printing an errrrr-----------------------------------");
+                throw new RuntimeException(
+                    "Violation: Immutable object '" + name + "' cannot set immutable object fields.");
+            }else{
+                System.out.println("all ok, in construction as no references ");
+                fields.put(name, value);
+            }
+        }else{
+            fields.put(name, value);
+        }
     }
 
     public GraceObject findReturnContext() {
