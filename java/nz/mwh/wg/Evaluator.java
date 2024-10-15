@@ -41,9 +41,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     public GraceObject visit(GraceObject context, ObjectConstructor node) {
         
 
-        boolean isIsolatedOne = node.isIsolated(); // Assuming isIsolated() checks for the 'isolated' keyword in the AST
-        
-        BaseObject object = new BaseObject(context, false, true, isIsolatedOne);
+        BaseObject object = new BaseObject(context, false, true, node.isIsolated(), node.isImmutable());
         
         boolean isIsolated = object.isIsolated(); // Assuming isIsolated() checks for the 'isolated' keyword in the AST
         // Increment reference count if the value is an instance of BaseObject, (now done in fieldWriter)

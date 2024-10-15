@@ -8,12 +8,13 @@ public class ObjectConstructor extends ASTNode {
     List<ASTNode> body;
     List<String> annotations;
     private boolean isIsolated;
-
+    private boolean isImmutable;
 
     public ObjectConstructor(Cons<ASTNode> body, Cons<String> annotations) {
         this.body = body.toList();
         this.annotations = annotations.toList();
-        this.isIsolated = annotations.toString().contains("isolated");  //not sure about this bit, is it necessary?
+        this.isIsolated = annotations.toString().contains("isolated");
+        this.isImmutable = annotations.toString().contains("immutable");
     }
 
     public <T> T accept(T context, Visitor<T> visitor) {
@@ -34,5 +35,9 @@ public class ObjectConstructor extends ASTNode {
 
     public boolean isIsolated() {
         return this.isIsolated;
+    }
+    
+    public boolean isImmutable() {
+        return this.isImmutable;
     }
 }

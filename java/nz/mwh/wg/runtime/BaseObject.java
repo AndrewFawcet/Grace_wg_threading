@@ -16,6 +16,7 @@ public class BaseObject implements GraceObject {
     private Map<String, Function<Request, GraceObject>> methods = new HashMap<>();
     private int referenceCount = 0; // Reference count field
     private boolean isIsolated = false;
+    private boolean isImmutable = false;
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
@@ -31,31 +32,34 @@ public class BaseObject implements GraceObject {
     }
 
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf) {
-        this(lexicalParent, returns, bindSelf, false); // Pass false for isIsolated by default
+        this(lexicalParent, returns, bindSelf, false, false); // Pass false for isIsolated by default
     }
 
-    //  The old constructor for BaseObject, does not use isIsolated boolean
-    // public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf) {
-    //     this.lexicalParent = lexicalParent;
-    //     this.returns = returns;
-    //     addMethod("==(1)", request -> {
-    //         GraceObject other = request.getParts().get(0).getArgs().get(0);
-    //         return new GraceBoolean(this == other);
-    //     });
-    //     addMethod("!=(1)", request -> {
-    //         GraceObject other = request.getParts().get(0).getArgs().get(0);
-    //         return new GraceBoolean(this != other);
-    //     });
-    //     if (bindSelf) {
-    //         addMethod("self(0)", request -> this);
-    //     }
+    // The old constructor for BaseObject, does not use isIsolated boolean
+    // public BaseObject(GraceObject lexicalParent, boolean returns, boolean
+    // bindSelf) {
+    // this.lexicalParent = lexicalParent;
+    // this.returns = returns;
+    // addMethod("==(1)", request -> {
+    // GraceObject other = request.getParts().get(0).getArgs().get(0);
+    // return new GraceBoolean(this == other);
+    // });
+    // addMethod("!=(1)", request -> {
+    // GraceObject other = request.getParts().get(0).getArgs().get(0);
+    // return new GraceBoolean(this != other);
+    // });
+    // if (bindSelf) {
+    // addMethod("self(0)", request -> this);
+    // }
     // }
 
-    // New constructor that accepts isIsolated as a parameter
-    public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isIsolated) {
+    // New constructor that accepts isIsolated and IsImmutable as a parameter
+    public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isIsolated,
+            boolean isImmutable) {
         this.lexicalParent = lexicalParent;
         this.returns = returns;
         this.isIsolated = isIsolated; // Set the isolation capability
+        this.isImmutable = isImmutable; // Set the immutability capability
 
         // Add basic methods
         addMethod("==(1)", request -> {
@@ -75,6 +79,10 @@ public class BaseObject implements GraceObject {
         return isIsolated;
     }
 
+    public boolean isImmutable() {
+        return this.isImmutable;
+    }
+
     public void setIsolated(boolean isIsolated) {
         this.isIsolated = isIsolated;
     }
@@ -84,7 +92,7 @@ public class BaseObject implements GraceObject {
         referenceCount++;
 
         System.out.println("Reference count incremented to " + referenceCount);
-        System.out.println( " -& the isolated bool is " + isIsolated);
+        System.out.println(" -& the isolated bool is " + isIsolated);
     }
 
     // New method to decrement reference count
@@ -153,7 +161,6 @@ public class BaseObject implements GraceObject {
         methods.put(name + ":=(1)", request -> {
             fields.put(name, request.getParts().get(0).getArgs().get(0));
 
-            // reference counter boooo yaaaaa. 
             // incrementing the BaseObject being referenced.
             fields.put(name, request.getParts().get(0).getArgs().get(0));
             GraceObject object = request.getParts().get(0).getArgs().get(0); // Get the object being assigned
@@ -162,9 +169,10 @@ public class BaseObject implements GraceObject {
                 BaseObject baseObject = (BaseObject) object; // Safe cast after instanceof check
                 baseObject.incrementReferenceCount(); // Increment the reference count
 
-                if (baseObject.isIsolated()){
-                    if (baseObject.getReferenceCount() > 1){
-                        throw new RuntimeException("Violation: Isolated object '" + name + "' cannot have more than one reference.");
+                if (baseObject.isIsolated()) {
+                    if (baseObject.getReferenceCount() > 1) {
+                        throw new RuntimeException(
+                                "Violation: Isolated object '" + name + "' cannot have more than one reference.");
                     }
                 }
 

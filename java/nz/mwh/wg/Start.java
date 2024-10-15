@@ -15,10 +15,11 @@ import nz.mwh.wg.ast.ObjectConstructor;
 
 public class Start {
     public static void main(String[] args) {
-        String filename = "basic.grace";
+        // String filename = "basic.grace";
         // String filename = "basicBasic.grace";
+       String filename = "basicImmutable.grace";
     //    String filename = "basicCapabilites.grace";
-        boolean printAST = false;
+    boolean printAST = false;
         String updateFile = null;
         boolean inlineImports = false;
         for (String arg : args) {
