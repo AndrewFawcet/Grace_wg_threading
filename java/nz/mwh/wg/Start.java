@@ -18,7 +18,7 @@ public class Start {
         // String filename = "basic.grace";
         // String filename = "basicBasic.grace";
        String filename = "basicImmutable.grace";
-    //    String filename = "basicCapabilites.grace";
+    //    String filename = "basicCapabilities.grace";
     boolean printAST = false;
         String updateFile = null;
         boolean inlineImports = false;

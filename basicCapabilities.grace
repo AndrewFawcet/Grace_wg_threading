@@ -1,6 +1,6 @@
 
 print "Hello beautiful world-----------------------------------------------------------------"
-var xxxObject := isolated object {
+var xxxObject := object is isolated{
     var xxxField := 123456
     
     method foo {
@@ -9,13 +9,10 @@ var xxxObject := isolated object {
     }
 }
 
-print " error after here? "
-print "after yyyObject assigned to XXXObject"
+print "after yyyObject assigned to XXXObject --- should be an error"
 print ""
 
 var yyyObject := xxxObject
-var zzzObject := xxxObject
-var aaaObject := yyyObject
 
 print ""
 print "after yyyObject assigned to XXXObject"

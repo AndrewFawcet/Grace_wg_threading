@@ -93,6 +93,8 @@ public class BaseObject implements GraceObject {
 
         System.out.println("Reference count incremented to " + referenceCount);
         System.out.println(" -& the isolated bool is " + isIsolated);
+        System.out.println(" -& the immutable bool is " + isImmutable);
+        
     }
 
     // New method to decrement reference count
