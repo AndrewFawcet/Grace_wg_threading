@@ -13,7 +13,7 @@ public class ObjectConstructor extends ASTNode {
     public ObjectConstructor(Cons<ASTNode> body, Cons<String> annotations) {
         this.body = body.toList();
         this.annotations = annotations.toList();
-        // this.isIsolated = annotations.contains("isolated");  //not sure about this bit, is it necessary?
+        this.isIsolated = annotations.toString().contains("isolated");  //not sure about this bit, is it necessary?
     }
 
     public <T> T accept(T context, Visitor<T> visitor) {

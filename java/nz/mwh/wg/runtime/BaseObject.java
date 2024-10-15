@@ -34,6 +34,7 @@ public class BaseObject implements GraceObject {
         this(lexicalParent, returns, bindSelf, false); // Pass false for isIsolated by default
     }
 
+    //  The old constructor for BaseObject, does not use isIsolated boolean
     // public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf) {
     //     this.lexicalParent = lexicalParent;
     //     this.returns = returns;
@@ -81,7 +82,9 @@ public class BaseObject implements GraceObject {
     // New method to increment reference count
     public void incrementReferenceCount() {
         referenceCount++;
+
         System.out.println("Reference count incremented to " + referenceCount);
+        System.out.println( " the isolated bool is " + isIsolated);
     }
 
     // New method to decrement reference count
