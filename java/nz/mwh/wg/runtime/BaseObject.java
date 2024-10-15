@@ -35,7 +35,7 @@ public class BaseObject implements GraceObject {
         this(lexicalParent, returns, bindSelf, false, false); // Pass false for isIsolated by default
     }
 
-    // The old constructor for BaseObject, does not use isIsolated boolean
+    // The old constructor for BaseObject, does not use isIsolated boolean or isImmutable boolean
     // public BaseObject(GraceObject lexicalParent, boolean returns, boolean
     // bindSelf) {
     // this.lexicalParent = lexicalParent;
@@ -140,8 +140,7 @@ public class BaseObject implements GraceObject {
     }
 
     public GraceObject findReceiver(String name) {
-        // System.out.println("searching for receiver for " + name + ", this object has
-        // methods " + methods.keySet());
+
         if (methods.containsKey(name) || fields.containsKey(name)) {
             return this;
         }
@@ -174,25 +173,6 @@ public class BaseObject implements GraceObject {
                 System.out.println(name + " assigned to a baseObject ----------");
                 BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned; // Safe cast after instanceof check
 
-//                if (objectBeingAssigned.isImmutable() && objectBeingAssigned.getReferenceCount() == 0 ) {
-//                    // this is a newly created object - cascade immutability to any nested objects
-//                    objectBeingAssigned.getFields().forEach((fieldName, field) -> {
-//                        if (field instanceof BaseObject) {
-//                            ((BaseObject) field).setImmutable(true);
-//                        }
-//                    });
-//
-//                    //older way
-//                    //                    for (String key : objectBeingAssigned.getFields().keySet()) {
-//                    //                        GraceObject graceObject = objectBeingAssigned.getFields().get(key);
-//                    //                    }
-//
-//
-//
-//                    // get children of objectBeingAssigned
-//                    //    add immutable capability
-//
-//                }
 
                 objectBeingAssigned.incrementReferenceCount(); // Increment the reference count
                 if (objectBeingAssigned.isIsolated()) {
@@ -204,9 +184,10 @@ public class BaseObject implements GraceObject {
 
             }
 
-            // this looks at the current object and checks if the fields that it holds if they are being changed is it:
-            // -immutable
-            //  -does it have one or more references (less than one indicates in construction)
+            // this looks at the current object and as the fields are being changed checks if the object is:
+            // -immutable 
+            // -does it have one or more references (less than one indicates in construction)
+            // This functions in conjunction with the downward propagation of immutable capabilities in the public GraceObject visit(GraceObject context, ObjectConstructor node) method
             if (isImmutable) {
                 System.out.println("Has the object been created?");
                 if (getReferenceCount() != 0) {
@@ -224,20 +205,6 @@ public class BaseObject implements GraceObject {
 
     public void setField(String name, GraceObject value) {
         fields.put(name, value);
-        //        // this will probably not need an immutability check
-        //        if (isImmutable) {
-        //            System.out.println("This might be an error, does it have more than one reference?");
-        //            if (getReferenceCount() != 0) {
-        //                System.out.println("this is printing an errrrr-----------------------------------");
-        //                throw new RuntimeException(
-        //                        "Violation: Immutable object '" + name + "' cannot set immutable object fields.");
-        //            } else {
-        //                System.out.println("all ok, in construction as no references ");
-        //                fields.put(name, value);
-        //            }
-        //        } else {
-        //            fields.put(name, value);
-        //        }
     }
 
     public GraceObject findReturnContext() {

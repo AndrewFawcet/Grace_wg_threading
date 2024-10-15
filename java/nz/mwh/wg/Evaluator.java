@@ -40,6 +40,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, ObjectConstructor node) {
 
+        // checks if baseObject that is immutable is making another nested object, if so it will pass on the immutable capability (propagates dwnaward)
         boolean isNewObjectImmutable = node.isImmutable();
         if (context instanceof BaseObject) {
             BaseObject contextBaseObject = (BaseObject) context;
@@ -50,13 +51,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         BaseObject object = new BaseObject(context, false, true, node.isIsolated(), isNewObjectImmutable);
         
-        boolean isIsolated = object.isIsolated(); // Assuming isIsolated() checks for the 'isolated' keyword in the AST
-        // Increment reference count if the value is an instance of BaseObject, (now done in fieldWriter)
-        // if (object instanceof BaseObject) {
-        //     object.incrementReferenceCount();
-        // }
+        // general info when mkaing a object. For checking purposes
+        boolean isIsolated = object.isIsolated();
+        boolean isImmutable = object.isImmutable();
         System.out.println("New Object reference count is " + object.getReferenceCount());
         System.out.println("New object is isolated " + isIsolated);
+        System.out.println("New object is immutable " + isImmutable);
         
         List<ASTNode> body = node.getBody();
         for (ASTNode part : body) {
@@ -110,9 +110,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, StringNode node) {
 
-        // System.out.println("GraceObject context, StringNode node " +
-        // node.getValue());
-
         return new GraceString(node.getValue());
     }
 
@@ -165,10 +162,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, VarDecl node) {
 
-        // System.out.println("GraceObject context, VarDecl node " + node.getName());
-
         if (node.getValue() != null) {
-            // System.out.println("GraceObject context, VarDecl node " + node.getValue());
 
             new LexicalRequest(new Cons<Part>(
                     new Part(node.getName() + ":=", new Cons<ASTNode>(node.getValue(), Cons.<ASTNode>nil())),
@@ -256,7 +250,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     public GraceObject visit(GraceObject context, Assign node) {
 
         if (node.getTarget() instanceof LexicalRequest) {
-            // System.out.println("LexicalRequest");
             LexicalRequest target = (LexicalRequest) node.getTarget();
             String name = target.getParts().get(0).getName();
             List<RequestPartR> parts = new ArrayList<>();
@@ -266,7 +259,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             receiver.request(request);
             return done;
         } else if (node.getTarget() instanceof ExplicitRequest) {
-            // System.out.println("ExplicitRequest");
             ExplicitRequest target = (ExplicitRequest) node.getTarget();
             System.out.println(target.toString());
             String name = target.getParts().get(0).getName();
@@ -491,16 +483,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // Details: Uses basePrelude() as the context and processes the module's AST.
     public GraceObject evaluateModule(ObjectConstructor module) {
 
-        // System.out.println("ObjectConstructor module");
-
         return this.visit(basePrelude(), module);
     }
 
     // Purpose: Adds a module to the internal module map.
     // Details: Maps the module name to its GraceObject representation.
     public void bindModule(String name, GraceObject module) {
-
-        System.out.println("----------------------String name, GraceObject module");
 
         modules.put(name, module);
     }
