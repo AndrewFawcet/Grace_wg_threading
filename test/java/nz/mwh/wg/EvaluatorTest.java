@@ -27,6 +27,7 @@ class EvaluatorTest {
         ASTNode ast = Parser.parse(source);
         GraceObject graceObject = Evaluator.evaluateProgram(ast);
 
+
         // Access the private field 'fields'
         Field field = graceObject.getClass().getDeclaredField("fields");
         // Make it accessible

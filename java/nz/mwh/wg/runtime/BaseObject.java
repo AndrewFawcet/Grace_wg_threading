@@ -55,7 +55,7 @@ public class BaseObject implements GraceObject {
 
     // New constructor that accepts isIsolated and IsImmutable as a parameter
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isIsolated,
-            boolean isImmutable) {
+                      boolean isImmutable) {
         this.lexicalParent = lexicalParent;
         this.returns = returns;
         this.isIsolated = isIsolated; // Set the isolation capability
@@ -87,6 +87,10 @@ public class BaseObject implements GraceObject {
         this.isIsolated = isIsolated;
     }
 
+    public void setImmutable(boolean immutable) {
+        isImmutable = immutable;
+    }
+
     // New method to increment reference count
     public void incrementReferenceCount() {
         referenceCount++;
@@ -94,7 +98,7 @@ public class BaseObject implements GraceObject {
         System.out.println("Reference count incremented to " + referenceCount);
         System.out.println(" -& the isolated bool is " + isIsolated);
         System.out.println(" -& the immutable bool is " + isImmutable);
-        
+
     }
 
     // New method to decrement reference count
@@ -165,14 +169,34 @@ public class BaseObject implements GraceObject {
 
             // incrementing the BaseObject being referenced.
             fields.put(name, request.getParts().get(0).getArgs().get(0));
-            GraceObject object = request.getParts().get(0).getArgs().get(0); // Get the object being assigned
-            if (object instanceof BaseObject) {
+            GraceObject valueBeingAssigned = request.getParts().get(0).getArgs().get(0); // Get the object being assigned
+            if (valueBeingAssigned instanceof BaseObject) {
                 System.out.println(name + " assigned to a baseObject ----------");
-                BaseObject baseObject = (BaseObject) object; // Safe cast after instanceof check
-                baseObject.incrementReferenceCount(); // Increment the reference count
+                BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned; // Safe cast after instanceof check
 
-                if (baseObject.isIsolated()) {
-                    if (baseObject.getReferenceCount() > 1) {
+//                if (objectBeingAssigned.isImmutable() && objectBeingAssigned.getReferenceCount() == 0 ) {
+//                    // this is a newly created object - cascade immutability to any nested objects
+//                    objectBeingAssigned.getFields().forEach((fieldName, field) -> {
+//                        if (field instanceof BaseObject) {
+//                            ((BaseObject) field).setImmutable(true);
+//                        }
+//                    });
+//
+//                    //older way
+//                    //                    for (String key : objectBeingAssigned.getFields().keySet()) {
+//                    //                        GraceObject graceObject = objectBeingAssigned.getFields().get(key);
+//                    //                    }
+//
+//
+//
+//                    // get children of objectBeingAssigned
+//                    //    add immutable capability
+//
+//                }
+
+                objectBeingAssigned.incrementReferenceCount(); // Increment the reference count
+                if (objectBeingAssigned.isIsolated()) {
+                    if (objectBeingAssigned.getReferenceCount() > 1) {
                         throw new RuntimeException(
                                 "Violation: Isolated object '" + name + "' cannot have more than one reference.");
                     }
@@ -183,13 +207,13 @@ public class BaseObject implements GraceObject {
             // this looks at the current object and checks if the fields that it holds if they are being changed is it:
             // -immutable
             //  -does it have one or more references (less than one indicates in construction)
-            if (isImmutable){
-                System.out.println("This might be an error, does it have more than one reference?");
-                if(getReferenceCount()!= 0){
+            if (isImmutable) {
+                System.out.println("Has the object been created?");
+                if (getReferenceCount() != 0) {
                     System.out.println("this is printing an errrrr-----------------------------------");
                     throw new RuntimeException(
-                        "Violation: Immutable object '" + name + "' cannot mutate immutable object fields.");
-                }else{
+                            "Violation: Immutable object '" + name + "' cannot mutate immutable object fields.");
+                } else {
                     System.out.println("all ok, in construction as no references ");
                 }
             }
@@ -199,22 +223,21 @@ public class BaseObject implements GraceObject {
     }
 
     public void setField(String name, GraceObject value) {
-
-        // this will probably need an immutability check as well
-
-        if (isImmutable){
-            System.out.println("This might be an error, does it have more than one reference?");
-            if(getReferenceCount()!= 0){
-                System.out.println("this is printing an errrrr-----------------------------------");
-                throw new RuntimeException(
-                    "Violation: Immutable object '" + name + "' cannot set immutable object fields.");
-            }else{
-                System.out.println("all ok, in construction as no references ");
-                fields.put(name, value);
-            }
-        }else{
-            fields.put(name, value);
-        }
+        fields.put(name, value);
+        //        // this will probably not need an immutability check
+        //        if (isImmutable) {
+        //            System.out.println("This might be an error, does it have more than one reference?");
+        //            if (getReferenceCount() != 0) {
+        //                System.out.println("this is printing an errrrr-----------------------------------");
+        //                throw new RuntimeException(
+        //                        "Violation: Immutable object '" + name + "' cannot set immutable object fields.");
+        //            } else {
+        //                System.out.println("all ok, in construction as no references ");
+        //                fields.put(name, value);
+        //            }
+        //        } else {
+        //            fields.put(name, value);
+        //        }
     }
 
     public GraceObject findReturnContext() {
@@ -227,4 +250,8 @@ public class BaseObject implements GraceObject {
         throw new RuntimeException("No return context found");
     }
 
+
+    public Map<String, GraceObject> getFields() {
+        return fields;
+    }
 }

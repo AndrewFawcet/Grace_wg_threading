@@ -15,7 +15,9 @@ var zzzObject:= object is immutable{
 print "before zzzObject method call"
 print ""
 
-zzzObject.foo()
+zzzObject.variableZ := zzzObject.variableZ +  1
+
+// zzzObject.foo()
 
 print ""
 print "after zzzObject method call"

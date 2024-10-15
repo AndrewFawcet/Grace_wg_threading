@@ -35,9 +35,9 @@ class ImmutabilityTest {
                 thrown.getMessage());
     }
 
-    @Test  // not working propoerly, check immutabilityTestSetField.grace
-    void immutabilityTestSetField() throws Exception {
-        String filename = "immutabilityTestSetField.grace";
+    @Test
+    void nestedImmutabilityTest() throws Exception {
+        String filename = "immutabilityTestNestedImmutability.grace";
         String source = Files.readString(Path.of(filename));
         ASTNode ast = Parser.parse(source);
 
@@ -47,7 +47,37 @@ class ImmutabilityTest {
         });
 
         // Optionally, verify the exception message or behavior
-        assertEquals("Violation: Immutable object 'otherField' cannot set immutable object fields.", thrown.getMessage());
+        assertEquals("Violation: Immutable object 'variableZ' cannot mutate immutable object fields.", thrown.getMessage());
+    }
+
+    @Test
+    void multiNestedImmutabilityTest() throws Exception {
+        String filename = "immutabilityTestMultiNestedImmutability.grace";
+        String source = Files.readString(Path.of(filename));
+        ASTNode ast = Parser.parse(source);
+
+        // Expecting RuntimeException for a different immutability test case
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            GraceObject graceObject = Evaluator.evaluateProgram(ast);
+        });
+
+        // Optionally, verify the exception message or behavior
+        assertEquals("Violation: Immutable object 'variableZ' cannot mutate immutable object fields.", thrown.getMessage());
+    }
+
+    @Test
+    void nestedImmutabilityAssignedToDifferentContextTest() throws Exception {
+        String filename = "immutabilityTestNestedImmutabilityAssignedToDifferentContext.grace";
+        String source = Files.readString(Path.of(filename));
+        ASTNode ast = Parser.parse(source);
+
+        // Expecting RuntimeException for a different immutability test case
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            GraceObject graceObject = Evaluator.evaluateProgram(ast);
+        });
+
+        // Optionally, verify the exception message or behavior
+        assertEquals("Violation: Immutable object 'cannotChangeMe' cannot mutate immutable object fields.", thrown.getMessage());
     }
 
 }
