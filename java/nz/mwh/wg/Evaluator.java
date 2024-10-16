@@ -40,16 +40,30 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, ObjectConstructor node) {
 
-        // checks if baseObject that is immutable is making another nested object, if so it will pass on the immutable capability (propagates dwnaward)
+        // checks if baseObject that is immutable is making another nested object, if so it will pass on the immutable capability (propagates downward)
+        // also checks if baseObject that is immutable and if the newObject is isolated, throws runtime error if so.
         boolean isNewObjectImmutable = node.isImmutable();
+        boolean isNewObjectIsolated = node.isIsolated();
         if (context instanceof BaseObject) {
             BaseObject contextBaseObject = (BaseObject) context;
             if (contextBaseObject.isImmutable()) {
+                if (isNewObjectIsolated){
+                    throw new RuntimeException(
+                        "Violation: An immutable object cannot reference a isolate object.");  
+                }
                 isNewObjectImmutable = true;
+            }
+            if (contextBaseObject.isIsolated()) {
+                if (isNewObjectImmutable){
+                    System.out.println("ok attaching a immutable to a isolated object");
+                    isNewObjectIsolated = false;  // referenced object is immutable not isolated
+                }else{
+                    isNewObjectIsolated = true;     // propagate through the referenced objects the isolated capability
+                }
             }
         }
 
-        BaseObject object = new BaseObject(context, false, true, node.isIsolated(), isNewObjectImmutable);
+        BaseObject object = new BaseObject(context, false, true, isNewObjectIsolated, isNewObjectImmutable);
         
         // general info when mkaing a object. For checking purposes
         boolean isIsolated = object.isIsolated();

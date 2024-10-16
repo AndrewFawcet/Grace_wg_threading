@@ -19,8 +19,22 @@ class IsolatedTest {
     }
 
     @Test
-    void isolatedObjectModificationShouldFail() throws Exception {
+    void isolatedObjectMultipleReferenceShouldFail() throws Exception {
         String filename = "isolatedTestMultipleReference.grace"; 
+        String source = Files.readString(Path.of(filename));
+        ASTNode ast = Parser.parse(source);
+        // Expect a RuntimeException when immutability is violated
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            GraceObject graceObject = Evaluator.evaluateProgram(ast);
+        });
+
+        assertEquals("Violation: Isolated object 'yyyObject' cannot have more than one reference.",
+        thrown.getMessage());
+    }
+
+    @Test
+    void isolatedObjectNestedMultipleReferenceShouldFail() throws Exception {
+        String filename = "isolatedTestNestedMultipleReference.grace"; 
         String source = Files.readString(Path.of(filename));
         ASTNode ast = Parser.parse(source);
         // Expect a RuntimeException when immutability is violated
