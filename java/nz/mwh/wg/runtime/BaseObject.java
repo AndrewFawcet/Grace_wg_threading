@@ -209,6 +209,7 @@ public class BaseObject implements GraceObject {
         });
     }
 
+    // TODO this links in with Evaluator GraceObject visit(GraceObject context, DefDecl node), may need updating for handling fields
     public void setField(String name, GraceObject value) {
         fields.put(name, value);
     }

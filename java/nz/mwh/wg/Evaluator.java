@@ -40,7 +40,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, ObjectConstructor node) {
 
-        // checks if baseObject that is immutable is making another nested object, if so it will pass on the immutable capability (propagates downward)
+        // checks if baseObject that is immutable or isolated is making another nested object, if so it will pass on the capability (propagates downward)
         // also checks if baseObject that is immutable and if the newObject is isolated, throws runtime error if so.
         boolean isNewObjectImmutable = node.isImmutable();
         boolean isNewObjectIsolated = node.isIsolated();
@@ -49,7 +49,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             if (contextBaseObject.isImmutable()) {
                 if (isNewObjectIsolated){
                     throw new RuntimeException(
-                        "Violation: An immutable object cannot reference a isolate object.");  
+                        "Violation: An immutable object cannot reference an isolate object.");  
                 }
                 isNewObjectImmutable = true;
             }
@@ -65,7 +65,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         BaseObject object = new BaseObject(context, false, true, isNewObjectIsolated, isNewObjectImmutable);
         
-        // general info when mkaing a object. For checking purposes
+        // general info when mkaing a object. For checking purposes and can be removed.
         boolean isIsolated = object.isIsolated();
         boolean isImmutable = object.isImmutable();
         System.out.println("New Object reference count is " + object.getReferenceCount());
@@ -159,6 +159,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
     // Purpose: Defines a field in the current object context.
     // Details: Evaluates the value and assigns it to the field in the BaseObject.
+    //
+    // TODO update the setField with capability checking ??
     @Override
     public GraceObject visit(GraceObject context, DefDecl node) {
 
