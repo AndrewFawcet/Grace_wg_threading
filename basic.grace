@@ -1,6 +1,6 @@
 
 print "Hello beautiful world-----------------------------------------------------------------"
-var xxxObject:= object is isolated{
+var xxxObject:= object is immutable isolated{
     var variableX := 123456
 
     print ""
@@ -15,7 +15,7 @@ var xxxObject:= object is isolated{
     }
 }
 
-var yyyObject:= object is mushroom{
+var yyyObject:= object is isolated immutable{
     var variableX := 123456
 
     print ""
@@ -34,11 +34,7 @@ print "before y y"
 print ""
 
 var y := xxxObject
-var a := xxxObject
-var b := xxxObject
-var c := xxxObject
-var d := xxxObject
-var e := xxxObject
+
 
 print "after y y"
 print ""

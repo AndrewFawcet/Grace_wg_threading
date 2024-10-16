@@ -174,14 +174,20 @@ public class BaseObject implements GraceObject {
                 BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned; // Safe cast after instanceof check
 
 
-                objectBeingAssigned.incrementReferenceCount(); // Increment the reference count
+                objectBeingAssigned.incrementReferenceCount(); 
+                
+                // checking if isolated, and runtime exception if too many references
                 if (objectBeingAssigned.isIsolated()) {
                     if (objectBeingAssigned.getReferenceCount() > 1) {
                         throw new RuntimeException(
                                 "Violation: Isolated object '" + name + "' cannot have more than one reference.");
                     }
                 }
-
+                // checking if isolated and if imutable, and runtime exception if multiple capabilities
+                if (objectBeingAssigned.isIsolated() && objectBeingAssigned.isImmutable()) {
+                        throw new RuntimeException(
+                                "Violation: Object '" + name + "' cannot have both capabilities 'isolated' and 'immutable' assigned.");
+                }
             }
 
             // this looks at the current object and as the fields are being changed checks if the object is:
