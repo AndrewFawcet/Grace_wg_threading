@@ -16,5 +16,5 @@ print "object references = 2"
 var reference3 := objectX
 print "object references = 3"
 
-print "End of test grace code"
-
+print""
+print "Goodbye cruel world"
