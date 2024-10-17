@@ -46,3 +46,4 @@ var z := objectY
 //y.foo()
 
 print "Goodbye cruel world"
+//
