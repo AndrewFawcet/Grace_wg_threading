@@ -28,7 +28,7 @@ class IsolatedTest {
             GraceObject graceObject = Evaluator.evaluateProgram(ast);
         });
 
-        assertEquals("Violation: Isolated object 'objectY' cannot have more than one reference.",
+        assertEquals("Capability Violation: Isolated object 'objectY' cannot have more than one reference.",
         thrown.getMessage());
     }
 
@@ -42,7 +42,7 @@ class IsolatedTest {
             GraceObject graceObject = Evaluator.evaluateProgram(ast);
         });
 
-        assertEquals("Violation: Isolated object 'objectY' cannot have more than one reference.",
+        assertEquals("Capability Violation: Isolated object 'objectY' cannot have more than one reference.",
         thrown.getMessage());
     }
 }

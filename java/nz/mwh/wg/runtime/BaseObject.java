@@ -182,13 +182,13 @@ public class BaseObject implements GraceObject {
                 if (objectBeingAssigned.isIsolated()) {
                     if (objectBeingAssigned.getReferenceCount() > 1) {
                         throw new RuntimeException(
-                                "Violation: Isolated object '" + name + "' cannot have more than one reference.");
+                                "Capability Violation: Isolated object '" + name + "' cannot have more than one reference.");
                     }
                 }
                 // checking if isolated and if imutable, and runtime exception if multiple capabilities
                 if (objectBeingAssigned.isIsolated() && objectBeingAssigned.isImmutable()) {
                         throw new RuntimeException(
-                                "Violation: Object '" + name + "' cannot have both capabilities 'isolated' and 'immutable' assigned.");
+                                "Capability Violation: Object '" + name + "' cannot have both capabilities 'isolated' and 'immutable' assigned.");
                 }
             }
 
@@ -201,7 +201,7 @@ public class BaseObject implements GraceObject {
                 if (getReferenceCount() != 0) {
                     System.out.println("this is printing an errrrr-----------------------------------");
                     throw new RuntimeException(
-                            "Violation: Immutable object '" + name + "' cannot mutate immutable object fields.");
+                            "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name + "'.");
                 } else {
                     System.out.println("all ok, in construction as no references ");
                 }

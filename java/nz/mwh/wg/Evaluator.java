@@ -49,7 +49,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             if (contextBaseObject.isImmutable()) {
                 if (isNewObjectIsolated){
                     throw new RuntimeException(
-                        "Violation: An immutable object cannot reference an isolate object.");  
+                        "Capability Violation: An 'immutable' object cannot reference an 'isolated' object.");  
                 }
                 isNewObjectImmutable = true;
             }
@@ -65,12 +65,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         BaseObject object = new BaseObject(context, false, true, isNewObjectIsolated, isNewObjectImmutable);
         
-        // general info when mkaing a object. For checking purposes and can be removed.
-        boolean isIsolated = object.isIsolated();
-        boolean isImmutable = object.isImmutable();
-        System.out.println("New Object reference count is " + object.getReferenceCount());
-        System.out.println("New object is isolated " + isIsolated);
-        System.out.println("New object is immutable " + isImmutable);
+        // // general info when mkaing a object. For checking purposes and can be removed.
+        // boolean isIsolated = object.isIsolated();
+        // boolean isImmutable = object.isImmutable();
+        // System.out.println("New Object reference count is " + object.getReferenceCount());
+        // System.out.println("New object is isolated " + isIsolated);
+        // System.out.println("New object is immutable " + isImmutable);
         
         List<ASTNode> body = node.getBody();
         for (ASTNode part : body) {
