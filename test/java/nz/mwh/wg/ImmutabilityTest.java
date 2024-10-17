@@ -31,7 +31,7 @@ class ImmutabilityTest {
         });
 
         // Optionally, you can verify that the exception message matches what you expect
-        assertEquals("Violation: Immutable object 'variableZ' cannot mutate immutable object fields.",
+        assertEquals("Violation: Immutable object 'fieldX' cannot mutate immutable object fields.",
                 thrown.getMessage());
     }
 
@@ -47,7 +47,7 @@ class ImmutabilityTest {
         });
 
         // Optionally, verify the exception message or behavior
-        assertEquals("Violation: Immutable object 'variableZ' cannot mutate immutable object fields.", thrown.getMessage());
+        assertEquals("Violation: Immutable object 'fieldX' cannot mutate immutable object fields.", thrown.getMessage());
     }
 
     @Test
@@ -62,7 +62,7 @@ class ImmutabilityTest {
         });
 
         // Optionally, verify the exception message or behavior
-        assertEquals("Violation: Immutable object 'variableZ' cannot mutate immutable object fields.", thrown.getMessage());
+        assertEquals("Violation: Immutable object 'fieldX' cannot mutate immutable object fields.", thrown.getMessage());
     }
 
     @Test
@@ -77,7 +77,7 @@ class ImmutabilityTest {
         });
 
         // Optionally, verify the exception message or behavior
-        assertEquals("Violation: Immutable object 'cannotChangeMe' cannot mutate immutable object fields.", thrown.getMessage());
+        assertEquals("Violation: Immutable object 'cannotChangeMeField' cannot mutate immutable object fields.", thrown.getMessage());
     }
 
 }

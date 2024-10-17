@@ -1,10 +1,10 @@
-print "Immutability test start-----------------------------------------"
+print "Immutability test start---------------------------------------------------------------"
 print "Hello beautiful world-----------------------------------------------------------------"
 
 
-var zzzObject := object is immutable{
+var objectX := object is immutable{
     var nestedObject := object {
-         var variableZ := 123
+         var fieldX := 123
     }
 }
 
@@ -12,6 +12,9 @@ var zzzObject := object is immutable{
 print ""
 print " - nested immutable object created"
 print "attempting to mutate nested immutable..."
-zzzObject.nestedObject.variableZ := zzzObject.nestedObject.variableZ + 789
 
+objectX.nestedObject.fieldX := objectX.nestedObject.fieldX + 789
+
+
+print ""
 print "Goodbye cruel world"

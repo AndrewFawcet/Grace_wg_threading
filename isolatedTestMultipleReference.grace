@@ -1,17 +1,18 @@
-
+print "Isolated test start-------------------------------------------------------------------"
 print "Hello beautiful world-----------------------------------------------------------------"
-var xxxObject := object is isolated{
-    var xxxField := 123456
+
+
+var objectX := object is isolated{
+    var fieldX := 123456
     
     method foo {
-        print(self.xxxField)
-        self.xxxField := self.xxxField + 789
+        print(self.fieldX)
+        self.fieldX := self.fieldX + 789
     }
 }
 print ""
 
-var yyyObject := xxxObject
+var objectY := objectX
 
 print ""
-
 print "Goodbye cruel world"

@@ -1,7 +1,7 @@
 
 print "Hello beautiful world-----------------------------------------------------------------"
-var xxxObject := object is isolated{
-    var xxxField := 123456
+var objectX := object is isolated{
+    var fieldX := 123456
     
     method foo {
         print(self.xxxField)
@@ -9,16 +9,16 @@ var xxxObject := object is isolated{
     }
 }
 
-print "after yyyObject assigned to XXXObject --- should be an error"
+print "after objectY assigned to objectX --- should be an error"
 print ""
 
-var yyyObject := xxxObject
+var objectY := objectX
 
 print ""
-print "after yyyObject assigned to XXXObject"
+print "after objectY assigned to objectX"
 print ""
 
 print "Now doing some foo() in the main"
-xxxObject.foo()
+objectX.foo()
 
 print "Goodbye cruel world"

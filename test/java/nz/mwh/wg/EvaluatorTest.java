@@ -36,7 +36,7 @@ class EvaluatorTest {
         @SuppressWarnings("unchecked")
         HashMap<String, BaseObject> fields = (HashMap<String, BaseObject>) field.get(graceObject);
 
-        BaseObject reference1 = fields.get("reference1");
+        BaseObject reference1 = fields.get("objectX");
         assertEquals(3, reference1.getReferenceCount());
 
         String lexicalReference = "varDec(\"reference3\", nil, nil, one(lexReq(one(part(\"reference1\", nil)))))";

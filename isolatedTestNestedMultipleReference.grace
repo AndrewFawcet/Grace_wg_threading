@@ -1,20 +1,21 @@
-
+print "Isolated test start-------------------------------------------------------------------"
 print "Hello beautiful world-----------------------------------------------------------------"
-var xxxObject := object is isolated{
+
+
+var objectX := object is isolated{
        var nestedObject1 := object {
          var nestedObject2 := object {
              var nestedObject3 := object {
-                  var variableZ := 123
+                  var fieldX := 123
              }
          }
     }
 }
 print ""
 
-var yyyObject := xxxObject.nestedObject1.nestedObject2.nestedObject3
+var objectY := objectX.nestedObject1.nestedObject2.nestedObject3
 
-print (yyyObject.variableZ)
+print (objectY.fieldX)
 
 print ""
-
 print "Goodbye cruel world"

@@ -1,6 +1,6 @@
 
 print "Hello beautiful world-----------------------------------------------------------------"
-var xxxObject:= object is immutable isolated{
+var objectX:= object is immutable isolated{
     var variableX := 123456
 
     print ""
@@ -15,7 +15,7 @@ var xxxObject:= object is immutable isolated{
     }
 }
 
-var yyyObject:= object is isolated immutable{
+var objectY:= object is isolated immutable{
     var variableX := 123456
 
     print ""
@@ -33,16 +33,16 @@ var yyyObject:= object is isolated immutable{
 print "before y y"
 print ""
 
-var y := xxxObject
+var y := objectX
 
 
 print "after y y"
 print ""
-var z := yyyObject
+var z := objectY
 
-//xxxObject.foo()
-//xxxObject.foo()
-//xxxObject.foo()
+//objectY.foo()
+//objectY.foo()
+//objectY.foo()
 //y.foo()
 
 print "Goodbye cruel world"

@@ -1,17 +1,19 @@
-print "Isolated and immutable test start-----------------------------------------"
+print "Isolated test start-------------------------------------------------------------------"
 print "Hello beautiful world-----------------------------------------------------------------"
 
 
-var xxxObject := object is isolated {
+var objectX := object is isolated {
     var nestedObject1 := object {
         var nestedObject2 := object { 
-            var yyyObject := object is immutable {
-                var variableY := 123
+            var objectY := object is immutable {
+                var fieldY := 123
             }
         }
     }
 }
+print""
 
-xxxObject.nestedObject1.nestedObject2.yyyObject.variableY := xxxObject.nestedObject1.nestedObject2.yyyObject.variableY + 987
+objectX.nestedObject1.nestedObject2.objectY.fieldY := objectX.nestedObject1.nestedObject2.objectY.fieldY + 987
 
+print""
 print "Goodbye cruel world"

@@ -1,4 +1,4 @@
-var x := object {
+var objectX := object {
     var variableX := 123456
 
     print ""
@@ -13,7 +13,7 @@ var x := object {
     }
 }
 print "----------1-----------"
-x.foo()
+objectX.foo()
 print "----------2-----------"
-x.foo()
+objectX.foo()
 print "----------3-----------"

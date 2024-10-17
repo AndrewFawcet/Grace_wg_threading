@@ -1,29 +1,29 @@
 
 print "Hello beautiful world-----------------------------------------------------------------"
 
-var zzzObject:= object is immutable{
-    var variableZ := 123
+var objectX:= object is immutable{
+    var variableX := 123
 
     method foo {
-        print(self.variableZ)
-        self.variableZ := self.variableZ + 789
+        print(self.variableX)
+        self.variableX := self.variableX + 789
     }
 }
 
 
 
-print "before zzzObject method call"
+print "before objectX method call"
 print ""
 
-zzzObject.variableZ := zzzObject.variableZ +  1
+objectX.variableX := objectX.variableX +  1
 
-// zzzObject.foo()
+// objectX.foo()
 
 print ""
-print "after zzzObject method call"
+print "after objectX method call"
 print ""
 
 print "and making a second reference to object to check it still can"
-var a := zzzObject
+var a := objectX
 
 print "Goodbye cruel world"

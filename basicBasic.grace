@@ -2,7 +2,7 @@
 print "Hello beautiful world-----------------------------------------------------------------"
 
 print "Hello ---------------------------aaa--------------------------------------"
-var aaaObject := object {
+var objectA := object {
     var variableA := 123456
     method foo {
         print(self.variableA)
@@ -11,12 +11,13 @@ var aaaObject := object {
     print (self.variableA)
 }
 
-aaaObject.var variableB := 456
+// objectA.(var variableB := 456)
+
 print "before x y"
 print ""
 
-var x := xxxObject
-var y := yyyObject
+var x := objectA
+var y := objectA
 
 print "after x y"
 print ""

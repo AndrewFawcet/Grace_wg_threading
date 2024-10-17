@@ -1,9 +1,9 @@
-print "Isolated and immutable test start-----------------------------------------"
+print "Isolated and immutable test start-----------------------------------------------------"
 print "Hello beautiful world-----------------------------------------------------------------"
 
 
-var zzzObject := object is immutable isolated {
+var objectX := object is immutable isolated {
 }
 
-
+print ""
 print "Goodbye cruel world"

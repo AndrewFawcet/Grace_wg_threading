@@ -1,11 +1,11 @@
-print "Immutability test start-----------------------------------------"
+print "Immutability test start---------------------------------------------------------------"
 print "Hello beautiful world-----------------------------------------------------------------"
 
 
-var zzzObject := object is immutable{
+var objectX := object is immutable{
     var nestedObject1 := object {
          var nestedObject2 := object {
-              var cannotChangeMe := 123
+              var cannotChangeMeField := 123
          }
     }
 }
@@ -13,10 +13,11 @@ var zzzObject := object is immutable{
 
 print ""
 print "attempting to mutate nested immutable that has been assigned to different context"
-var dodgyCopy := zzzObject.nestedObject1.nestedObject2
-dodgyCopy.cannotChangeMe := dodgyCopy.cannotChangeMe + 1
 
-print (zzzObject.nestedObject.cannotChangeMe)
+var dodgyCopy := objectX.nestedObject1.nestedObject2
+dodgyCopy.cannotChangeMeField := dodgyCopy.cannotChangeMeField + 456
 
+print (objectX.nestedObject.cannotChangeMeField)
 
+print ""
 print "Goodbye cruel world"

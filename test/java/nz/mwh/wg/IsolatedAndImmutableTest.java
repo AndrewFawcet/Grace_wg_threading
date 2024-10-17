@@ -28,7 +28,7 @@ class IsolatedAndImmutableTest {
             GraceObject graceObject = Evaluator.evaluateProgram(ast);
         });
 
-        assertEquals("Violation: Object 'zzzObject' cannot have both capabilities 'isolated' and 'immutable' assigned.",
+        assertEquals("Violation: Object 'objectX' cannot have both capabilities 'isolated' and 'immutable' assigned.",
         thrown.getMessage());
     }
 
@@ -42,7 +42,7 @@ class IsolatedAndImmutableTest {
             GraceObject graceObject = Evaluator.evaluateProgram(ast);
         });
 
-        assertEquals("Violation: Object 'zzzObject' cannot have both capabilities 'isolated' and 'immutable' assigned.",
+        assertEquals("Violation: Object 'objectX' cannot have both capabilities 'isolated' and 'immutable' assigned.",
         thrown.getMessage());
     }
 
@@ -56,7 +56,7 @@ class IsolatedAndImmutableTest {
             GraceObject graceObject = Evaluator.evaluateProgram(ast);
         });
 
-        assertEquals("Violation: An immutable object cannot reference a isolate object.",
+        assertEquals("Violation: An immutable object cannot reference an isolate object.",
         thrown.getMessage());
     }
 
@@ -71,7 +71,7 @@ class IsolatedAndImmutableTest {
             GraceObject graceObject = Evaluator.evaluateProgram(ast);
         });
 
-        assertEquals("Violation: An immutable object cannot reference a isolate object.",
+        assertEquals("Violation: An immutable object cannot reference an isolate object.",
         thrown.getMessage());
     }
 
@@ -94,7 +94,7 @@ class IsolatedAndImmutableTest {
             GraceObject graceObject = Evaluator.evaluateProgram(ast);
         });
 
-        assertEquals("Violation: Immutable object 'variableY' cannot mutate immutable object fields.",
+        assertEquals("Violation: Immutable object 'fieldY' cannot mutate immutable object fields.",
         thrown.getMessage());
     }
 

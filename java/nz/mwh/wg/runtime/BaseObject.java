@@ -122,6 +122,7 @@ public class BaseObject implements GraceObject {
         methods.put(name, method);
     }
 
+    // TODO should this even exist? if so should something be updated?
     @Override
     public GraceObject request(Request request) {
         Function<Request, GraceObject> method = methods.get(request.getName());
@@ -150,6 +151,7 @@ public class BaseObject implements GraceObject {
         throw new RuntimeException("No such method in scope: " + name);
     }
 
+    // TODO update with capabilitie anything set here? (if it is used?)
     public void addField(String name) {
         fields.put(name, uninitialised);
         methods.put(name + "(0)", request -> {

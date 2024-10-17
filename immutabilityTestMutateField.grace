@@ -1,15 +1,15 @@
-print "Immutability test start-----------------------------------------"
+print "Immutability test start---------------------------------------------------------------"
 print "Hello beautiful world-----------------------------------------------------------------"
 
-var zzzObject:= object is immutable{
-    var variableZ := 123
+
+var objectX:= object is immutable{
+    var fieldX := 123
 
 }
 
 print ""
 
-zzzObject.variableZ := zzzObject.variableZ + 789
+objectX.fieldX := objectX.fieldX + 789
 
 print ""
-
 print "Goodbye cruel world"
