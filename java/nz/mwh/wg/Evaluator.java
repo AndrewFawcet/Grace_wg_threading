@@ -44,6 +44,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         // also checks if baseObject that is immutable and if the newObject is isolated, throws runtime error if so.
         boolean isNewObjectImmutable = node.isImmutable();
         boolean isNewObjectIsolated = node.isIsolated();
+        System.out.println("is here in baseObject makeer in evaluator");
+        // boolean isNewObjectAThread = node.isThread();
+        
         if (context instanceof BaseObject) {
             BaseObject contextBaseObject = (BaseObject) context;
             if (contextBaseObject.isImmutable()) {
@@ -101,13 +104,51 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, LexicalRequest node) {
 
+        System.out.println("this is the method call...............");
+
+        boolean isThread = false;
+
         List<RequestPartR> parts = new ArrayList<>();
         for (Part part : node.getParts()) {
-            List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
+            System.out.println("getting an arg");
+            // List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
+            List<GraceObject> args = part.getArgs().stream().map(x -> {
+                // Check if x is an instance of MethodDecl
+                System.out.println("x is an instance of: " + x.getClass().getName());
+                if (x instanceof LexicalRequest) {
+                    System.out.println("x instanceof LexicalRequest +++++++++++++++++++++++++++++++++++");
+                }
+                if (x instanceof MethodDecl) {
+                    MethodDecl methodDecl = (MethodDecl) x;
+                    System.out.println("This method.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    // Check the isThread property
+                    if (methodDecl.isThread()) {
+                        System.out.println("This method is marked as a thread.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                        // Do something specific for threaded methods if needed
+                    }
+                }
+                // Visit as usual
+                return visit(context, x);
+            }).collect(Collectors.toList());
+            // if (args.get(0) instanceof  Request){
+            //     System.out.println("        Request in here");
+            // }
+            System.out.println("                          " + args.size());
+            
             parts.add(new RequestPartR(part.getName(), args));
         }
         Request request = new Request(this, parts);
         GraceObject receiver = context.findReceiver(request.getName());
+        
+        if (receiver instanceof BaseObject) {
+            System.err.println("asdads+++++++++");
+            // reciever is not important...
+            // the lexicalRequestNode is what is important, and will hold the way to get the isThread annotation
+
+
+            
+        }
+        
         return receiver.request(request);
     }
 
@@ -255,6 +296,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         }
         Request request = new Request(this, parts, node.location);
         GraceObject receiver = node.getReceiver().accept(context, this);
+
         return receiver.request(request);
 
     }

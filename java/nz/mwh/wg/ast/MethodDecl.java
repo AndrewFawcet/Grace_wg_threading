@@ -10,12 +10,14 @@ public class MethodDecl extends ASTNode {
     ASTNode type;
     List<String> annotations;
     List<? extends ASTNode> body;
+    private boolean isThread;
 
     public MethodDecl(Cons<? extends Part> parts, ASTNode type, Cons<String> annotations, Cons<? extends ASTNode> body) {
         this.parts = parts.toList();
         this.type = type;
         this.annotations = annotations.toList();
         this.body = body.toList();
+        this.isThread = annotations.toString().contains("thread");
     }
 
     public <T> T accept(T context, Visitor<T> visitor) {
@@ -32,5 +34,9 @@ public class MethodDecl extends ASTNode {
 
     public List<? extends ASTNode> getBody() {
         return body;
+    }
+
+    public boolean isThread() {
+        return this.isThread;
     }
 }

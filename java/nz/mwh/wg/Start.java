@@ -15,7 +15,7 @@ import nz.mwh.wg.ast.ObjectConstructor;
 
 public class Start {
     public static void main(String[] args) {
-        String filename = "basicBasic.grace";
+        String filename = "b.grace";
         // String filename = "basicImmutable.grace";
         // String filename = "test.grace";
         //    String filename = "basicCapabilities.grace";
