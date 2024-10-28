@@ -40,41 +40,50 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, ObjectConstructor node) {
 
-        // checks if baseObject that is immutable or isolated is making another nested object, if so it will pass on the capability (propagates downward)
-        // also checks if baseObject that is immutable and if the newObject is isolated, throws runtime error if so.
+        // checks if baseObject that is immutable or isolated is making another nested
+        // object, if so it will pass on the capability (propagates downward)
+        // also checks if baseObject that is immutable and if the newObject is isolated,
+        // throws runtime error if so.
         boolean isNewObjectImmutable = node.isImmutable();
         boolean isNewObjectIsolated = node.isIsolated();
-        System.out.println("is here in baseObject makeer in evaluator");
         // boolean isNewObjectAThread = node.isThread();
-        
+
         if (context instanceof BaseObject) {
             BaseObject contextBaseObject = (BaseObject) context;
             if (contextBaseObject.isImmutable()) {
-                if (isNewObjectIsolated){
+                if (isNewObjectIsolated) {
                     throw new RuntimeException(
-                        "Capability Violation: An 'immutable' object cannot reference an 'isolated' object.");  
+                            "Capability Violation: An 'immutable' object cannot reference an 'isolated' object.");
                 }
-                isNewObjectImmutable = true;
+                if (!isNewObjectImmutable) {
+                    throw new RuntimeException(
+                            "Capability Violation: An 'immutable' object cannot reference a (base) object without the 'immutable' capability.");
+                }
             }
             if (contextBaseObject.isIsolated()) {
-                if (isNewObjectImmutable){
-                    System.out.println("ok attaching a immutable to a isolated object");
-                    isNewObjectIsolated = false;  // referenced object is immutable not isolated
-                }else{
-                    isNewObjectIsolated = true;     // propagate through the referenced objects the isolated capability
+                if (isNewObjectImmutable) {
+                    isNewObjectIsolated = false; // referenced object is immutable not isolated
+                } else {
+                    if (!isNewObjectIsolated) {
+                        System.out.println("the BaseObject attached to a isolated should also be isolated.");
+                        throw new RuntimeException(
+                                "Capability Violation: An 'isolated' object cannot reference a (base) object without the 'isolated' or 'immutable' capability.");
+                    }
                 }
             }
         }
 
         BaseObject object = new BaseObject(context, false, true, isNewObjectIsolated, isNewObjectImmutable);
-        
-        // // general info when mkaing a object. For checking purposes and can be removed.
+
+        // // general info when making a object. For checking purposes and can be
+        // removed.
         // boolean isIsolated = object.isIsolated();
         // boolean isImmutable = object.isImmutable();
-        // System.out.println("New Object reference count is " + object.getReferenceCount());
+        // System.out.println("New Object reference count is " +
+        // object.getReferenceCount());
         // System.out.println("New object is isolated " + isIsolated);
         // System.out.println("New object is immutable " + isImmutable);
-        
+
         List<ASTNode> body = node.getBody();
         for (ASTNode part : body) {
             if (part instanceof DefDecl) {
@@ -104,51 +113,42 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, LexicalRequest node) {
 
-        System.out.println("this is the method call...............");
-
-        boolean isThread = false;
+        // boolean isThread = false;
 
         List<RequestPartR> parts = new ArrayList<>();
         for (Part part : node.getParts()) {
-            System.out.println("getting an arg");
-            // List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
-            List<GraceObject> args = part.getArgs().stream().map(x -> {
-                // Check if x is an instance of MethodDecl
-                System.out.println("x is an instance of: " + x.getClass().getName());
-                if (x instanceof LexicalRequest) {
-                    System.out.println("x instanceof LexicalRequest +++++++++++++++++++++++++++++++++++");
-                }
-                if (x instanceof MethodDecl) {
-                    MethodDecl methodDecl = (MethodDecl) x;
-                    System.out.println("This method.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                    // Check the isThread property
-                    if (methodDecl.isThread()) {
-                        System.out.println("This method is marked as a thread.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                        // Do something specific for threaded methods if needed
-                    }
-                }
-                // Visit as usual
-                return visit(context, x);
-            }).collect(Collectors.toList());
-            // if (args.get(0) instanceof  Request){
-            //     System.out.println("        Request in here");
+            // System.out.println("getting an arg");
+            List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
+            // List<GraceObject> args = part.getArgs().stream().map(x -> {
+            // // Check if x is an instance of MethodDecl
+            // if (x instanceof LexicalRequest) {
             // }
-            System.out.println("                          " + args.size());
-            
+            // if (x instanceof MethodDecl) {
+            // MethodDecl methodDecl = (MethodDecl) x;
+            // // Check the isThread property
+            // if (methodDecl.isThread()) {
+            // // Do something specific for threaded methods if needed
+            // }
+            // }
+            // // Visit as usual
+            // return visit(context, x);
+            // }).collect(Collectors.toList());
+            // if (args.get(0) instanceof Request){
+            // System.out.println(" Request in here");
+            // }
+
             parts.add(new RequestPartR(part.getName(), args));
         }
         Request request = new Request(this, parts);
         GraceObject receiver = context.findReceiver(request.getName());
-        
+
         if (receiver instanceof BaseObject) {
-            System.err.println("asdads+++++++++");
             // reciever is not important...
-            // the lexicalRequestNode is what is important, and will hold the way to get the isThread annotation
+            // the lexicalRequestNode is what is important, and will hold the way to get the
+            // isThread annotation
 
-
-            
         }
-        
+
         return receiver.request(request);
     }
 
@@ -329,7 +329,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             Request request = new Request(this, parts);
             System.out.println("request name " + request.getName());
             GraceObject receiver = target.getReceiver().accept(context, this);
-            
+
             // Print reference count if receiver is an instance of BaseObject
             // TODO remove?
             if (receiver instanceof BaseObject) {
@@ -568,7 +568,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         Evaluator evaluator = new Evaluator();
         return evaluator.visit(lexicalParent, program);
     }
-
 
     public static void log(String message) {
         System.out.println(" >" + message);

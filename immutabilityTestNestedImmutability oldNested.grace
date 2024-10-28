@@ -3,7 +3,7 @@ print "Hello beautiful world----------------------------------------------------
 
 
 var objectX := object is immutable{
-    var nestedObject := object is immutable{
+    var nestedObject := object {
          var fieldX := 123
     }
 }
