@@ -9,7 +9,6 @@ public class Assign extends ASTNode {
     public Assign(ASTNode target, ASTNode value) {
         this.target = target;
         this.value = value;
-        // TODO increment reference?
     }
 
     
