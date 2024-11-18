@@ -21,7 +21,7 @@ class IsolatedAndImmutableTest {
     @Test
     void isolatedAndImmutableObjectShouldFail() throws Exception {
         String filename = "isolatedAndImmutableTest.grace"; 
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
         // Expect a RuntimeException when immutability is violated
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
@@ -35,7 +35,7 @@ class IsolatedAndImmutableTest {
     @Test
     void immutableAndIsolatedObjectShouldFail() throws Exception {
         String filename = "immutableAndIsolatedTest.grace"; 
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
         // Expect a RuntimeException when immutability is violated
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
@@ -49,7 +49,7 @@ class IsolatedAndImmutableTest {
     @Test
     void immutableWithIsolatedObjectShouldFail() throws Exception {
         String filename = "immutableWithIsolatedTest.grace"; 
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
         // Expect a RuntimeException when immutability is violated
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
@@ -64,7 +64,7 @@ class IsolatedAndImmutableTest {
     @Test
     void immutableWithNestedIsolatedObjectShouldFail() throws Exception {
         String filename = "immutableWithNestedIsolatedTest.grace"; 
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
         // Expect a RuntimeException when immutability is violated
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
@@ -78,7 +78,7 @@ class IsolatedAndImmutableTest {
     @Test
     void isolatedWithNestedImmutableObjectShouldPass() throws Exception {
         String filename = "isolatedWithNestedImmutableTest.grace"; 
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
         // Expect the evaluation to complete successfully
             GraceObject graceObject = Evaluator.evaluateProgram(ast);
@@ -87,7 +87,7 @@ class IsolatedAndImmutableTest {
     @Test
     void isolatedWithNestedImmutableObjectMutatedShouldFail() throws Exception {
         String filename = "isolatedWithNestedImmutableMutatedTest.grace"; 
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
         // Expect a RuntimeException when immutability is violated
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {

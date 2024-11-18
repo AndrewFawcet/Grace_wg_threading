@@ -23,7 +23,7 @@ class ImmutabilityTest {
     @Test
     void immutabilityTestMutateField() throws Exception {
         String filename = "immutabilityTestMutateField.grace";
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
         // Expect a RuntimeException when immutability is violated
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
@@ -38,7 +38,7 @@ class ImmutabilityTest {
     @Test
     void nestedImmutabilityTest() throws Exception {
         String filename = "immutabilityTestNestedImmutability.grace";
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
 
         // Expecting RuntimeException for a different immutability test case
@@ -53,7 +53,7 @@ class ImmutabilityTest {
     @Test
     void multiNestedImmutabilityTest() throws Exception {
         String filename = "immutabilityTestMultiNestedImmutability.grace";
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
 
         // Expecting RuntimeException for a different immutability test case
@@ -68,7 +68,7 @@ class ImmutabilityTest {
     @Test
     void nestedImmutabilityAssignedToDifferentContextTest() throws Exception {
         String filename = "immutabilityTestNestedImmutabilityAssignedToDifferentContext.grace";
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
 
         // Expecting RuntimeException for a different immutability test case

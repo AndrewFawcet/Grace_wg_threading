@@ -23,7 +23,7 @@ class EvaluatorTest {
     @Test
     void referenceIsIncrementedTest() throws Exception {
         String filename = "referenceIncrementTest.grace";
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
         GraceObject graceObject = Evaluator.evaluateProgram(ast);
 

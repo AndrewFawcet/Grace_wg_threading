@@ -21,7 +21,7 @@ class IsolatedTest {
     @Test
     void isolatedObjectMultipleReferenceShouldFail() throws Exception {
         String filename = "isolatedTestMultipleReference.grace"; 
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
         // Expect a RuntimeException when immutability is violated
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
@@ -35,7 +35,7 @@ class IsolatedTest {
     @Test
     void isolatedObjectNestedMultipleReferenceShouldFail() throws Exception {
         String filename = "isolatedTestNestedMultipleReference.grace"; 
-        String source = Files.readString(Path.of(filename));
+        String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
         // Expect a RuntimeException when immutability is violated
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
