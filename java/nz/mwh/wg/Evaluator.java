@@ -44,8 +44,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         // object, if so it will pass on the capability (propagates downward)
         // also checks if baseObject that is immutable and if the newObject is isolated,
         // throws runtime error if so.
-        boolean isNewObjectImmutable = node.isImmutable();
+        boolean isNewObjectLocal = node.isLocal();
         boolean isNewObjectIsolated = node.isIsolated();
+        boolean isNewObjectImmutable = node.isImmutable();
+
         // boolean isNewObjectAThread = node.isThread();
 
         if (context instanceof BaseObject) {
@@ -55,12 +57,20 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     throw new RuntimeException(
                             "Capability Violation: An 'immutable' object cannot reference an 'isolated' object.");
                 }
+                if (isNewObjectLocal) {
+                    throw new RuntimeException(
+                            "Capability Violation: An 'immutable' object cannot reference an 'local' object.");
+                }
                 if (!isNewObjectImmutable) {
                     throw new RuntimeException(
                             "Capability Violation: An 'immutable' object cannot reference a (base) object without the 'immutable' capability.");
                 }
             }
             if (contextBaseObject.isIsolated()) {
+                if (isNewObjectLocal) {
+                    throw new RuntimeException(
+                            "Capability Violation: An 'isolated' object cannot reference an 'local' object.");
+                }
                 if (isNewObjectImmutable) {
                     isNewObjectIsolated = false; // referenced object is immutable not isolated
                 } else {
@@ -71,9 +81,11 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     }
                 }
             }
+
+
         }
 
-        BaseObject object = new BaseObject(context, false, true, isNewObjectIsolated, isNewObjectImmutable);
+        BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated, isNewObjectImmutable);
 
         // // general info when making a object. For checking purposes and can be
         // removed.

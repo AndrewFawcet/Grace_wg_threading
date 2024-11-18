@@ -17,6 +17,7 @@ public class BaseObject implements GraceObject {
     private int referenceCount = 0; // Reference count field
     private boolean isIsolated = false;
     private boolean isImmutable = false;
+    private boolean isLocal = false;
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
@@ -32,7 +33,7 @@ public class BaseObject implements GraceObject {
     }
 
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf) {
-        this(lexicalParent, returns, bindSelf, false, false); // Pass false for isIsolated by default
+        this(lexicalParent, returns, bindSelf, false, false, false); // Pass false for islocal, isIsolated and isImmutable by default
     }
 
     // The old constructor for BaseObject, does not use isIsolated boolean or isImmutable boolean
@@ -54,10 +55,11 @@ public class BaseObject implements GraceObject {
     // }
 
     // New constructor that accepts isIsolated and IsImmutable as a parameter
-    public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isIsolated,
+    public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isLocal, boolean isIsolated,
                       boolean isImmutable) {
         this.lexicalParent = lexicalParent;
         this.returns = returns;
+        this.isLocal = isLocal;
         this.isIsolated = isIsolated; // Set the isolation capability
         this.isImmutable = isImmutable; // Set the immutability capability
 
@@ -75,12 +77,20 @@ public class BaseObject implements GraceObject {
         }
     }
 
+    public boolean isLocal() {
+        return isLocal;
+    }
+
     public boolean isIsolated() {
         return isIsolated;
     }
 
     public boolean isImmutable() {
         return this.isImmutable;
+    }
+
+    public void setLocal(boolean isLocal) {
+        this.isLocal = isLocal;
     }
 
     public void setIsolated(boolean isIsolated) {
@@ -199,7 +209,6 @@ public class BaseObject implements GraceObject {
             if (isImmutable) {
                 System.out.println("Has the object been created?");
                 if (getReferenceCount() != 0) {
-                    System.out.println("this is printing an errrrr-----------------------------------");
                     throw new RuntimeException(
                             "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name + "'.");
                 } else {
