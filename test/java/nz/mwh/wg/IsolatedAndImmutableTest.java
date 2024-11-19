@@ -81,7 +81,7 @@ class IsolatedAndImmutableTest {
         String source = Files.readString(Path.of("test/resources/" + filename));
         ASTNode ast = Parser.parse(source);
         // Expect the evaluation to complete successfully
-            GraceObject graceObject = Evaluator.evaluateProgram(ast);
+        GraceObject graceObject = Evaluator.evaluateProgram(ast);
     }
 
     @Test
