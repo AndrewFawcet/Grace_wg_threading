@@ -38,7 +38,7 @@ def z = object {
     }
 }
 
-print (z.bar {x, y -> x + y})  // Pass a block with two parameters and a body
+print (z.bar {x, y -> x + y}, true)  // Pass a block with two parameters and a body
 
 print ("-------")
 

@@ -44,13 +44,13 @@ public class GraceBlock implements GraceObject {
             blockContext.setField(name, part.getArgs().get(i));
         }
 
-        Thread thread = new Thread(() -> System.out.println("hi from java thread"));
-        thread.start();
-        try {
-            thread.join(); // Wait for the thread to finish
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Thread was interrupted", e);
-        }
+        // Thread thread = new Thread(() -> System.out.println("hi from java thread"));
+        // thread.start();
+        // try {
+        //     thread.join(); // Wait for the thread to finish
+        // } catch (InterruptedException e) {
+        //     throw new RuntimeException("Thread was interrupted", e);
+        // }
 
         for (ASTNode stmt : body) {
             if (stmt instanceof DefDecl) {
@@ -63,45 +63,14 @@ public class GraceBlock implements GraceObject {
             }
         }
 
-        // Use ExecutorService to handle threading
-        // ExecutorService executor = Executors.newSingleThreadExecutor();
-        // Future<GraceObject> result1 = executor.submit(() -> {
         // Execute the block body
         GraceObject last = null;
         for (ASTNode node : body) {
             last = node.accept(blockContext, request.getVisitor());
         }
         return last; // Return the final result of the block
-        // });
 
-        // Shutdown the executor and retrieve the result
-        // try {
-        // executor.shutdown();
-        // return result1.get(); // Wait for the thread to finish and get the result
-        // } catch (InterruptedException | ExecutionException e) {
-        // throw new RuntimeException("Error executing block in thread: " +
-        // e.getMessage(), e);
-        // }
-
-        // return last; // Return the final result of the block
     }
-
-    // for (ASTNode stmt : body) {
-    // if (stmt instanceof DefDecl) {
-    // DefDecl def = (DefDecl) stmt;
-    // blockContext.addField(def.getName());
-    // } else if (stmt instanceof VarDecl) {
-    // VarDecl var = (VarDecl) stmt;
-    // blockContext.addField(var.getName());
-    // blockContext.addFieldWriter(var.getName());
-    // }
-    // }
-    // GraceObject last = null;
-    // for (ASTNode node : body) {
-    // last = node.accept(blockContext, request.getVisitor());
-    // }
-    // return last;
-    // }
 
     @Override
     public GraceObject findReceiver(String name) {

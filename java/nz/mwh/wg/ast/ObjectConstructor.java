@@ -10,6 +10,7 @@ public class ObjectConstructor extends ASTNode {
     private boolean isLocal;
     private boolean isIsolated;
     private boolean isImmutable;
+    private boolean isThreaded;
 
     public ObjectConstructor(Cons<ASTNode> body, Cons<String> annotations) {
         this.body = body.toList();
@@ -17,6 +18,7 @@ public class ObjectConstructor extends ASTNode {
         this.isLocal = annotations.toString().contains("local");
         this.isIsolated = annotations.toString().contains("isolated");
         this.isImmutable = annotations.toString().contains("immutable");
+        this.isThreaded = annotations.toString().contains("threaded");
     }
 
     public <T> T accept(T context, Visitor<T> visitor) {
@@ -45,5 +47,9 @@ public class ObjectConstructor extends ASTNode {
     
     public boolean isImmutable() {
         return this.isImmutable;
+    }
+
+    public boolean isThreaded() {
+        return this.isThreaded;
     }
 }

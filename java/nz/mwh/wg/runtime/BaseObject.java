@@ -18,6 +18,8 @@ public class BaseObject implements GraceObject {
     private boolean isIsolated = false;
     private boolean isImmutable = false;
     private boolean isLocal = false;
+    private boolean isThreaded = false;
+    
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
@@ -33,7 +35,7 @@ public class BaseObject implements GraceObject {
     }
 
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf) {
-        this(lexicalParent, returns, bindSelf, false, false, false); // Pass false for islocal, isIsolated and isImmutable by default
+        this(lexicalParent, returns, bindSelf, false, false, false, false); // Pass false for islocal, isIsolated, isImmutable and isThreaded by default
     }
 
     // The old constructor for BaseObject, does not use isIsolated boolean or isImmutable boolean
@@ -56,12 +58,13 @@ public class BaseObject implements GraceObject {
 
     // New constructor that accepts isIsolated and IsImmutable as a parameter
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isLocal, boolean isIsolated,
-                      boolean isImmutable) {
+                      boolean isImmutable, boolean isThreaded) {
         this.lexicalParent = lexicalParent;
         this.returns = returns;
         this.isLocal = isLocal;
         this.isIsolated = isIsolated; // Set the isolation capability
         this.isImmutable = isImmutable; // Set the immutability capability
+        this.isThreaded = isThreaded;
 
         // Add basic methods
         addMethod("==(1)", request -> {

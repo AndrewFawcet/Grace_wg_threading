@@ -47,6 +47,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         boolean isNewObjectLocal = node.isLocal();
         boolean isNewObjectIsolated = node.isIsolated();
         boolean isNewObjectImmutable = node.isImmutable();
+        boolean isNewObjectThreaded = node.isThreaded();
 
         // boolean isNewObjectAThread = node.isThread();
 
@@ -82,10 +83,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 }
             }
 
-
         }
 
-        BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated, isNewObjectImmutable);
+        BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
+                isNewObjectImmutable, isNewObjectThreaded);
 
         // // general info when making a object. For checking purposes and can be
         // removed.
@@ -112,9 +113,23 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 visit(object, part);
             }
         }
-        for (ASTNode part : body) {
-            visit(object, part);
+
+        // If the object is threaded, execute its body in a new thread
+        if (isNewObjectThreaded) {
+            new Thread(() -> {
+                for (ASTNode part : body) {
+                    visit(object, part);
+                }
+            }).start();
+        } else {
+            for (ASTNode part : body) {
+                visit(object, part);
+            }
         }
+
+        // for (ASTNode part : body) {
+        //     visit(object, part);
+        // }
         return object;
     }
 
@@ -364,13 +379,33 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // and a body.
     // Details: Wraps the block parameters and body in a GraceBlock object.
     @Override
-    public GraceObject visit(GraceObject context, Block node) {
+    public GraceObject visit(GraceObject context, Block blockNode) {
 
-        List<ASTNode> parameters = node.getParameters();
-        List<ASTNode> body = node.getBody();
+        if (blockNode.isThreaded()) {
+            System.out.println("Yo to the bakedbean this be year threaded block message.......");
+        }
+        List<ASTNode> parameters = blockNode.getParameters();
+        List<ASTNode> body = blockNode.getBody();
 
         return new GraceBlock(context, parameters, body);
     }
+
+    // @Override
+    // public GraceObject visit(GraceObject context, Block blockNode) {
+
+    // List<ASTNode> parameters = blockNode.getParameters();
+    // List<ASTNode> body = blockNode.getBody();
+
+    // if (blockNode.isThreaded()) {
+    // new Thread(() -> {
+    // blockNode.getBody().forEach(node -> node.accept(context, this));
+    // }).start();
+    // } else {
+    // blockNode.getBody().forEach(node -> node.accept(context, this));
+    // }
+
+    // return new GraceBlock(context, parameters, body);
+    // }
 
     // Purpose: Handles return statements within method bodies.
     // Details: Evaluates the return value and throws a ReturnException to exit the
