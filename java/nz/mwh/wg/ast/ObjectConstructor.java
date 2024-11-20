@@ -14,7 +14,7 @@ public class ObjectConstructor extends ASTNode {
     public ObjectConstructor(Cons<ASTNode> body, Cons<String> annotations) {
         this.body = body.toList();
         this.annotations = annotations.toList();
-        this.isLocal = annotations.toString().contains("local123456");
+        this.isLocal = annotations.toString().contains("local");
         this.isIsolated = annotations.toString().contains("isolated");
         this.isImmutable = annotations.toString().contains("immutable");
     }
