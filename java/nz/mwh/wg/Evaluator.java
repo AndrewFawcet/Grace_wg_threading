@@ -120,6 +120,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 for (ASTNode part : body) {
                     visit(object, part);
                 }
+                System.out.println("HELLO INSIDE A NEW THREAD");
             }).start();
         } else {
             for (ASTNode part : body) {
@@ -381,9 +382,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, Block blockNode) {
 
-        if (blockNode.isThreaded()) {
-            System.out.println("Yo to the bakedbean this be year threaded block message.......");
-        }
         List<ASTNode> parameters = blockNode.getParameters();
         List<ASTNode> body = blockNode.getBody();
 
