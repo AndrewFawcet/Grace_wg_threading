@@ -19,7 +19,7 @@ public class BaseObject implements GraceObject {
     private boolean isImmutable = false;
     private boolean isLocal = false;
     private boolean isThreaded = false;
-    
+    private Thread currentThread = null;
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
@@ -38,33 +38,20 @@ public class BaseObject implements GraceObject {
         this(lexicalParent, returns, bindSelf, false, false, false, false); // Pass false for islocal, isIsolated, isImmutable and isThreaded by default
     }
 
-    // The old constructor for BaseObject, does not use isIsolated boolean or isImmutable boolean
-    // public BaseObject(GraceObject lexicalParent, boolean returns, boolean
-    // bindSelf) {
-    // this.lexicalParent = lexicalParent;
-    // this.returns = returns;
-    // addMethod("==(1)", request -> {
-    // GraceObject other = request.getParts().get(0).getArgs().get(0);
-    // return new GraceBoolean(this == other);
-    // });
-    // addMethod("!=(1)", request -> {
-    // GraceObject other = request.getParts().get(0).getArgs().get(0);
-    // return new GraceBoolean(this != other);
-    // });
-    // if (bindSelf) {
-    // addMethod("self(0)", request -> this);
-    // }
-    // }
-
     // New constructor that accepts isIsolated and IsImmutable as a parameter
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isLocal, boolean isIsolated,
                       boolean isImmutable, boolean isThreaded) {
         this.lexicalParent = lexicalParent;
         this.returns = returns;
-        this.isLocal = isLocal;
+        this.isLocal = isLocal; //set the local capability
         this.isIsolated = isIsolated; // Set the isolation capability
         this.isImmutable = isImmutable; // Set the immutability capability
         this.isThreaded = isThreaded;
+
+        // set the initial thread when an object is created
+        if (isLocal) {
+            this.currentThread = Thread.currentThread();
+        }
 
         // Add basic methods
         addMethod("==(1)", request -> {
@@ -104,14 +91,21 @@ public class BaseObject implements GraceObject {
         isImmutable = immutable;
     }
 
+    public Thread getCurrentThread() {
+        return currentThread;
+    }
+    
+    public void setCurrentThread(Thread thread) {
+        if (thread == null) {
+            throw new IllegalArgumentException("Thread cannot be null");
+        }
+        this.currentThread = thread;
+    }
+
     // New method to increment reference count
     public void incrementReferenceCount() {
         referenceCount++;
-
         System.out.println("Reference count incremented to " + referenceCount);
-        // System.out.println(" -& the isolated bool is " + isIsolated);
-        // System.out.println(" -& the immutable bool is " + isImmutable);
-
     }
 
     // New method to decrement reference count
@@ -179,7 +173,8 @@ public class BaseObject implements GraceObject {
 
     public void addFieldWriter(String name) {
         methods.put(name + ":=(1)", request -> {
-            fields.put(name, request.getParts().get(0).getArgs().get(0));
+
+            validateThreadAccess(); // Check thread access
 
             // incrementing the BaseObject being referenced.
             fields.put(name, request.getParts().get(0).getArgs().get(0));
@@ -188,9 +183,9 @@ public class BaseObject implements GraceObject {
                 System.out.println(name + " assigned to a baseObject ----------");
                 BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned; // Safe cast after instanceof check
 
-
                 objectBeingAssigned.incrementReferenceCount(); 
-                
+                objectBeingAssigned.logThreadInfo("assigned to a field '" + name + "'");    // junk?
+
                 // checking if isolated, and runtime exception if too many references
                 if (objectBeingAssigned.isIsolated()) {
                     if (objectBeingAssigned.getReferenceCount() > 1) {
@@ -210,7 +205,6 @@ public class BaseObject implements GraceObject {
             // -does it have one or more references (less than one indicates in construction)
             // This functions in conjunction with the downward propagation of immutable capabilities in the public GraceObject visit(GraceObject context, ObjectConstructor node) method
             if (isImmutable) {
-                System.out.println("Has the object been created?");
                 if (getReferenceCount() != 0) {
                     throw new RuntimeException(
                             "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name + "'.");
@@ -242,4 +236,28 @@ public class BaseObject implements GraceObject {
     public Map<String, GraceObject> getFields() {
         return fields;
     }
+
+    private void logThreadInfo(String action) {
+        if (isIsolated || isImmutable || isLocal) { // Only log for capability-annotated objects
+            Thread thread = Thread.currentThread();
+            currentThread = thread; // Update the current thread
+            
+            System.out.println("hello----------------------------------------------------+" + thread.getName());
+            System.out.println("action: " + action);
+        }
+    }
+    
+
+    private void validateThreadAccess() {
+        if (isLocal) {
+            Thread callingThread = Thread.currentThread();
+            if (currentThread == null) {
+                // Set the current thread when the object is first used
+                currentThread = callingThread;
+            } else if (currentThread != callingThread) {
+                throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
+            }
+        }
+    }
+    
 }

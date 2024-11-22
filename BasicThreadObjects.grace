@@ -9,3 +9,5 @@ var objectX := object is threaded {
 }
 
 
+// print (objectX.objectXX.fieldXX)
+

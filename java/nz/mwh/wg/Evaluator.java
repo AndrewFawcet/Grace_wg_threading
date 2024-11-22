@@ -49,8 +49,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         boolean isNewObjectImmutable = node.isImmutable();
         boolean isNewObjectThreaded = node.isThreaded();
 
-        // boolean isNewObjectAThread = node.isThread();
-
         if (context instanceof BaseObject) {
             BaseObject contextBaseObject = (BaseObject) context;
             if (contextBaseObject.isImmutable()) {
