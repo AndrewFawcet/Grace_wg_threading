@@ -115,10 +115,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         // If the object is threaded, execute its body in a new thread
         if (isNewObjectThreaded) {
             new Thread(() -> {
+                System.out.println("HELLO INSIDE A NEW THREAD");
                 for (ASTNode part : body) {
                     visit(object, part);
                 }
-                System.out.println("HELLO INSIDE A NEW THREAD");
             }).start();
         } else {
             for (ASTNode part : body) {
@@ -386,22 +386,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         return new GraceBlock(context, parameters, body);
     }
 
-    // @Override
-    // public GraceObject visit(GraceObject context, Block blockNode) {
-
-    // List<ASTNode> parameters = blockNode.getParameters();
-    // List<ASTNode> body = blockNode.getBody();
-
-    // if (blockNode.isThreaded()) {
-    // new Thread(() -> {
-    // blockNode.getBody().forEach(node -> node.accept(context, this));
-    // }).start();
-    // } else {
-    // blockNode.getBody().forEach(node -> node.accept(context, this));
-    // }
-
-    // return new GraceBlock(context, parameters, body);
-    // }
 
     // Purpose: Handles return statements within method bodies.
     // Details: Evaluates the return value and throws a ReturnException to exit the

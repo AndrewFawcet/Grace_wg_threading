@@ -19,7 +19,7 @@ public class BaseObject implements GraceObject {
     private boolean isImmutable = false;
     private boolean isLocal = false;
     private boolean isThreaded = false;
-    private Thread currentThread = null;
+    private Thread localThread = null;
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
@@ -50,7 +50,7 @@ public class BaseObject implements GraceObject {
 
         // set the initial thread when an object is created
         if (isLocal) {
-            this.currentThread = Thread.currentThread();
+            this.localThread = Thread.currentThread();
         }
 
         // Add basic methods
@@ -91,27 +91,25 @@ public class BaseObject implements GraceObject {
         isImmutable = immutable;
     }
 
-    public Thread getCurrentThread() {
-        return currentThread;
+    public Thread getLocalThread() {
+        return localThread;
     }
     
-    public void setCurrentThread(Thread thread) {
+    public void setLocalThread(Thread thread) {
         if (thread == null) {
             throw new IllegalArgumentException("Thread cannot be null");
         }
-        this.currentThread = thread;
+        this.localThread = thread;
     }
 
     // New method to increment reference count
     public void incrementReferenceCount() {
         referenceCount++;
-        System.out.println("Reference count incremented to " + referenceCount);
     }
 
     // New method to decrement reference count
     public void decrementReferenceCount() {
         referenceCount--;
-        System.out.println("Reference count decremented to " + referenceCount);
     }
 
     // New method to get the reference count
@@ -158,7 +156,7 @@ public class BaseObject implements GraceObject {
         throw new RuntimeException("No such method in scope: " + name);
     }
 
-    // TODO update with capabilitie anything set here? (if it is used?)
+    // TODO update with capability anything set here? (if it is used?)
     public void addField(String name) {
         fields.put(name, uninitialised);
         methods.put(name + "(0)", request -> {
@@ -180,7 +178,7 @@ public class BaseObject implements GraceObject {
             fields.put(name, request.getParts().get(0).getArgs().get(0));
             GraceObject valueBeingAssigned = request.getParts().get(0).getArgs().get(0); // Get the object being assigned
             if (valueBeingAssigned instanceof BaseObject) {
-                System.out.println(name + " assigned to a baseObject ----------");
+                // System.out.println(name + " assigned to a baseObject ----------");
                 BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned; // Safe cast after instanceof check
 
                 objectBeingAssigned.incrementReferenceCount(); 
@@ -238,24 +236,26 @@ public class BaseObject implements GraceObject {
     }
 
     private void logThreadInfo(String action) {
-        if (isIsolated || isImmutable || isLocal) { // Only log for capability-annotated objects
+        if (isLocal) { // Only log for local-annotated objects
             Thread thread = Thread.currentThread();
-            currentThread = thread; // Update the current thread
-            
+            localThread = thread; // Update the current thread
             System.out.println("hello----------------------------------------------------+" + thread.getName());
-            System.out.println("action: " + action);
         }
     }
     
 
     private void validateThreadAccess() {
+        // System.out.println("checking if it is looking at a local object.");
         if (isLocal) {
             Thread callingThread = Thread.currentThread();
-            if (currentThread == null) {
+            if (localThread == null) {
+                System.out.println("setting the localThread for a baseObject with local capability---------");
                 // Set the current thread when the object is first used
-                currentThread = callingThread;
-            } else if (currentThread != callingThread) {
+                localThread = callingThread;
+            } else if (localThread != callingThread) {
                 throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
+            } else {
+                System.out.println("all ok with the access on this local object +++++");
             }
         }
     }
