@@ -103,7 +103,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             } else if (part instanceof VarDecl) {
                 VarDecl var = (VarDecl) part;
                 object.addField(var.getName());
-                object.addFieldWriter(var.getName());
+
+
+                Thread dummy = null;
+                object.addFieldWriter(var.getName(), dummy);
             } else if (part instanceof ImportStmt) {
                 ImportStmt imp = (ImportStmt) part;
                 object.addField(imp.getName());
@@ -114,12 +117,14 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         // If the object is threaded, execute its body in a new thread
         if (isNewObjectThreaded) {
-            new Thread(() -> {
+            Thread thread = new Thread(() -> {
                 System.out.println("HELLO INSIDE A NEW THREAD");
                 for (ASTNode part : body) {
                     visit(object, part);
                 }
-            }).start();
+            });
+            thread.setDaemon(false);
+            thread.start();
         } else {
             for (ASTNode part : body) {
                 visit(object, part);
@@ -287,7 +292,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     } else if (part instanceof VarDecl) {
                         VarDecl var = (VarDecl) part;
                         methodContext.addField(var.getName());
-                        methodContext.addFieldWriter(var.getName());
+
+                        Thread dummy = null;
+                        methodContext.addFieldWriter(var.getName(), dummy);
                     }
                 }
                 try {

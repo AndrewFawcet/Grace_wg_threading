@@ -169,10 +169,10 @@ public class BaseObject implements GraceObject {
         });
     }
 
-    public void addFieldWriter(String name) {
+    public void addFieldWriter(String name, Thread callingThread) {
         methods.put(name + ":=(1)", request -> {
 
-            validateThreadAccess(); // Check thread access
+            validateThreadAccess(callingThread); // Check thread access
 
             // incrementing the BaseObject being referenced.
             fields.put(name, request.getParts().get(0).getArgs().get(0));
@@ -244,10 +244,10 @@ public class BaseObject implements GraceObject {
     }
     
 
-    private void validateThreadAccess() {
+    private void validateThreadAccess(Thread callingThread) {
         // System.out.println("checking if it is looking at a local object.");
         if (isLocal) {
-            Thread callingThread = Thread.currentThread();
+//            Thread callingThread = Thread.currentThread();
             if (localThread == null) {
                 System.out.println("setting the localThread for a baseObject with local capability---------");
                 // Set the current thread when the object is first used
@@ -258,6 +258,7 @@ public class BaseObject implements GraceObject {
                 System.out.println("all ok with the access on this local object +++++");
             }
         }
+
     }
     
 }
