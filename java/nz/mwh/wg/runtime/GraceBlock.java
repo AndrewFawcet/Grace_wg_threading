@@ -59,7 +59,8 @@ public class GraceBlock implements GraceObject {
             } else if (stmt instanceof VarDecl) {
                 VarDecl var = (VarDecl) stmt;
                 blockContext.addField(var.getName());
-                blockContext.addFieldWriter(var.getName(), null);
+                Thread dummy = null;
+                blockContext.addFieldWriter(var.getName(), dummy);
             }
         }
 

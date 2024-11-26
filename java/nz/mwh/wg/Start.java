@@ -18,6 +18,7 @@ public class Start {
         // String filename = "blockTestThreading.grace";
         // String filename = "blockTest.grace";
         String filename = "BasicThreadObjects.grace";
+        // String filename = "BasicThreadObjectsSafe.grace";
         
         
     boolean printAST = false;
