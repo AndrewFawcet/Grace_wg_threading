@@ -104,9 +104,18 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 VarDecl var = (VarDecl) part;
                 object.addField(var.getName());
 
+               Thread currentThread = Thread.currentThread();
+                // Thread currentThread = null;
 
-                Thread dummy = null;
-                object.addFieldWriter(var.getName(), dummy);
+                System.out.println(" object thread " + object.getObjectThread());
+                System.out.println(" Evaluator thread " + Thread.currentThread());
+
+                if (object.getObjectThread()!= Thread.currentThread()){
+                    System.out.println(" Its a mismatch :) ");
+                }
+
+
+                object.addFieldWriter(var.getName(), currentThread);
             } else if (part instanceof ImportStmt) {
                 ImportStmt imp = (ImportStmt) part;
                 object.addField(imp.getName());
@@ -293,7 +302,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         VarDecl var = (VarDecl) part;
                         methodContext.addField(var.getName());
 
-                        Thread dummy = null;
+
+                        Thread dummy = Thread.currentThread();
                         methodContext.addFieldWriter(var.getName(), dummy);
                     }
                 }

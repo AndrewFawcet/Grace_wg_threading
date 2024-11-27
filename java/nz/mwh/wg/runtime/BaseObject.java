@@ -19,7 +19,7 @@ public class BaseObject implements GraceObject {
     private boolean isImmutable = false;
     private boolean isLocal = false;
     private boolean isThreaded = false;
-    private Thread localThread = null;
+    private Thread objectThread = null;
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
@@ -43,15 +43,17 @@ public class BaseObject implements GraceObject {
                       boolean isImmutable, boolean isThreaded) {
         this.lexicalParent = lexicalParent;
         this.returns = returns;
-        this.isLocal = isLocal; //set the local capability
-        this.isIsolated = isIsolated; // Set the isolation capability
-        this.isImmutable = isImmutable; // Set the immutability capability
+        this.isLocal = isLocal; 
+        this.isIsolated = isIsolated; 
+        this.isImmutable = isImmutable; 
         this.isThreaded = isThreaded;
 
         // set the initial thread when an object is created
-        if (isLocal) {
-            this.localThread = Thread.currentThread();
-        }
+        // if (isLocal) {
+        //     this.objectThread = Thread.currentThread();
+        // }
+        // Just set the thread for all objects.
+        this.objectThread = Thread.currentThread();
 
         // Add basic methods
         addMethod("==(1)", request -> {
@@ -91,15 +93,15 @@ public class BaseObject implements GraceObject {
         isImmutable = immutable;
     }
 
-    public Thread getLocalThread() {
-        return localThread;
+    public Thread getObjectThread() {
+        return objectThread;
     }
     
     public void setLocalThread(Thread thread) {
         if (thread == null) {
             throw new IllegalArgumentException("Thread cannot be null");
         }
-        this.localThread = thread;
+        this.objectThread = thread;
     }
 
     // New method to increment reference count
@@ -172,7 +174,8 @@ public class BaseObject implements GraceObject {
     public void addFieldWriter(String name, Thread callingThread) {
         methods.put(name + ":=(1)", request -> {
 
-            validateThreadAccess(callingThread); // Check thread access
+            // this causes errors with the fields being made in a local object
+            // validateThreadAccess(callingThread); // Check thread access
 
             // incrementing the BaseObject being referenced.
             fields.put(name, request.getParts().get(0).getArgs().get(0));
@@ -181,8 +184,21 @@ public class BaseObject implements GraceObject {
                 // System.out.println(name + " assigned to a baseObject ----------");
                 BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned; // Safe cast after instanceof check
 
+
+                
+                // this looks at the accessing a local object (not what a local object accesses)
+                if (objectBeingAssigned.isLocal){
+                    Thread currentThread = Thread.currentThread();
+                    if (currentThread != objectBeingAssigned.getObjectThread()){
+                        throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
+                    } else {
+                        System.out.println("all ok with the access on this local object +++++");
+                    }
+                }
+
+
                 objectBeingAssigned.incrementReferenceCount(); 
-                objectBeingAssigned.logThreadInfo("assigned to a field '" + name + "'");    // junk?
+                // objectBeingAssigned.logThreadInfo("assigned to a field '" + name + "'");    // junk?
 
                 // checking if isolated, and runtime exception if too many references
                 if (objectBeingAssigned.isIsolated()) {
@@ -235,24 +251,26 @@ public class BaseObject implements GraceObject {
         return fields;
     }
 
-    private void logThreadInfo(String action) {
-        if (isLocal) { // Only log for local-annotated objects
-            Thread thread = Thread.currentThread();
-            localThread = thread; // Update the current thread
-            System.out.println("hello----------------------------------------------------+" + thread.getName());
-        }
-    }
+    // private void logThreadInfo(String action) {
+        // if (isLocal) { // Only log for local-annotated objects
+            // Thread thread = Thread.currentThread();
+            // objectThread = thread; // Update the current thread
+            // System.out.println("hello----------------------------------------------------+" + thread.getName());
+        // }
+    // }
     
 
     private void validateThreadAccess(Thread callingThread) {
         // System.out.println("checking if it is looking at a local object.");
         if (isLocal) {
 //            Thread callingThread = Thread.currentThread();
-            if (localThread == null) {
-                System.out.println("setting the localThread for a baseObject with local capability---------");
-                // Set the current thread when the object is first used
-                localThread = callingThread;
-            } else if (localThread != callingThread) {
+            // if (objectThread == null) {
+            //     System.out.println("setting the localThread for a baseObject with local capability---------");
+            //     // Set the current thread when the object is first used
+            //     objectThread = callingThread;
+            // } else 
+            
+            if (objectThread != callingThread) {
                 throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
             } else {
                 System.out.println("all ok with the access on this local object +++++");

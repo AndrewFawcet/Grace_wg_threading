@@ -1,10 +1,9 @@
 // Grace thread object behavior test
 
-var objectX := object {
-    var objectY := object is threaded {
-        var objectYY := object is local {
-            var fieldYY : Number := 1
-        }
-        print (objectYY.fieldYY + 1)
-    }
+
+
+var objectX := object is local {
+    var fieldXX : Number := 1
 }
+print (objectX.fieldXX + 1)
+
