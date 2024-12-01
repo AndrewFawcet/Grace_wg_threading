@@ -17,7 +17,7 @@ public class Start {
     public static void main(String[] args) {
         // String filename = "blockTestThreading.grace";
         // String filename = "blockTest.grace";
-        String filename = "BasicThreadObjects.grace";
+        String filename = "BasicThreadObjects2.grace";
         // String filename = "BasicThreadObjectsSafe.grace";
          
         

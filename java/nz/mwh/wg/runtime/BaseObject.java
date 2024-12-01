@@ -97,7 +97,7 @@ public class BaseObject implements GraceObject {
         return objectThread;
     }
     
-    public void setLocalThread(Thread thread) {
+    public void setObjectThread(Thread thread) {
         if (thread == null) {
             throw new IllegalArgumentException("Thread cannot be null");
         }
