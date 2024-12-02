@@ -47,7 +47,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         boolean isNewObjectLocal = node.isLocal();
         boolean isNewObjectIsolated = node.isIsolated();
         boolean isNewObjectImmutable = node.isImmutable();
-        boolean isNewObjectThreaded = node.isThreaded();
 
         if (context instanceof BaseObject) {
             BaseObject contextBaseObject = (BaseObject) context;
@@ -84,7 +83,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         }
 
         BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
-                isNewObjectImmutable, isNewObjectThreaded);
+                isNewObjectImmutable);
 
         // // general info when making a object. For checking purposes and can be
         // removed.
@@ -115,7 +114,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 }
 
 
-                object.addFieldWriter(var.getName(), currentThread);
+                object.addFieldWriter(var.getName());
             } else if (part instanceof ImportStmt) {
                 ImportStmt imp = (ImportStmt) part;
                 object.addField(imp.getName());
@@ -125,24 +124,24 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         }
 
         // If the object is threaded, execute its body in a new thread
-        if (isNewObjectThreaded) {
-            Thread thread = new Thread(() -> {
-                System.out.println("HELLO INSIDE A NEW THREAD");
-                for (ASTNode part : body) {
-                    visit(object, part);
-                }
-            });
-            thread.setDaemon(false);
-            thread.start();
-        } else {
-            for (ASTNode part : body) {
-                visit(object, part);
-            }
-        }
-
-        // for (ASTNode part : body) {
-        //     visit(object, part);
+        // if (isNewObjectThreaded) {
+        //     Thread thread = new Thread(() -> {
+        //         System.out.println("HELLO INSIDE A NEW THREAD");
+        //         for (ASTNode part : body) {
+        //             visit(object, part);
+        //         }
+        //     });
+        //     thread.setDaemon(false);
+        //     thread.start();
+        // } else {
+        //     for (ASTNode part : body) {
+        //         visit(object, part);
+        //     }
         // }
+
+        for (ASTNode part : body) {
+            visit(object, part);
+        }
         return object;
     }
 
@@ -302,9 +301,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         VarDecl var = (VarDecl) part;
                         methodContext.addField(var.getName());
 
-
-                        Thread dummy = Thread.currentThread();
-                        methodContext.addFieldWriter(var.getName(), dummy);
+                        methodContext.addFieldWriter(var.getName());
                     }
                 }
                 try {

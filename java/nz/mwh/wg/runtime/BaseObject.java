@@ -18,7 +18,6 @@ public class BaseObject implements GraceObject {
     private boolean isIsolated = false;
     private boolean isImmutable = false;
     private boolean isLocal = false;
-    private boolean isThreaded = false;
     private Thread objectThread = null;
 
     protected static GraceDone done = GraceDone.done;
@@ -35,25 +34,19 @@ public class BaseObject implements GraceObject {
     }
 
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf) {
-        this(lexicalParent, returns, bindSelf, false, false, false, false); // Pass false for islocal, isIsolated, isImmutable and isThreaded by default
+        this(lexicalParent, returns, bindSelf, false, false, false); // Pass false for islocal, isIsolated, isImmutable and isThreaded by default
     }
 
     // New constructor that accepts isIsolated and IsImmutable as a parameter
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isLocal, boolean isIsolated,
-                      boolean isImmutable, boolean isThreaded) {
+                      boolean isImmutable) {
         this.lexicalParent = lexicalParent;
         this.returns = returns;
         this.isLocal = isLocal; 
         this.isIsolated = isIsolated; 
         this.isImmutable = isImmutable; 
-        this.isThreaded = isThreaded;
 
-        // set the initial thread when an object is created
-        // if (isLocal) {
-        //     this.objectThread = Thread.currentThread();
-        // }
-        // Just set the thread for all objects.
-        this.objectThread = Thread.currentThread();
+//        this.objectThread = Thread.currentThread();
 
         // Add basic methods
         addMethod("==(1)", request -> {
@@ -96,14 +89,8 @@ public class BaseObject implements GraceObject {
     public Thread getObjectThread() {
         return objectThread;
     }
-    
-    public void setObjectThread(Thread thread) {
-        if (thread == null) {
-            throw new IllegalArgumentException("Thread cannot be null");
-        }
-        this.objectThread = thread;
-    }
 
+    
     // New method to increment reference count
     public void incrementReferenceCount() {
         referenceCount++;
@@ -171,7 +158,7 @@ public class BaseObject implements GraceObject {
         });
     }
 
-    public void addFieldWriter(String name, Thread callingThread) {
+    public void addFieldWriter(String name) {
         methods.put(name + ":=(1)", request -> {
 
             // this causes errors with the fields being made in a local object
@@ -190,9 +177,9 @@ public class BaseObject implements GraceObject {
                 if (objectBeingAssigned.isLocal){
                     Thread currentThread = Thread.currentThread();
                     if (currentThread != objectBeingAssigned.getObjectThread()){
-                        throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
+                        throw new RuntimeException("Capability Violation: Local object accessed from a different thread. (from baseOject)");
                     } else {
-                        System.out.println("all ok with the access on this local object +++++");
+                        System.out.println("all ok with the access on this local object +++++  (from baseOject)");
                     }
                 }
 
@@ -263,12 +250,6 @@ public class BaseObject implements GraceObject {
     private void validateThreadAccess(Thread callingThread) {
         // System.out.println("checking if it is looking at a local object.");
         if (isLocal) {
-//            Thread callingThread = Thread.currentThread();
-            // if (objectThread == null) {
-            //     System.out.println("setting the localThread for a baseObject with local capability---------");
-            //     // Set the current thread when the object is first used
-            //     objectThread = callingThread;
-            // } else 
             
             if (objectThread != callingThread) {
                 throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
