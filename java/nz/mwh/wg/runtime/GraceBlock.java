@@ -10,6 +10,7 @@ public class GraceBlock implements GraceObject {
     private GraceObject lexicalParent;
     private List<ASTNode> parameters;
     private List<ASTNode> body;
+    // private MyBlockingQueue<Object> queue = new MyBlockingQueue<>(1); // Blocking queue for thread communication
 
     public GraceBlock(GraceObject lexicalParent, List<ASTNode> parameters, List<ASTNode> body) {
         this.lexicalParent = lexicalParent;
@@ -28,13 +29,11 @@ public class GraceBlock implements GraceObject {
         throw new RuntimeException("No such method in Block(" + parameters.size() + "): " + request.getName());
     }
 
-    // creates a new execution context (blockContext)
-    // sets up block parameters and fields from the parameters and body.
-    // executtes the statements in the block's body and returns the result of the last statement.
     private GraceObject apply(Request request, RequestPartR part) {
         BaseObject blockContext = new BaseObject(lexicalParent);
-
-        // setting up the block parameters
+        MyBlockingQueue<GraceObject> queue = new MyBlockingQueue<>(1); // Blocking queue with capacity 1
+    
+        // Setting up the block parameters
         for (int i = 0; i < parameters.size(); i++) {
             ASTNode parameter = parameters.get(i);
             String name;
@@ -48,7 +47,7 @@ public class GraceBlock implements GraceObject {
             blockContext.addField(name);
             blockContext.setField(name, part.getArgs().get(i));
         }
-
+    
         for (ASTNode stmt : body) {
             if (stmt instanceof DefDecl) {
                 DefDecl def = (DefDecl) stmt;
@@ -59,15 +58,136 @@ public class GraceBlock implements GraceObject {
                 blockContext.addFieldWriter(var.getName());
             }
         }
-
-        // Execute the block body
-        GraceObject last = null;
-        for (ASTNode node : body) {
-            last = node.accept(blockContext, request.getVisitor());
+        System.out.println("before thread started");
+    
+        // Create a thread to execute the block body
+        Thread workerThread = new Thread(() -> {
+            System.out.println("thread started");
+            try {
+                GraceObject last = null;
+                for (ASTNode node : body) {
+                    last = node.accept(blockContext, request.getVisitor());
+                }
+                queue.put(last); // Put the result into the queue
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Thread interrupted while executing block.", e);
+            }
+        });
+    
+        workerThread.start(); // Start the worker thread
+    
+        try {
+            // Take the result from the queue (blocking until available)
+            return queue.take();
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Interrupted while waiting for block result.", e);
         }
-        return last; // Return the result of the last executed statement
-
     }
+    
+    // private GraceObject apply(Request request, RequestPartR part) {
+    //     BaseObject blockContext = new BaseObject(lexicalParent);
+    
+    //     // Setting up the block parameters
+    //     for (int i = 0; i < parameters.size(); i++) {
+    //         ASTNode parameter = parameters.get(i);
+    //         String name;
+    //         if (parameter instanceof IdentifierDeclaration) {
+    //             name = ((IdentifierDeclaration) parameter).getName();
+    //         } else if (parameter instanceof LexicalRequest) {
+    //             name = ((LexicalRequest) parameter).getParts().get(0).getName();
+    //         } else {
+    //             throw new RuntimeException("Invalid parameter in block: " + parameter);
+    //         }
+    //         blockContext.addField(name);
+    //         blockContext.setField(name, part.getArgs().get(i));
+    //     }
+    
+    //     for (ASTNode stmt : body) {
+    //         if (stmt instanceof DefDecl) {
+    //             DefDecl def = (DefDecl) stmt;
+    //             blockContext.addField(def.getName());
+    //         } else if (stmt instanceof VarDecl) {
+    //             VarDecl var = (VarDecl) stmt;
+    //             blockContext.addField(var.getName());
+    //             blockContext.addFieldWriter(var.getName());
+    //         }
+    //     }
+    
+    //     // MyBlockingQueue for thread communication
+    //     MyBlockingQueue<GraceObject> queue = new MyBlockingQueue<>(1);
+    
+    //     // Create and start the thread
+    //     Thread workerThread = new Thread(() -> {
+    //         try {
+    //             GraceObject last = null;
+    //             for (ASTNode node : body) {
+    //                 last = node.accept(blockContext, request.getVisitor());
+    //             }
+    //             queue.put(last); // Place the result in the queue
+    //         } catch (Exception e) {
+    //             System.err.println("Error in thread execution: " + e.getMessage());
+    //             try {
+    //                 queue.put(null); // Place null if there's an error
+    //             } catch (InterruptedException interruptedException) {
+    //                 Thread.currentThread().interrupt(); // Restore the interrupt status
+    //             }
+    //         }
+    //     });
+    
+    //     workerThread.start(); // Start the thread
+    
+    //     // Retrieve the result in the main thread
+    //     try {
+    //         GraceObject result = queue.take(); // Block until the result is available
+    //         return result;
+    //     } catch (InterruptedException e) {
+    //         Thread.currentThread().interrupt(); // Restore the interrupt status
+    //         throw new RuntimeException("Thread was interrupted while waiting for the result.");
+    //     }
+    // }
+
+
+
+    // creates a new execution context (blockContext)
+    // sets up block parameters and fields from the parameters and body.
+    // executtes the statements in the block's body and returns the result of the last statement.
+    // private GraceObject apply(Request request, RequestPartR part) {
+    //     BaseObject blockContext = new BaseObject(lexicalParent);
+
+    //     // setting up the block parameters
+    //     for (int i = 0; i < parameters.size(); i++) {
+    //         ASTNode parameter = parameters.get(i);
+    //         String name;
+    //         if (parameter instanceof IdentifierDeclaration) {
+    //             name = ((IdentifierDeclaration) parameter).getName();
+    //         } else if (parameter instanceof LexicalRequest) {
+    //             name = ((LexicalRequest) parameter).getParts().get(0).getName();
+    //         } else {
+    //             throw new RuntimeException("Invalid parameter in block: " + parameter);
+    //         }
+    //         blockContext.addField(name);
+    //         blockContext.setField(name, part.getArgs().get(i));
+    //     }
+
+    //     for (ASTNode stmt : body) {
+    //         if (stmt instanceof DefDecl) {
+    //             DefDecl def = (DefDecl) stmt;
+    //             blockContext.addField(def.getName());
+    //         } else if (stmt instanceof VarDecl) {
+    //             VarDecl var = (VarDecl) stmt;
+    //             blockContext.addField(var.getName());
+    //             blockContext.addFieldWriter(var.getName());
+    //         }
+    //     }
+
+    //     // Execute the block body
+    //     GraceObject last = null;
+    //     for (ASTNode node : body) {
+    //         last = node.accept(blockContext, request.getVisitor());
+    //     }
+    //     return last; // Return the result of the last executed statement
+
+    // }
 
     // Stub method to find the receiver object by name. Unimplemented
     @Override
