@@ -5,6 +5,7 @@ import java.util.concurrent.*; // For threading and Future
 
 import nz.mwh.wg.ast.*;
 
+
 public class GraceBlock implements GraceObject {
     private GraceObject lexicalParent;
     private List<ASTNode> parameters;
@@ -16,6 +17,7 @@ public class GraceBlock implements GraceObject {
         this.body = body;
     }
 
+    // handles incoming requests to the block
     @Override
     public GraceObject request(Request request) {
         if (request.parts.size() == 1) {
@@ -26,6 +28,9 @@ public class GraceBlock implements GraceObject {
         throw new RuntimeException("No such method in Block(" + parameters.size() + "): " + request.getName());
     }
 
+    // creates a new execution context (blockContext)
+    // sets up block parameters and fields from the parameters and body.
+    // executtes the statements in the block's body and returns the result of the last statement.
     private GraceObject apply(Request request, RequestPartR part) {
         BaseObject blockContext = new BaseObject(lexicalParent);
 
@@ -44,14 +49,6 @@ public class GraceBlock implements GraceObject {
             blockContext.setField(name, part.getArgs().get(i));
         }
 
-        // Thread thread = new Thread(() -> System.out.println("hi from java thread"));
-        // thread.start();
-        // try {
-        //     thread.join(); // Wait for the thread to finish
-        // } catch (InterruptedException e) {
-        //     throw new RuntimeException("Thread was interrupted", e);
-        // }
-
         for (ASTNode stmt : body) {
             if (stmt instanceof DefDecl) {
                 DefDecl def = (DefDecl) stmt;
@@ -68,10 +65,11 @@ public class GraceBlock implements GraceObject {
         for (ASTNode node : body) {
             last = node.accept(blockContext, request.getVisitor());
         }
-        return last; // Return the final result of the block
+        return last; // Return the result of the last executed statement
 
     }
 
+    // Stub method to find the receiver object by name. Unimplemented
     @Override
     public GraceObject findReceiver(String name) {
         throw new RuntimeException("No such method in scope: " + name);

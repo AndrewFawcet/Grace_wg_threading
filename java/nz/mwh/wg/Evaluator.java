@@ -73,7 +73,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     isNewObjectIsolated = false; // referenced object is immutable not isolated
                 } else {
                     if (!isNewObjectIsolated) {
-                        System.out.println("the BaseObject attached to a isolated should also be isolated.");
+                        System.out.println("the BaseObject attached to an isolated should also be isolated.");
                         throw new RuntimeException(
                                 "Capability Violation: An 'isolated' object cannot reference a (base) object without the 'isolated' or 'immutable' capability.");
                     }
@@ -102,17 +102,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             } else if (part instanceof VarDecl) {
                 VarDecl var = (VarDecl) part;
                 object.addField(var.getName());
-
-               Thread currentThread = Thread.currentThread();
-                // Thread currentThread = null;
-
-                System.out.println(" object thread " + object.getObjectThread());
-                System.out.println(" Evaluator thread " + Thread.currentThread());
-
-                if (object.getObjectThread()!= Thread.currentThread()){
-                    System.out.println(" Its a mismatch :) ");
-                }
-
 
                 object.addFieldWriter(var.getName());
             } else if (part instanceof ImportStmt) {

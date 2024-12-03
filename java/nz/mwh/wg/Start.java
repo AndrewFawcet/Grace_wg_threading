@@ -17,7 +17,15 @@ public class Start {
     public static void main(String[] args) {
         // String filename = "blockTestThreading.grace";
         // String filename = "blockTest.grace";
-        String filename = "BasicThreadObjects2.grace";
+        // String filename = "blockTest1.grace";   // ok
+        // String filename = "blockTest2.grace";   // ok
+        // String filename = "blockTest3.grace";   // ok
+        // String filename = "blockTest4.grace";   // ok
+        // String filename = "blockTest5.grace";   // ok
+        // String filename = "blockTest6.grace";   // ok
+        // String filename = "blockTest7.grace";   // ok
+        // String filename = "blockTest8.grace";   // ok
+        // String filename = "BasicThreadObjects2.grace";
         // String filename = "BasicThreadObjectsSafe.grace";
          
         
