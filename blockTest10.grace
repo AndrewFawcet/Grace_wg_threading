@@ -2,6 +2,7 @@
 
 print ("----starting")
 var block := { 
+    print("here")
     var localObject := object is local {
         var field := 42
         method increment { self.field := self.field + 1 }
@@ -17,5 +18,5 @@ var block := {
 
 print("Executing block...")
 block.apply
-
+block.apply_thread
 print ("-------ten ok")

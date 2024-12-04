@@ -34,19 +34,21 @@ public class BaseObject implements GraceObject {
     }
 
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf) {
-        this(lexicalParent, returns, bindSelf, false, false, false); // Pass false for islocal, isIsolated, isImmutable and isThreaded by default
+        this(lexicalParent, returns, bindSelf, false, false, false); // Pass false for islocal, isIsolated, isImmutable
+                                                                     // and isThreaded by default
     }
 
     // New constructor that accepts isIsolated and IsImmutable as a parameter
     public BaseObject(GraceObject lexicalParent, boolean returns, boolean bindSelf, boolean isLocal, boolean isIsolated,
-                      boolean isImmutable) {
+            boolean isImmutable) {
         this.lexicalParent = lexicalParent;
         this.returns = returns;
-        this.isLocal = isLocal; 
-        this.isIsolated = isIsolated; 
-        this.isImmutable = isImmutable; 
+        this.isLocal = isLocal;
+        this.isIsolated = isIsolated;
+        this.isImmutable = isImmutable;
 
-//        this.objectThread = Thread.currentThread();
+        // If the object is marked as local, set objectThread to the current thread
+        this.objectThread = Thread.currentThread();
 
         // Add basic methods
         addMethod("==(1)", request -> {
@@ -90,7 +92,6 @@ public class BaseObject implements GraceObject {
         return objectThread;
     }
 
-    
     // New method to increment reference count
     public void incrementReferenceCount() {
         referenceCount++;
@@ -166,47 +167,59 @@ public class BaseObject implements GraceObject {
 
             // incrementing the BaseObject being referenced.
             fields.put(name, request.getParts().get(0).getArgs().get(0));
-            GraceObject valueBeingAssigned = request.getParts().get(0).getArgs().get(0); // Get the object being assigned
+            GraceObject valueBeingAssigned = request.getParts().get(0).getArgs().get(0); // Get the object being
+                                                                                         // assigned
             if (valueBeingAssigned instanceof BaseObject) {
                 // System.out.println(name + " assigned to a baseObject ----------");
                 BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned; // Safe cast after instanceof check
 
                 // this looks at the accessing a local object (not what a local object accesses)
-                if (objectBeingAssigned.isLocal){
+                if (objectBeingAssigned.isLocal) {
                     Thread currentThread = Thread.currentThread();
-                    if (currentThread != objectBeingAssigned.getObjectThread()){
-                        throw new RuntimeException("Capability Violation: Local object accessed from a different thread. (from baseOject)");
+                    if (currentThread != objectBeingAssigned.getObjectThread()) {
+                        System.out.println("current thread " + currentThread);
+                        System.out.println("objectThread " + objectThread);
+                        throw new RuntimeException(
+                                "Capability Violation: Local object accessed from a different thread. (from baseOject)");
                     } else {
                         System.out.println("all ok with the access on this local object +++++  (from baseOject)");
                     }
                 }
 
-
-                objectBeingAssigned.incrementReferenceCount(); 
-                // objectBeingAssigned.logThreadInfo("assigned to a field '" + name + "'");    // junk?
+                objectBeingAssigned.incrementReferenceCount();
+                // objectBeingAssigned.logThreadInfo("assigned to a field '" + name + "'"); //
+                // junk?
 
                 // checking if isolated, and runtime exception if too many references
                 if (objectBeingAssigned.isIsolated()) {
                     if (objectBeingAssigned.getReferenceCount() > 1) {
                         throw new RuntimeException(
-                                "Capability Violation: Isolated object '" + name + "' cannot have more than one reference.");
+                                "Capability Violation: Isolated object '" + name
+                                        + "' cannot have more than one reference.");
                     }
                 }
-                // checking if isolated and if imutable, and runtime exception if multiple capabilities
+                // checking if isolated and if imutable, and runtime exception if multiple
+                // capabilities
                 if (objectBeingAssigned.isIsolated() && objectBeingAssigned.isImmutable()) {
-                        throw new RuntimeException(
-                                "Capability Violation: Object '" + name + "' cannot have both capabilities 'isolated' and 'immutable' assigned.");
+                    throw new RuntimeException(
+                            "Capability Violation: Object '" + name
+                                    + "' cannot have both capabilities 'isolated' and 'immutable' assigned.");
                 }
             }
 
-            // this looks at the current object and as the fields are being changed checks if the object is:
-            // -immutable 
-            // -does it have one or more references (less than one indicates in construction)
-            // This functions in conjunction with the downward propagation of immutable capabilities in the public GraceObject visit(GraceObject context, ObjectConstructor node) method
+            // this looks at the current object and as the fields are being changed checks
+            // if the object is:
+            // -immutable
+            // -does it have one or more references (less than one indicates in
+            // construction)
+            // This functions in conjunction with the downward propagation of immutable
+            // capabilities in the public GraceObject visit(GraceObject context,
+            // ObjectConstructor node) method
             if (isImmutable) {
                 if (getReferenceCount() != 0) {
                     throw new RuntimeException(
-                            "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name + "'.");
+                            "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name
+                                    + "'.");
                 } else {
                     System.out.println("all ok, in construction as no references ");
                 }
@@ -216,7 +229,8 @@ public class BaseObject implements GraceObject {
         });
     }
 
-    // TODO this links in with Evaluator GraceObject visit(GraceObject context, DefDecl node), may need updating for handling fields
+    // TODO this links in with Evaluator GraceObject visit(GraceObject context,
+    // DefDecl node), may need updating for handling fields
     public void setField(String name, GraceObject value) {
         fields.put(name, value);
     }
@@ -231,24 +245,23 @@ public class BaseObject implements GraceObject {
         throw new RuntimeException("No return context found");
     }
 
-
     public Map<String, GraceObject> getFields() {
         return fields;
     }
 
     // private void logThreadInfo(String action) {
-        // if (isLocal) { // Only log for local-annotated objects
-            // Thread thread = Thread.currentThread();
-            // objectThread = thread; // Update the current thread
-            // System.out.println("hello----------------------------------------------------+" + thread.getName());
-        // }
+    // if (isLocal) { // Only log for local-annotated objects
+    // Thread thread = Thread.currentThread();
+    // objectThread = thread; // Update the current thread
+    // System.out.println("hello----------------------------------------------------+"
+    // + thread.getName());
     // }
-    
+    // }
 
     private void validateThreadAccess(Thread callingThread) {
         // System.out.println("checking if it is looking at a local object.");
         if (isLocal) {
-            
+
             if (objectThread != callingThread) {
                 throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
             } else {
@@ -257,5 +270,5 @@ public class BaseObject implements GraceObject {
         }
 
     }
-    
+
 }

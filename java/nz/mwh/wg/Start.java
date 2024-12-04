@@ -25,7 +25,11 @@ public class Start {
         // String filename = "blockTest6.grace";   // ok
         // String filename = "blockTest7.grace";   // ok
         // String filename = "blockTest8.grace";   // ok
-        String filename = "blockTest9.grace";   // ok
+        // String filename = "blockTest9.grace";   // ok
+        String filename = "blockTest10.grace";   // 
+        // String filename = "blockTest9.grace";   // 
+        // String filename = "blockTest9.grace";   // 
+        // String filename = "blockTest9.grace";   // 
         // String filename = "BasicThreadObjects2.grace";
         // String filename = "BasicThreadObjectsSafe.grace";
         
