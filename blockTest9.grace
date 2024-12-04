@@ -1,5 +1,5 @@
 print ("----starting")
-method foo (arg: Block) -> String is threaded{
+method foo (arg: Block) -> String{
     return "Received: {arg.apply}"
 }
 
