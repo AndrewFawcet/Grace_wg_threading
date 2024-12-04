@@ -9,7 +9,6 @@ public class GraceBlock implements GraceObject {
     private GraceObject lexicalParent;
     private List<ASTNode> parameters;
     private List<ASTNode> body;
-    private boolean isThreaded = false;
     // private MyBlockingQueue<Object> queue = new MyBlockingQueue<>(1); // Blocking
     // queue for thread communication
 
@@ -21,11 +20,10 @@ public class GraceBlock implements GraceObject {
     // }
 
     // overload for threaded
-    public GraceBlock(GraceObject lexicalParent, List<ASTNode> parameters, List<ASTNode> body, Boolean isThreaded) {
+    public GraceBlock(GraceObject lexicalParent, List<ASTNode> parameters, List<ASTNode> body) {
         this.lexicalParent = lexicalParent;
         this.parameters = parameters;
         this.body = body;
-        this.isThreaded = isThreaded;
     }
 
     // handles incoming requests to the block

@@ -6,9 +6,6 @@ import nz.mwh.wg.runtime.Request;
 
 public class Block extends nz.mwh.wg.ast.Block implements GraceObject {
     
-    public Block(Cons<ASTNode> parameters, Cons<ASTNode> body, Cons<String> annotations) {
-        super(parameters, body, annotations);
-    }
     public Block(Cons<ASTNode> parameters, Cons<ASTNode> body) {
         super(parameters, body);
     }
