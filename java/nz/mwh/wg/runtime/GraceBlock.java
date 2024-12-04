@@ -43,7 +43,6 @@ public class GraceBlock implements GraceObject {
 
     private GraceObject apply(Request request, RequestPartR part, boolean apply_thread) {
         BaseObject blockContext = new BaseObject(lexicalParent);
-        MyBlockingQueue<GraceObject> queue = new MyBlockingQueue<>(1); // Blocking queue with capacity 1
 
         // Setting up the block parameters
         for (int i = 0; i < parameters.size(); i++) {
@@ -70,11 +69,10 @@ public class GraceBlock implements GraceObject {
                 blockContext.addFieldWriter(var.getName());
             }
         }
-        System.out.println("before thread started");
 
-        // if (isThreaded) {
         if (apply_thread) {
-            System.out.println("just before thread started !!!");
+            System.out.println("just before thread started ---");
+            MyBlockingQueue<GraceObject> queue = new MyBlockingQueue<>(1); // Blocking queue with capacity 1
 
             // Create a thread to execute the block body
             Thread workerThread = new Thread(() -> {

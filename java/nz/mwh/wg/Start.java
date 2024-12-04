@@ -28,7 +28,6 @@ public class Start {
         String filename = "blockTest9.grace";   // ok
         // String filename = "BasicThreadObjects2.grace";
         // String filename = "BasicThreadObjectsSafe.grace";
-         
         
     boolean printAST = false;
         String updateFile = null;

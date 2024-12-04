@@ -171,8 +171,6 @@ public class BaseObject implements GraceObject {
                 // System.out.println(name + " assigned to a baseObject ----------");
                 BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned; // Safe cast after instanceof check
 
-
-                
                 // this looks at the accessing a local object (not what a local object accesses)
                 if (objectBeingAssigned.isLocal){
                     Thread currentThread = Thread.currentThread();
