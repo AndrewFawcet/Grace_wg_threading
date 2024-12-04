@@ -85,15 +85,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
                 isNewObjectImmutable);
 
-        // // general info when making a object. For checking purposes and can be
-        // removed.
-        // boolean isIsolated = object.isIsolated();
-        // boolean isImmutable = object.isImmutable();
-        // System.out.println("New Object reference count is " +
-        // object.getReferenceCount());
-        // System.out.println("New object is isolated " + isIsolated);
-        // System.out.println("New object is immutable " + isImmutable);
-
         List<ASTNode> body = node.getBody();
         for (ASTNode part : body) {
             if (part instanceof DefDecl) {
@@ -111,22 +102,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 visit(object, part);
             }
         }
-
-        // If the object is threaded, execute its body in a new thread
-        // if (isNewObjectThreaded) {
-        //     Thread thread = new Thread(() -> {
-        //         System.out.println("HELLO INSIDE A NEW THREAD");
-        //         for (ASTNode part : body) {
-        //             visit(object, part);
-        //         }
-        //     });
-        //     thread.setDaemon(false);
-        //     thread.start();
-        // } else {
-        //     for (ASTNode part : body) {
-        //         visit(object, part);
-        //     }
-        // }
 
         for (ASTNode part : body) {
             visit(object, part);
@@ -386,7 +361,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         List<ASTNode> parameters = blockNode.getParameters();
         List<ASTNode> body = blockNode.getBody();
 
-        return new GraceBlock(context, parameters, body);
+//        return new GraceBlock(context, parameters, body);
+        return new GraceBlock(context, parameters, body, blockNode.isThreaded());
     }
 
 
