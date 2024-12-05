@@ -361,7 +361,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         List<ASTNode> parameters = blockNode.getParameters();
         List<ASTNode> body = blockNode.getBody();
 
-//        return new GraceBlock(context, parameters, body);
         return new GraceBlock(context, parameters, body);
     }
 

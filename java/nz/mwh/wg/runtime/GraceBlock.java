@@ -72,7 +72,7 @@ public class GraceBlock implements GraceObject {
 
         if (apply_thread) {
             System.out.println("just before thread started ---");
-            MyBlockingQueue<GraceObject> queue = new MyBlockingQueue<>(1); // Blocking queue with capacity 1
+            MyBlockingQueue_junk<GraceObject> queue = new MyBlockingQueue_junk<>(1); // Blocking queue with capacity 1
 
             // Create a thread to execute the block body
             Thread workerThread = new Thread(() -> {

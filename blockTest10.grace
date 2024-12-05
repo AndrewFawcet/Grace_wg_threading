@@ -1,4 +1,5 @@
 // Testing local Capability
+// this just recreates the object in the block, therefore there are no conflicts
 
 print ("----starting")
 var block := { 

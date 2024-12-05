@@ -5,14 +5,14 @@ import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class MyBlockingQueue<E> {
+public class MyBlockingQueue_junk<E> {
     private int max;
     private Queue<E> queue;
     private ReentrantLock lock = new ReentrantLock(true);
     private Condition notEmpty = lock.newCondition();
     private Condition notFull = lock.newCondition();
 
-    public MyBlockingQueue(int size) {
+    public MyBlockingQueue_junk(int size) {
         this.queue = new LinkedList<>();
         this.max = size;
     }
