@@ -1,5 +1,3 @@
-// seems to be doig calculations prior to going into the thread, thus not accessing the local in the other thread.
-
 print ("----starting")
 
 
@@ -14,4 +12,13 @@ print(block.apply(xObject.value, 10))
 print ("----now threading block")
 print(block.apply_thread(xObject.value, 10))
 
-print ("-------fifteen ok")
+
+var block := {fetchX, y -> fetchX() + y }
+
+print(block.apply({xObject.value}, 10))
+
+print("----now threading block")
+print(block.apply_thread({xObject.value}, 10))
+
+
+print ("-------sixteen ok")

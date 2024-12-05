@@ -50,19 +50,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         if (context instanceof BaseObject) {
             BaseObject contextBaseObject = (BaseObject) context;
-            if (contextBaseObject.isImmutable()) {
-                if (isNewObjectIsolated) {
-                    throw new RuntimeException(
-                            "Capability Violation: An 'immutable' object cannot reference an 'isolated' object.");
-                }
-                if (isNewObjectLocal) {
-                    throw new RuntimeException(
-                            "Capability Violation: An 'immutable' object cannot reference an 'local' object.");
-                }
-                if (!isNewObjectImmutable) {
-                    throw new RuntimeException(
-                            "Capability Violation: An 'immutable' object cannot reference a (base) object without the 'immutable' capability.");
-                }
+            if (contextBaseObject.isLocal()) {
+                System.out.println("in the visit -----------");
+            
             }
             if (contextBaseObject.isIsolated()) {
                 if (isNewObjectLocal) {
@@ -77,6 +67,20 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         throw new RuntimeException(
                                 "Capability Violation: An 'isolated' object cannot reference a (base) object without the 'isolated' or 'immutable' capability.");
                     }
+                }
+            }
+            if (contextBaseObject.isImmutable()) {
+                if (isNewObjectIsolated) {
+                    throw new RuntimeException(
+                            "Capability Violation: An 'immutable' object cannot reference an 'isolated' object.");
+                }
+                if (isNewObjectLocal) {
+                    throw new RuntimeException(
+                            "Capability Violation: An 'immutable' object cannot reference an 'local' object.");
+                }
+                if (!isNewObjectImmutable) {
+                    throw new RuntimeException(
+                            "Capability Violation: An 'immutable' object cannot reference a (base) object without the 'immutable' capability.");
                 }
             }
 
@@ -116,41 +120,44 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, LexicalRequest node) {
 
-        // boolean isThread = false;
-
         List<RequestPartR> parts = new ArrayList<>();
         for (Part part : node.getParts()) {
             // System.out.println("getting an arg");
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
-            // List<GraceObject> args = part.getArgs().stream().map(x -> {
-            // // Check if x is an instance of MethodDecl
-            // if (x instanceof LexicalRequest) {
-            // }
-            // if (x instanceof MethodDecl) {
-            // MethodDecl methodDecl = (MethodDecl) x;
-            // // Check the isThread property
-            // if (methodDecl.isThread()) {
-            // // Do something specific for threaded methods if needed
-            // }
-            // }
-            // // Visit as usual
-            // return visit(context, x);
-            // }).collect(Collectors.toList());
-            // if (args.get(0) instanceof Request){
-            // System.out.println(" Request in here");
+
+            // System.out.println(" Request in here------------------------ " + part.getName());
+
+            // if (args.get(0) instanceof BaseObject && args.size() > 0 ){
+            //     BaseObject a = (BaseObject) args.get(0);
+            //     if (a.isLocal()){
+            //         System.out.println( "is local object as args ");
+            //     } else {
+            //         System.out.println("asdfasdf");
+            //     }    
             // }
 
             parts.add(new RequestPartR(part.getName(), args));
         }
+
+
+
+
         Request request = new Request(this, parts);
         GraceObject receiver = context.findReceiver(request.getName());
 
         if (receiver instanceof BaseObject) {
+            BaseObject test = (BaseObject) receiver;
+            if (test.isLocal()){
+                System.out.println( "is local object as reciever ");
+            } else {
+                // System.out.println("asdfasdf");
+            }
             // reciever is not important...
             // the lexicalRequestNode is what is important, and will hold the way to get the
             // isThread annotation
-
         }
+
+
 
         return receiver.request(request);
     }
@@ -159,7 +166,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // Details: Simply wraps the numeric value in a GraceNumber
     @Override
     public GraceObject visit(GraceObject context, NumberNode node) {
-
         return new GraceNumber(node.getValue());
     }
 

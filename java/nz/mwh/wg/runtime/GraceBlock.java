@@ -56,10 +56,28 @@ public class GraceBlock implements GraceObject {
                 throw new RuntimeException("Invalid parameter in block: " + parameter);
             }
             blockContext.addField(name);
-            blockContext.setField(name, part.getArgs().get(i));
-        }
+            // blockContext.setField(name, part.getArgs().get(i));  // replaced with stuff below...
 
-        for (ASTNode stmt : body) {
+            // If threading, use a deferred closure to evaluate the argument later
+            GraceObject arg = part.getArgs().get(i);
+            if (apply_thread) {
+                blockContext.setField(name, new GraceObject() {
+                    @Override
+                    public GraceObject request(Request innerRequest) {
+                        // Dynamically resolve the value when requested
+                        return arg.request(innerRequest);
+                    }
+                });
+            } else {
+                // Directly assign the resolved argument for non-threaded execution
+                blockContext.setField(name, arg);
+            }
+        }
+        // }
+
+        for (
+
+        ASTNode stmt : body) {
             if (stmt instanceof DefDecl) {
                 DefDecl def = (DefDecl) stmt;
                 blockContext.addField(def.getName());
@@ -76,7 +94,7 @@ public class GraceBlock implements GraceObject {
 
             // Create a thread to execute the block body
             Thread workerThread = new Thread(() -> {
-                System.out.println("thread started");
+                System.out.println("thread started ---");
                 try {
                     GraceObject last = null;
                     for (ASTNode node : body) {

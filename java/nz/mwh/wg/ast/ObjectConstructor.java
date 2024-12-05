@@ -10,7 +10,6 @@ public class ObjectConstructor extends ASTNode {
     private boolean isLocal;
     private boolean isIsolated;
     private boolean isImmutable;
-    private boolean isThreaded;
 
     public ObjectConstructor(Cons<ASTNode> body, Cons<String> annotations) {
         this.body = body.toList();
