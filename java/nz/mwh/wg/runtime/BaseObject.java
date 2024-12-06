@@ -125,6 +125,7 @@ public class BaseObject implements GraceObject {
         if (isLocal()){
             System.out.println("objectThread " + objectThread);
             System.out.println(" Thread.currentThread() " + Thread.currentThread());
+            validateThreadAccess();
         }
         
         if (method != null) {
@@ -244,8 +245,13 @@ public class BaseObject implements GraceObject {
     public Map<String, GraceObject> getFields() {
 
         if (isLocal()){
-            System.out.println("objectThread " + objectThread);
-            System.out.println(" Thread.currentThread() " + Thread.currentThread());
+            System.out.println("  objectThread-- " + objectThread);
+            System.out.println("  Thread.currentThread()-- " + Thread.currentThread());
+            System.out.println("This could fail if you wanted it to");
+            // if (objectThread != Thread.currentThread()) {
+            //     throw new RuntimeException(
+            //             "Local Violation: Local object, cannot access a local object field from another thread.");
+            // }
         }
 
         return fields;
@@ -264,7 +270,7 @@ public class BaseObject implements GraceObject {
         // System.out.println("checking if it is looking at a local object.");
         if (isLocal) {
             
-            if (objectThread != callingThread) {
+            if (objectThread != Thread.currentThread()) {
                 throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
             } else {
                 System.out.println("all ok with the access on this local object +++++");

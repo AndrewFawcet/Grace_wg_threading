@@ -7,11 +7,11 @@ def xObject = object is local{
     var value :=  1 
 }
 
-var block := {x, y -> x + y }
+var block := {x, y -> x.value + y }
 
-print(block.apply(xObject.value, 10))
+print(block.apply(xObject, 10))
 
 print ("----now threading block")
-print(block.apply_thread(xObject.value, 10))
+print(block.apply_thread(xObject, 10))
 
 print ("-------fifteen ok")

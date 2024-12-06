@@ -56,24 +56,33 @@ public class GraceBlock implements GraceObject {
                 throw new RuntimeException("Invalid parameter in block: " + parameter);
             }
             blockContext.addField(name);
-            // blockContext.setField(name, part.getArgs().get(i));  // replaced with stuff below...
+            blockContext.setField(name, part.getArgs().get(i)); // replaced with stuff
+            // below...
 
-            // If threading, use a deferred closure to evaluate the argument later
-            GraceObject arg = part.getArgs().get(i);
-            if (apply_thread) {
-                blockContext.setField(name, new GraceObject() {
-                    @Override
-                    public GraceObject request(Request innerRequest) {
-                        // Dynamically resolve the value when requested
-                        return arg.request(innerRequest);
-                    }
-                });
-            } else {
-                // Directly assign the resolved argument for non-threaded execution
-                blockContext.setField(name, arg);
-            }
-        }
+        //     // If threading, use a deferred closure to evaluate the argument later
+        //     GraceObject arg = part.getArgs().get(i);
+        //     if (apply_thread) {
+        //         GraceObject argNull = null;
+        //         blockContext.setField(name, new GraceObject() {
+        //             @Override
+        //             public GraceObject request(Request innerRequest) {
+        //                 // Dynamically resolve the value when requested
+        //                 return arg.request(innerRequest);
+        //             }
+
+        //             // dummy implementation of the findReceiver(String) method
+        //             @Override
+        //             public GraceObject findReceiver(String name) {
+        //                 // Can throw an exception or return null
+        //                 throw new UnsupportedOperationException("findReceiver not supported in this context");
+        //             }
+        //         });
+        //     } else {
+        //         // Directly assign the resolved argument for non-threaded execution
+        //         blockContext.setField(name, arg);
+        //     }
         // }
+        }
 
         for (
 
