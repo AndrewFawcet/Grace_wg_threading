@@ -182,13 +182,13 @@ public class BaseObject implements GraceObject {
                 // this looks at the accessing a local object (not what a local object accesses)
                 if (objectBeingAssigned.isLocal){
                     Thread currentThread = Thread.currentThread();
-                    if (currentThread != objectBeingAssigned.getObjectThread()){
-                        System.out.println("current thread " + currentThread);
-                        System.out.println("objectThread " + objectThread);
-                        throw new RuntimeException("Capability Violation: Local object accessed from a different thread. (from baseOject)");
-                    } else {
-                        System.out.println("all ok with the access on this local object +++++  (from baseOject)");
-                    }
+                    System.out.println("current thread " + currentThread);
+                    System.out.println("objectThread " + objectThread);
+                    // if (currentThread != objectBeingAssigned.getObjectThread()){
+                    //     throw new RuntimeException("Capability Violation: Local object accessed from a different thread. (from baseOject)");
+                    // } else {
+                    //     System.out.println("all ok with the access on this local object +++++  (from baseOject)");
+                    // }
                 }
 
 
@@ -266,10 +266,9 @@ public class BaseObject implements GraceObject {
     // }
     
 
-    private void validateThreadAccess(Thread callingThread) {
+    private void validateThreadAccess() {
         // System.out.println("checking if it is looking at a local object.");
         if (isLocal) {
-            
             if (objectThread != Thread.currentThread()) {
                 throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
             } else {
@@ -278,5 +277,4 @@ public class BaseObject implements GraceObject {
         }
 
     }
-    
 }
