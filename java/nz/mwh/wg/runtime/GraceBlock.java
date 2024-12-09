@@ -56,32 +56,9 @@ public class GraceBlock implements GraceObject {
                 throw new RuntimeException("Invalid parameter in block: " + parameter);
             }
             blockContext.addField(name);
-            blockContext.setField(name, part.getArgs().get(i)); // replaced with stuff
-            // below...
+            // System.out.println("Setting parameter: " + name + " with value: " + part.getArgs().get(i));
 
-        //     // If threading, use a deferred closure to evaluate the argument later
-        //     GraceObject arg = part.getArgs().get(i);
-        //     if (apply_thread) {
-        //         GraceObject argNull = null;
-        //         blockContext.setField(name, new GraceObject() {
-        //             @Override
-        //             public GraceObject request(Request innerRequest) {
-        //                 // Dynamically resolve the value when requested
-        //                 return arg.request(innerRequest);
-        //             }
-
-        //             // dummy implementation of the findReceiver(String) method
-        //             @Override
-        //             public GraceObject findReceiver(String name) {
-        //                 // Can throw an exception or return null
-        //                 throw new UnsupportedOperationException("findReceiver not supported in this context");
-        //             }
-        //         });
-        //     } else {
-        //         // Directly assign the resolved argument for non-threaded execution
-        //         blockContext.setField(name, arg);
-        //     }
-        // }
+            blockContext.setField(name, part.getArgs().get(i)); 
         }
 
         for (
@@ -112,7 +89,9 @@ public class GraceBlock implements GraceObject {
                 try {
                     GraceObject last = null;
                     for (ASTNode node : body) {
-                        last = node.accept(new BaseObject(lexicalParent), request.getVisitor());
+                        last = node.accept(blockContext, request.getVisitor());
+
+                        // last = node.accept(new BaseObject(lexicalParent), request.getVisitor());
                     }
                     port2.send(last); // Send result to port1
                 } catch (InterruptedException e) {
@@ -130,11 +109,19 @@ public class GraceBlock implements GraceObject {
             }
         } else {
             // Non-threaded execution as before
+            // GraceObject last = null;
+            // for (ASTNode node : body) {
+            //     last = node.accept(new BaseObject(lexicalParent), request.getVisitor());
+            // }
+            // return last;
+            // Execute the block body
             GraceObject last = null;
             for (ASTNode node : body) {
-                last = node.accept(new BaseObject(lexicalParent), request.getVisitor());
+                last = node.accept(blockContext, request.getVisitor());
             }
-            return last;
+            return last; // Return the result of the last executed statement
+
+        // }
         }
     
         // if (apply_thread) {
@@ -167,7 +154,7 @@ public class GraceBlock implements GraceObject {
 
         //     // creates a new execution context (blockContext)
         //     // sets up block parameters and fields from the parameters and body.
-        //     // executtes the statements in the block's body and returns the result of the
+        //     // executes the statements in the block's body and returns the result of the
         //     // last statement.
 
         //     // Execute the block body

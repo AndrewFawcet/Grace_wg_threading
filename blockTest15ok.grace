@@ -3,7 +3,7 @@
 print ("----starting")
 
 
-def xObject = object{
+def xObject := object{
     var value :=  1 
 }
 

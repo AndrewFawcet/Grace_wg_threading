@@ -3,7 +3,7 @@ package nz.mwh.wg.runtime;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import nz.mwh.wg.ast.*;
+// import nz.mwh.wg.ast.*;
 
 public class Channel<T> {
     private final BlockingQueue<T> queue1; // Queue from port1 to port2

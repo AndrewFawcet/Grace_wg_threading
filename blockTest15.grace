@@ -3,7 +3,7 @@
 print ("----starting")
 
 
-def xObject = object is local{
+def xObject := object is local{
     var value :=  1 
 }
 

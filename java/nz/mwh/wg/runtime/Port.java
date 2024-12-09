@@ -2,7 +2,7 @@ package nz.mwh.wg.runtime;
 
 import java.util.concurrent.BlockingQueue;
 
-import nz.mwh.wg.ast.*;
+// import nz.mwh.wg.ast.*;
 
 public class Port<T> {
     private final BlockingQueue<T> writeQueue;
