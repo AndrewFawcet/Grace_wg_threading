@@ -5,6 +5,8 @@ import java.util.concurrent.*; // For threading and Future
 
 import nz.mwh.wg.ast.*;
 
+// This class represents a block of code with parameters and a body that can be invoked directly or in a separate thread.
+// The GraceBlock class models a functional block within the Grace language runtime, capturing lexical scope, parameters, and a sequence of statements, and supports execution either synchronously or asynchronously through the use of a Channel to enable threading and communication between execution contexts.
 public class GraceBlock implements GraceObject {
     private GraceObject lexicalParent;
     private List<ASTNode> parameters;

@@ -4,6 +4,8 @@ import java.util.concurrent.BlockingQueue;
 
 // import nz.mwh.wg.ast.*;
 
+// This class represents one end of a communication channel that can send and receive messages.
+// The Port class encapsulates a bidirectional communication mechanism using two blocking queues, enabling synchronized message passing between threads while supporting blocking behavior for backpressure.
 public class Port<T> {
     private final BlockingQueue<T> writeQueue;
     private final BlockingQueue<T> readQueue;

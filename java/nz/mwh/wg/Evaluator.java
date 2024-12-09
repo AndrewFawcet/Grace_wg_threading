@@ -139,9 +139,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             parts.add(new RequestPartR(part.getName(), args));
         }
 
-
-
-
         Request request = new Request(this, parts);
         GraceObject receiver = context.findReceiver(request.getName());
 
@@ -156,9 +153,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // the lexicalRequestNode is what is important, and will hold the way to get the
             // isThread annotation
         }
-
-
-
         return receiver.request(request);
     }
 
