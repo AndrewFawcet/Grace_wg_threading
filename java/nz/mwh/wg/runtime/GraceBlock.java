@@ -98,46 +98,86 @@ public class GraceBlock implements GraceObject {
         }
 
         if (apply_thread) {
-            System.out.println("just before thread started ---");
-            MyBlockingQueue_junk<GraceObject> queue = new MyBlockingQueue_junk<>(1); // Blocking queue with capacity 1
+            System.out.println("Setting up threading with channels...");
 
-            // Create a thread to execute the block body
+            // Create a channel with capacity 1 (proof of concept)
+            Channel<GraceObject> channel = new Channel<>(1);
+
+            // Create two ports
+            Port<GraceObject> port1 = channel.createPort1();
+            Port<GraceObject> port2 = channel.createPort2();
+
+            // Pass port2 to the worker thread
             Thread workerThread = new Thread(() -> {
-                System.out.println("thread started ---");
                 try {
                     GraceObject last = null;
                     for (ASTNode node : body) {
-                        last = node.accept(blockContext, request.getVisitor());
+                        last = node.accept(new BaseObject(lexicalParent), request.getVisitor());
                     }
-                    queue.put(last); // Put the result into the queue
+                    port2.send(last); // Send result to port1
                 } catch (InterruptedException e) {
-                    throw new RuntimeException("Thread interrupted while executing block.", e);
+                    throw new RuntimeException("Worker thread interrupted.", e);
                 }
             });
 
-            workerThread.start(); // Start the worker thread
+            workerThread.start();
 
             try {
-                // Take the result from the queue (blocking until available)
-                return queue.take();
+                // Main thread receives result from port1
+                return port1.receive();
             } catch (InterruptedException e) {
-                throw new RuntimeException("Interrupted while waiting for block result.", e);
+                throw new RuntimeException("Main thread interrupted while waiting for result.", e);
             }
         } else {
-
-            // creates a new execution context (blockContext)
-            // sets up block parameters and fields from the parameters and body.
-            // executtes the statements in the block's body and returns the result of the
-            // last statement.
-
-            // Execute the block body
+            // Non-threaded execution as before
             GraceObject last = null;
             for (ASTNode node : body) {
-                last = node.accept(blockContext, request.getVisitor());
+                last = node.accept(new BaseObject(lexicalParent), request.getVisitor());
             }
-            return last; // Return the result of the last executed statement
-
+            return last;
         }
+    
+        // if (apply_thread) {
+        //     System.out.println("just before thread started ---");
+        //     MyBlockingQueue_junk<GraceObject> queue = new MyBlockingQueue_junk<>(1); // Blocking queue with capacity 1
+
+        //     // Create a thread to execute the block body
+        //     Thread workerThread = new Thread(() -> {
+        //         System.out.println("thread started ---");
+        //         try {
+        //             GraceObject last = null;
+        //             for (ASTNode node : body) {
+        //                 last = node.accept(blockContext, request.getVisitor());
+        //             }
+        //             queue.put(last); // Put the result into the queue
+        //         } catch (InterruptedException e) {
+        //             throw new RuntimeException("Thread interrupted while executing block.", e);
+        //         }
+        //     });
+
+        //     workerThread.start(); // Start the worker thread
+
+        //     try {
+        //         // Take the result from the queue (blocking until available)
+        //         return queue.take();
+        //     } catch (InterruptedException e) {
+        //         throw new RuntimeException("Interrupted while waiting for block result.", e);
+        //     }
+        // } else {
+
+        //     // creates a new execution context (blockContext)
+        //     // sets up block parameters and fields from the parameters and body.
+        //     // executtes the statements in the block's body and returns the result of the
+        //     // last statement.
+
+        //     // Execute the block body
+        //     GraceObject last = null;
+        //     for (ASTNode node : body) {
+        //         last = node.accept(blockContext, request.getVisitor());
+        //     }
+        //     return last; // Return the result of the last executed statement
+
+        // }
 
     }
 
