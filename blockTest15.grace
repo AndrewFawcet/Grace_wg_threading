@@ -1,4 +1,4 @@
-// seems to be doig calculations prior to going into the thread, thus not accessing the local in the other thread.
+// good test
 
 print ("----starting")
 
