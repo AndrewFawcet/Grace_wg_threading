@@ -48,7 +48,6 @@ public class GraceBlock implements GraceObject {
                 throw new RuntimeException("Invalid parameter in block: " + parameter);
             }
             blockContext.addField(name);
-            // System.out.println("Setting parameter: " + name + " with value: " + part.getArgs().get(i));
 
             blockContext.setField(name, part.getArgs().get(i)); 
         }
@@ -93,12 +92,16 @@ public class GraceBlock implements GraceObject {
 
             workerThread.start();
 
-            try {
-                // Main thread receives result from port1
-                return port1.receive();
-            } catch (InterruptedException e) {
-                throw new RuntimeException("Main thread interrupted while waiting for result.", e);
-            }
+            // returning this allows the main thread to continue.
+            return new GraceChannelWrapper(port1);
+            
+            // this forces threads to propogate sequentially
+            // try {
+            //     // Main thread receives result from port1
+            //     return port1.receive();
+            // } catch (InterruptedException e) {
+            //     throw new RuntimeException("Main thread interrupted while waiting for result.", e);
+            // }
         } else {
             // Non-threaded execution
             GraceObject last = null;
