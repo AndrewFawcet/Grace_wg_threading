@@ -19,7 +19,6 @@ class LocalTest {
     void setUp() {
     }
 
-
     @Test
     // threading causes this to always pass
     void localObjectWithNonLocalReferenceShouldFail() throws Exception {
