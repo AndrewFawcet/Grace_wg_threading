@@ -13,6 +13,6 @@ block.apply_thread(xObject, 1)
 block.apply_thread(xObject, 1)
 block.apply_thread(xObject, 1)
 block.apply_thread(xObject, 1)
-print (xObject.value)
+print ("final value is " + xObject.value)
 
 print ("-------seventeen ok")
