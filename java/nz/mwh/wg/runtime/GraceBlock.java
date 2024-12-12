@@ -82,7 +82,6 @@ public class GraceBlock implements GraceObject {
                     for (ASTNode node : body) {
                         last = node.accept(blockContext, request.getVisitor());
 
-                        // last = node.accept(new BaseObject(lexicalParent), request.getVisitor());
                     }
                     port2.send(last); // Send result to port1
                 } catch (InterruptedException e) {

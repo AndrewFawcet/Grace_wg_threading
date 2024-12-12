@@ -2,7 +2,7 @@
     "java.project.sourcePaths": [
         "test/java",
         "java",
-        "lib"
+        // "lib"    // maybe not needed?
     ],
     "java.project.referencedLibraries": [
         "lib/apiguardian-api-1.1.2.jar",
