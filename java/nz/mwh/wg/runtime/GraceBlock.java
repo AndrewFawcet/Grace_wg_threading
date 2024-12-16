@@ -12,10 +12,19 @@ public class GraceBlock implements GraceObject {
     private List<ASTNode> parameters;
     private List<ASTNode> body;
 
+    // Fields for thread communication
+    private Port<GraceObject> inPort;
+    private Port<GraceObject> outPort;
+
     public GraceBlock(GraceObject lexicalParent, List<ASTNode> parameters, List<ASTNode> body) {
         this.lexicalParent = lexicalParent;
         this.parameters = parameters;
         this.body = body;
+
+        // Initialize ports (shared across all threads using this block)
+        Channel<GraceObject> channel = new Channel<>(1); // Example channel with capacity 1
+        this.inPort = channel.createPort1(); // Port for receiving messages (main thread)
+        this.outPort = channel.createPort2(); // Port for sending messages (worker thread)
     }
 
     // handles incoming requests to the block
@@ -63,6 +72,11 @@ public class GraceBlock implements GraceObject {
             }
         }
 
+        // Add `__in__` and `__out__` to the block context
+        blockContext.addField("__in__", inPort);
+        blockContext.addField("__out__", outPort);
+
+
         if (apply_thread) {
             System.out.println("Setting up threading with channels...");
 
@@ -88,7 +102,8 @@ public class GraceBlock implements GraceObject {
                         last = node.accept(blockContext, request.getVisitor(), port2);
 
                     }
-                    port2.send(last); // Send result to port1 (main thread)
+                    // port2.send(last); // Send result to port1 (main thread)
+                    outPort.send(last); // Send result to the main thread
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Worker thread interrupted.", e);
                 }
@@ -116,6 +131,14 @@ public class GraceBlock implements GraceObject {
             return last; // Return the result of the last executed statement
 
         }
+    }
+    private String getParameterName(ASTNode parameter) {
+        if (parameter instanceof IdentifierDeclaration) {
+            return ((IdentifierDeclaration) parameter).getName();
+        } else if (parameter instanceof LexicalRequest) {
+            return ((LexicalRequest) parameter).getParts().get(0).getName();
+        }
+        throw new RuntimeException("Invalid parameter in block: " + parameter);
     }
 
     // Stub method to find the receiver object by name. Unimplemented
