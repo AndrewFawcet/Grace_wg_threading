@@ -72,10 +72,9 @@ public class GraceBlock implements GraceObject {
             }
         }
 
-        // Add `__in__` and `__out__` to the block context
-        blockContext.addField("__in__", inPort);
-        blockContext.addField("__out__", outPort);
-
+        // Add the `__in__` and `__out__` fields to the block context
+        blockContext.addField("__in__");
+        blockContext.addField("__out__");
 
         if (apply_thread) {
             System.out.println("Setting up threading with channels...");
@@ -87,9 +86,9 @@ public class GraceBlock implements GraceObject {
             Port<GraceObject> port1 = channel.createPort1(); // Main thread's end
             Port<GraceObject> port2 = channel.createPort2(); // Worker thread's end
 
-            // Add symbolic ports to the worker's lexical context
-            blockContext.addField("__in__", port2); // Worker thread's incoming port
-            blockContext.addField("__out__", port1); // Worker thread's outgoing port
+            // Assign ports explicitly for threading
+            blockContext.setField("__in__", port2); // Worker thread's incoming port
+            blockContext.setField("__out__", port1); // Worker thread's outgoing port
 
             // Pass port2 to the worker thread
             Thread workerThread = new Thread(() -> {
@@ -124,6 +123,9 @@ public class GraceBlock implements GraceObject {
             // }
         } else {
             // Non-threaded execution
+            blockContext.setField("__in__", inPort); // Assign incoming port (not needeed?)
+            blockContext.setField("__out__", outPort); // Assign outgoing port (not needeed?)
+
             GraceObject last = null;
             for (ASTNode node : body) {
                 last = node.accept(blockContext, request.getVisitor());
@@ -132,6 +134,7 @@ public class GraceBlock implements GraceObject {
 
         }
     }
+
     private String getParameterName(ASTNode parameter) {
         if (parameter instanceof IdentifierDeclaration) {
             return ((IdentifierDeclaration) parameter).getName();

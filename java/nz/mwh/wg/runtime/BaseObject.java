@@ -166,14 +166,6 @@ public class BaseObject implements GraceObject {
         });
     }
 
-    // overloading the making of fields for __in__ and __out__ in graceBlock
-    public void addField(String name, GraceObject value) {
-        if (fields.containsKey(name)) {
-            throw new IllegalArgumentException("Field '" + name + "' already exists.");
-        }
-        fields.put(name, value);
-    }
-
     public void addFieldWriter(String name) {
         methods.put(name + ":=(1)", request -> {
 
@@ -248,7 +240,6 @@ public class BaseObject implements GraceObject {
         throw new RuntimeException("No return context found");
     }
 
-
     // TODO use this for enforcing access to local objects fields or methods?
     public Map<String, GraceObject> getFields() {
 
@@ -261,7 +252,6 @@ public class BaseObject implements GraceObject {
             //             "Local Violation: Local object, cannot access a local object field from another thread.");
             // }
         }
-
         return fields;
     }
 
@@ -269,11 +259,9 @@ public class BaseObject implements GraceObject {
         // if (isLocal) { // Only log for local-annotated objects
             // Thread thread = Thread.currentThread();
             // objectThread = thread; // Update the current thread
-            // System.out.println("hello----------------------------------------------------+" + thread.getName());
         // }
     // }
     
-
     private void validateThreadAccess() {
         // System.out.println("checking if it is looking at a local object.");
         if (isLocal) {
