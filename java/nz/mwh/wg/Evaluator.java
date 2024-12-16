@@ -322,23 +322,17 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             return done;
         } else if (node.getTarget() instanceof ExplicitRequest) {
             ExplicitRequest target = (ExplicitRequest) node.getTarget();
-            System.out.println(target.toString());
             String name = target.getParts().get(0).getName();
-            System.out.println(name);
             List<RequestPartR> parts = new ArrayList<>();
             parts.add(new RequestPartR(name + ":=", Collections.singletonList(node.getValue().accept(context, this))));
-            System.out.println("Collections.singletonList - the value in the node  "
-                    + Collections.singletonList(node.getValue().accept(context, this)));
-            System.out.println("this " + this.toString());
             Request request = new Request(this, parts);
-            System.out.println("request name " + request.getName());
             GraceObject receiver = target.getReceiver().accept(context, this);
 
             // Print reference count if receiver is an instance of BaseObject
             // TODO remove?
             if (receiver instanceof BaseObject) {
                 int refCount = ((BaseObject) receiver).getReferenceCount();
-                System.out.println("Receiver's reference count: " + refCount);
+                // System.out.println("Receiver's reference count: " + refCount);
                 // throw a fail in here if ref count > 0;
 
             } else {
