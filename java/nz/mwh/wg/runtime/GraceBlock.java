@@ -49,7 +49,7 @@ public class GraceBlock implements GraceObject {
             }
             blockContext.addField(name);
 
-            blockContext.setField(name, part.getArgs().get(i)); 
+            blockContext.setField(name, part.getArgs().get(i));
         }
 
         for (ASTNode stmt : body) {
@@ -72,7 +72,11 @@ public class GraceBlock implements GraceObject {
             // Create two ports
             Port<GraceObject> port1 = channel.createPort1(); // Main thread's end
             Port<GraceObject> port2 = channel.createPort2(); // Worker thread's end
-        
+
+            // Add symbolic ports to the worker's lexical context
+            blockContext.addField("__in__", port2); // Worker thread's incoming port
+            blockContext.addField("__out__", port1); // Worker thread's outgoing port
+
             // Pass port2 to the worker thread
             Thread workerThread = new Thread(() -> {
                 try {
@@ -94,13 +98,14 @@ public class GraceBlock implements GraceObject {
 
             // returning this allows the main thread to continue.
             return new GraceChannelWrapper(port1);
-            
+
             // this forces threads to propogate sequentially
             // try {
-            //     // Main thread receives result from port1
-            //     return port1.receive();
+            // // Main thread receives result from port1
+            // return port1.receive();
             // } catch (InterruptedException e) {
-            //     throw new RuntimeException("Main thread interrupted while waiting for result.", e);
+            // throw new RuntimeException("Main thread interrupted while waiting for
+            // result.", e);
             // }
         } else {
             // Non-threaded execution

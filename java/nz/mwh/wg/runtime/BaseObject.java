@@ -166,6 +166,14 @@ public class BaseObject implements GraceObject {
         });
     }
 
+    // overloading the making of fields for __in__ and __out__ in graceBlock
+    public void addField(String name, GraceObject value) {
+        if (fields.containsKey(name)) {
+            throw new IllegalArgumentException("Field '" + name + "' already exists.");
+        }
+        fields.put(name, value);
+    }
+
     public void addFieldWriter(String name) {
         methods.put(name + ":=(1)", request -> {
 
