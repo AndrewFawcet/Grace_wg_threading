@@ -70,9 +70,9 @@ public class GraceBlock implements GraceObject {
             Channel<GraceObject> channel = new Channel<>(1);
 
             // Create two ports
-            Port<GraceObject> port1 = channel.createPort1();
-            Port<GraceObject> port2 = channel.createPort2();
-
+            Port<GraceObject> port1 = channel.createPort1(); // Main thread's end
+            Port<GraceObject> port2 = channel.createPort2(); // Worker thread's end
+        
             // Pass port2 to the worker thread
             Thread workerThread = new Thread(() -> {
                 try {
@@ -81,10 +81,10 @@ public class GraceBlock implements GraceObject {
 
                         // i think this needs to have the port2 sent to the other thread
                         // last = node.accept(blockContext, request.getVisitor(), port2); // like this??
-                        last = node.accept(blockContext, request.getVisitor());
+                        last = node.accept(blockContext, request.getVisitor(), port2);
 
                     }
-                    port2.send(last); // Send result to port1
+                    port2.send(last); // Send result to port1 (main thread)
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Worker thread interrupted.", e);
                 }

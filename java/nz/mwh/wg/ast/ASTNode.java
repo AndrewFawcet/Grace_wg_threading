@@ -1,10 +1,18 @@
 package nz.mwh.wg.ast;
 
 import nz.mwh.wg.Visitor;
+import nz.mwh.wg.runtime.GraceObject;
+import nz.mwh.wg.runtime.Port;
 
 public abstract class ASTNode{
 
     public abstract <T> T accept(T context, Visitor<T> visitor);
+
+    // Overloaded accept method for threaded communication
+    public <T> T accept(T context, Visitor<T> visitor, Port<GraceObject> port) {
+        // Default implementation calls the original accept method
+        return accept(context, visitor);
+    }
 
     protected static String escapeString(String value) {
         
