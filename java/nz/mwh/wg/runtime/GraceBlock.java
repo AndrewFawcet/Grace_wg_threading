@@ -52,9 +52,7 @@ public class GraceBlock implements GraceObject {
             blockContext.setField(name, part.getArgs().get(i)); 
         }
 
-        for (
-
-        ASTNode stmt : body) {
+        for (ASTNode stmt : body) {
             if (stmt instanceof DefDecl) {
                 DefDecl def = (DefDecl) stmt;
                 blockContext.addField(def.getName());
@@ -80,6 +78,9 @@ public class GraceBlock implements GraceObject {
                 try {
                     GraceObject last = null;
                     for (ASTNode node : body) {
+
+                        // i think this needs to have the port2 sent to the other thread
+                        // last = node.accept(blockContext, request.getVisitor(), port2); // like this??
                         last = node.accept(blockContext, request.getVisitor());
 
                     }

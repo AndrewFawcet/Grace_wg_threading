@@ -9,6 +9,11 @@ public class GraceChannelWrapper implements GraceObject {
         this.port = port;
     }
 
+    // Have a send method in here??
+    public void send(GraceObject obj) throws InterruptedException {
+        port.send(obj);
+    }
+
     // Method to retrieve the result when ready
     public GraceObject getResult() {
         try {
