@@ -16,14 +16,14 @@ public class GracePort<T> implements GraceObject {
         this.readQueue = readQueue;
     }
 
-    public void send(T message) throws InterruptedException {
+    public void put(T message) throws InterruptedException {
         if (closed) {
             throw new IllegalStateException("Port is closed and cannot accept new messages.");
         }
         writeQueue.put(message); // Blocks if the queue is full
     }
 
-    public T receive() throws InterruptedException {
+    public T take() throws InterruptedException {
         // return readQueue.take(); // Blocks if the queue is empty
         T message = readQueue.take(); // Blocks if the queue is empty
         if (message == null) { // Null indicates the port has been closed
