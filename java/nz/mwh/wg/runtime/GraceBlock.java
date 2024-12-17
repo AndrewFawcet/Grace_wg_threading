@@ -97,7 +97,6 @@ public class GraceBlock implements GraceObject {
                     for (ASTNode node : body) {
 
                         // i think this needs to have the port2 sent to the other thread
-                        // last = node.accept(blockContext, request.getVisitor(), port2); // like this??
                         last = node.accept(blockContext, request.getVisitor(), port2);
 
                     }
