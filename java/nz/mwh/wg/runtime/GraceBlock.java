@@ -12,15 +12,10 @@ public class GraceBlock implements GraceObject {
     private List<ASTNode> parameters;
     private List<ASTNode> body;
 
-    // Fields for thread communication
-    private Port<GraceObject> inPort;
-    private Port<GraceObject> outPort;
-
     public GraceBlock(GraceObject lexicalParent, List<ASTNode> parameters, List<ASTNode> body) {
         this.lexicalParent = lexicalParent;
         this.parameters = parameters;
         this.body = body;
-
     }
 
     // handles incoming requests to the block
@@ -72,9 +67,10 @@ public class GraceBlock implements GraceObject {
             System.out.println("Setting up threading with channels...");
 
             // Create a channel with capacity 1 (proof of concept)
-            Channel<GraceObject> channel = new Channel<>(1);
+            Channel<GraceObject> channel = new Channel<>(10);
+            Channel<GraceObject> channel = new Channel<>(10);
 
-            Port<GraceObject> resultPort = spawn(channel, () -> {
+            GracePort<GraceObject> resultPort = spawn(channel, () -> {
                 try {
                     GraceObject last = null;
                     for (ASTNode node : body) {
@@ -98,17 +94,17 @@ public class GraceBlock implements GraceObject {
         }
     }
 
-    private Port<GraceObject> spawn(Channel<GraceObject> channel, Runnable task) {
-        Port<GraceObject> port1 = channel.createPort1(); // Main thread's end
-        Port<GraceObject> port2 = channel.createPort2(); // Worker thread's end
+    private GracePort<GraceObject> spawn(Channel<GraceObject> channel, Runnable task) {
+        GracePort<GraceObject> port1 = channel.createPort1(); // Main thread's end
+        GracePort<GraceObject> port2 = channel.createPort2(); // Worker thread's end
 
         Thread workerThread = new Thread(() -> {
             task.run();
-            try {
-                port2.close(); // completion
-            } catch (Exception e) {
-                throw new RuntimeException("Error closing port in thread.", e);
-            }
+            // try {
+            //     port2.close(); // completion
+            // } catch (Exception e) {
+            //     throw new RuntimeException("Error closing port in thread.", e);
+            // }
         });
         workerThread.start();
 

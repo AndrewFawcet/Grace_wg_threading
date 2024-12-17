@@ -6,12 +6,12 @@ import java.util.concurrent.BlockingQueue;
 
 // This class represents one end of a communication channel that can send and receive messages.
 // The Port class encapsulates a bidirectional communication mechanism using two blocking queues, enabling synchronized message passing between threads while supporting blocking behavior for backpressure.
-public class Port<T> implements GraceObject {
+public class GracePort<T> implements GraceObject {
     private final BlockingQueue<T> writeQueue;
     private final BlockingQueue<T> readQueue;
     private volatile boolean closed = false; // Flag to indicate closure
 
-    public Port(BlockingQueue<T> writeQueue, BlockingQueue<T> readQueue) {
+    public GracePort(BlockingQueue<T> writeQueue, BlockingQueue<T> readQueue) {
         this.writeQueue = writeQueue;
         this.readQueue = readQueue;
     }

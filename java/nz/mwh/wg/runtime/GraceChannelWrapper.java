@@ -3,9 +3,9 @@ package nz.mwh.wg.runtime;
 // import nz.mwh.wg.ast.*;
 
 public class GraceChannelWrapper implements GraceObject {
-    private final Port<GraceObject> port;
+    private final GracePort<GraceObject> port;
 
-    public GraceChannelWrapper(Port<GraceObject> port) {
+    public GraceChannelWrapper(GracePort<GraceObject> port) {
         this.port = port;
     }
 

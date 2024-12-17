@@ -16,11 +16,11 @@ public class Channel<T> {
         this.queue2 = new LinkedBlockingQueue<>(capacity);
     }
 
-    public Port<T> createPort1() {
-        return new Port<>(queue1, queue2);
+    public GracePort<T> createPort1() {
+        return new GracePort<>(queue1, queue2);
     }
 
-    public Port<T> createPort2() {
-        return new Port<>(queue2, queue1);
+    public GracePort<T> createPort2() {
+        return new GracePort<>(queue2, queue1);
     }
 }
