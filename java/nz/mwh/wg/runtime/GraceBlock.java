@@ -66,22 +66,53 @@ public class GraceBlock implements GraceObject {
         if (apply_thread) {
             System.out.println("Setting up threading with channels...");
 
-            // Create a channel with capacity 1 (proof of concept)
-            Channel<GraceObject> channel = new Channel<>(10);
-            Channel<GraceObject> channel = new Channel<>(10);
+            // // Create a channel with capacity 1 (proof of concept)
+            // Channel<GraceObject> channel = new Channel<>(10);
 
-            GracePort<GraceObject> resultPort = spawn(channel, () -> {
+            // GracePort<GraceObject> port1 = channel.createPort1(); // Main thread's port
+            // GracePort<GraceObject> port2 = channel.createPort2(); // Worker thread's port
+
+            BlockingQueue<GraceObject> toWorker = new LinkedBlockingQueue<>(1);
+            BlockingQueue<GraceObject> fromWorker = new LinkedBlockingQueue<>(1);
+
+            // Spawn a worker thread
+            Thread workerThread = new Thread(() -> {
                 try {
-                    GraceObject last = null;
-                    for (ASTNode node : body) {
-                        last = node.accept(blockContext, request.getVisitor()); // more intermediate results could get sent to main thread
+
+                    // Worker thread listens for tasks and sends results back
+                    while (true) {
+                        GraceObject task = toWorker.take(); // Receive a task from the main thread
+                        if (task == null) {
+                            break; // Exit on null (signifies end of communication)
+                        }
+
+                        System.out.println("Worker received task: " + task);
+                        GraceObject last = null;
+                        // Process the task (e.g., execute AST nodes)
+                        for (ASTNode node : body) {
+                            last = node.accept(blockContext, request.getVisitor());
+                        }
+
+                        fromWorker.put(last); // Send the result back to the main thread
                     }
-                    channel.createPort2().send(last); // Send the result to the main thread
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Worker thread interrupted.", e);
                 }
             });
-            return new GraceChannelWrapper(resultPort);
+            
+            workerThread.start();
+
+
+            // Send a task to the worker thread
+            try {
+                // toWorker.put(new GraceObject() {}); // Placeholder object; replace with actual task logic if needed
+                GraceObject result = fromWorker.take(); // Wait for result
+                toWorker.put(null); // Send termination signal
+                workerThread.join(); // Ensure clean thread termination
+                return result;
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Thread communication error.", e);
+            }
 
         } else {
             // Non-threaded execution
@@ -100,16 +131,12 @@ public class GraceBlock implements GraceObject {
 
         Thread workerThread = new Thread(() -> {
             task.run();
-            // try {
-            //     port2.close(); // completion
-            // } catch (Exception e) {
-            //     throw new RuntimeException("Error closing port in thread.", e);
-            // }
         });
         workerThread.start();
 
         return port1; // Return the main thread's end
     }
+
     private String getParameterName(ASTNode parameter) {
         if (parameter instanceof IdentifierDeclaration) {
             return ((IdentifierDeclaration) parameter).getName();
