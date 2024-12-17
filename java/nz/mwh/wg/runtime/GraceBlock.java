@@ -21,10 +21,6 @@ public class GraceBlock implements GraceObject {
         this.parameters = parameters;
         this.body = body;
 
-        // Initialize ports (shared across all threads using this block)
-        Channel<GraceObject> channel = new Channel<>(1); // Example channel with capacity 1
-        this.inPort = channel.createPort1(); // Port for receiving messages (main thread)
-        this.outPort = channel.createPort2(); // Port for sending messages (worker thread)
     }
 
     // handles incoming requests to the block
@@ -72,59 +68,27 @@ public class GraceBlock implements GraceObject {
             }
         }
 
-        // Add the `__in__` and `__out__` fields to the block context
-        blockContext.addField("__in__");
-        blockContext.addField("__out__");
-
         if (apply_thread) {
             System.out.println("Setting up threading with channels...");
 
             // Create a channel with capacity 1 (proof of concept)
             Channel<GraceObject> channel = new Channel<>(1);
 
-            // Create two ports
-            Port<GraceObject> port1 = channel.createPort1(); // Main thread's end
-            Port<GraceObject> port2 = channel.createPort2(); // Worker thread's end
-
-            // Assign ports explicitly for threading
-            blockContext.setField("__in__", port2); // Worker thread's incoming port
-            blockContext.setField("__out__", port1); // Worker thread's outgoing port
-
-            // Pass port2 to the worker thread
-            Thread workerThread = new Thread(() -> {
+            Port<GraceObject> resultPort = spawn(channel, () -> {
                 try {
                     GraceObject last = null;
                     for (ASTNode node : body) {
-
-                        // i think this needs to have the port2 sent to the other thread
-                        last = node.accept(blockContext, request.getVisitor(), port2);
-
+                        last = node.accept(blockContext, request.getVisitor()); // more intermediate results could get sent to main thread
                     }
-                    // port2.send(last); // Send result to port1 (main thread)
-                    outPort.send(last); // Send result to the main thread
+                    channel.createPort2().send(last); // Send the result to the main thread
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Worker thread interrupted.", e);
                 }
             });
+            return new GraceChannelWrapper(resultPort);
 
-            workerThread.start();
-
-            // returning this allows the main thread to continue.
-            return new GraceChannelWrapper(port1);
-
-            // this forces threads to propogate sequentially
-            // try {
-            // // Main thread receives result from port1
-            // return port1.receive();
-            // } catch (InterruptedException e) {
-            // throw new RuntimeException("Main thread interrupted while waiting for
-            // result.", e);
-            // }
         } else {
             // Non-threaded execution
-            blockContext.setField("__in__", inPort); // Assign incoming port (not needeed?)
-            blockContext.setField("__out__", outPort); // Assign outgoing port (not needeed?)
-
             GraceObject last = null;
             for (ASTNode node : body) {
                 last = node.accept(blockContext, request.getVisitor());
@@ -134,6 +98,22 @@ public class GraceBlock implements GraceObject {
         }
     }
 
+    private Port<GraceObject> spawn(Channel<GraceObject> channel, Runnable task) {
+        Port<GraceObject> port1 = channel.createPort1(); // Main thread's end
+        Port<GraceObject> port2 = channel.createPort2(); // Worker thread's end
+
+        Thread workerThread = new Thread(() -> {
+            task.run();
+            try {
+                port2.close(); // completion
+            } catch (Exception e) {
+                throw new RuntimeException("Error closing port in thread.", e);
+            }
+        });
+        workerThread.start();
+
+        return port1; // Return the main thread's end
+    }
     private String getParameterName(ASTNode parameter) {
         if (parameter instanceof IdentifierDeclaration) {
             return ((IdentifierDeclaration) parameter).getName();

@@ -9,6 +9,7 @@ import java.util.concurrent.BlockingQueue;
 public class Port<T> implements GraceObject {
     private final BlockingQueue<T> writeQueue;
     private final BlockingQueue<T> readQueue;
+    private volatile boolean closed = false; // Flag to indicate closure
 
     public Port(BlockingQueue<T> writeQueue, BlockingQueue<T> readQueue) {
         this.writeQueue = writeQueue;
@@ -16,11 +17,25 @@ public class Port<T> implements GraceObject {
     }
 
     public void send(T message) throws InterruptedException {
+        if (closed) {
+            throw new IllegalStateException("Port is closed and cannot accept new messages.");
+        }
         writeQueue.put(message); // Blocks if the queue is full
     }
 
     public T receive() throws InterruptedException {
-        return readQueue.take(); // Blocks if the queue is empty
+        // return readQueue.take(); // Blocks if the queue is empty
+        T message = readQueue.take(); // Blocks if the queue is empty
+        if (message == null) { // Null indicates the port has been closed
+            throw new IllegalStateException("Port is closed and no further messages are available.");
+        }
+        return message;
+    }
+
+    public void close() throws InterruptedException {
+        closed = true;
+        writeQueue.put(null);   // for graceful closure.
+        readQueue.put(null);    // for graceful closure.
     }
 
     @Override
