@@ -3,6 +3,8 @@ package nz.mwh.wg.runtime;
 import java.util.List;
 import java.util.concurrent.*; // For threading and Future
 
+import javax.sound.sampled.Port;
+
 import nz.mwh.wg.ast.*;
 
 // This class represents a block of code with parameters and a body that can be invoked directly or in a separate thread.
@@ -72,8 +74,28 @@ public class GraceBlock implements GraceObject {
             // GracePort<GraceObject> port1 = channel.createPort1(); // Main thread's port
             // GracePort<GraceObject> port2 = channel.createPort2(); // Worker thread's port
 
+            // two queues for full duplex communication
             BlockingQueue<GraceObject> toWorker = new LinkedBlockingQueue<>(1);
             BlockingQueue<GraceObject> fromWorker = new LinkedBlockingQueue<>(1);
+
+            GracePort<GraceObject> portForWorker = new GracePort<>(toWorker, fromWorker); // write Q, read Q
+            GracePort<GraceObject> portForMain = new GracePort<>(fromWorker, toWorker);
+
+
+            // GracePort<GraceObject> mainGracePort = spawn(portForWorker, () -> {
+            //     try {
+            //         GraceObject last = null;
+            //         for (ASTNode node : body) {
+            //             last = node.accept(blockContext, request.getVisitor()); // more intermediate results could get sent to main thread
+            //         }
+            //         fromWorker.put(last); // Send the result to the main thread
+            //     } catch (InterruptedException e) {
+            //         throw new RuntimeException("Worker thread interrupted.", e);
+            //     }
+            // });
+            // // return new GraceChannelWrapper(fromWorker.take());
+            // return mainGracePort;
+
 
             // Spawn a worker thread
             Thread workerThread = new Thread(() -> {
@@ -125,16 +147,14 @@ public class GraceBlock implements GraceObject {
         }
     }
 
-    private GracePort<GraceObject> spawn(Channel<GraceObject> channel, Runnable task) {
-        GracePort<GraceObject> port1 = channel.createPort1(); // Main thread's end
-        GracePort<GraceObject> port2 = channel.createPort2(); // Worker thread's end
+    private GracePort<GraceObject> spawn(BlockingQueue<GraceObject> fromWorker, Runnable task) {
 
         Thread workerThread = new Thread(() -> {
             task.run();
         });
         workerThread.start();
 
-        return port1; // Return the main thread's end
+        return fromWorker; // Return the main thread's end
     }
 
     private String getParameterName(ASTNode parameter) {
