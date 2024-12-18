@@ -25,14 +25,12 @@ public class GraceBlock implements GraceObject {
     public GraceObject request(Request request) {
         if (request.parts.size() == 1) {
             if (request.parts.get(0).getName().equals("apply")) {
-                return apply(request, request.parts.get(0), false);
+                return apply(request, request.parts.get(0));
             }
             if (request.parts.get(0).getName().equals("apply_thread")) {
                 // threading
                 System.out.println("beginning threading");
 
-                
-                
                 GraceObject response = spawn(request);
 
                 return response;
@@ -54,7 +52,7 @@ public class GraceBlock implements GraceObject {
                 System.out.println("Worker thread started.");
                 Request incomingRequest = portWorker.receive(); // Wait for request
                 // Execute the block and send the result back
-                GraceObject result = apply( incomingRequest, incomingRequest.parts.get(0), true);
+                GraceObject result = apply( incomingRequest, incomingRequest.parts.get(0));
                 portWorker.send(result); // Send response
             } catch (InterruptedException e) {
                 throw new RuntimeException("Worker thread interrupted.", e);
@@ -62,20 +60,29 @@ public class GraceBlock implements GraceObject {
         });
 
         workerThread.start();
-
-        // Send the request and receive the response
         try {
-            portMain.send(request); // Send request to the worker
-            GraceObject response = portMain.receive(); // Wait for response from worker
-            System.out.println("Main thread received response: " + response);
-            return response; // Return the response to the caller
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Error in communication between threads.", e);
-        }
+                portMain.send(request); // Send request to the worker
+                // GraceObject response = portMain.receive(); // Wait for response from worker
+                System.out.println("Worker thread sending GraceChannelWrapper ");
+                return new GraceChannelWrapper(portMain);
+            
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Error in communication between threads.", e);
+            }
+
+        // // Send the request and receive the response
+        // try {
+        //     portMain.send(request); // Send request to the worker
+        //     GraceObject response = portMain.receive(); // Wait for response from worker
+        //     System.out.println("Main thread received response: " + response);
+        //     return response; // Return the response to the caller
+        // } catch (InterruptedException e) {
+        //     throw new RuntimeException("Error in communication between threads.", e);
+        // }
     }
 
 
-    private GraceObject apply(Request request, RequestPartR part, boolean apply_thread) {
+    private GraceObject apply(Request request, RequestPartR part) {
         BaseObject blockContext = new BaseObject(lexicalParent);
 
         // Setting up the block parameters
@@ -112,8 +119,6 @@ public class GraceBlock implements GraceObject {
             return last; // Return the result of the last executed statement
 
         }
-    
-
 
     private String getParameterName(ASTNode parameter) {
         if (parameter instanceof IdentifierDeclaration) {

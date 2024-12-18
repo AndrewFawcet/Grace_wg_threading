@@ -1,61 +1,67 @@
 package nz.mwh.wg.runtime;
 
 // import nz.mwh.wg.ast.*;
+import java.util.concurrent.CompletableFuture;
 
 public class GraceChannelWrapper implements GraceObject {
-    private final GracePort<GraceObject> port;
+    private final GracePort<Request, GraceObject> port;
 
-    public GraceChannelWrapper(GracePort<GraceObject> port) {
+    public GraceChannelWrapper(GracePort<Request, GraceObject> port) {
         this.port = port;
     }
 
-    // Have a send method in here??
-    // Method to send a message to the worker thread
-    public void send(GraceObject message) {
+    //  // Non-blocking send using CompletableFuture
+    //  public CompletableFuture<Void> sendAsync(GraceObject message) {
+    //     return CompletableFuture.runAsync(() -> {
+    //         try {
+    //             port.send(message);
+    //         } catch (InterruptedException e) {
+    //             throw new RuntimeException("Interrupted while sending message to worker thread.", e);
+    //         }
+    //     });
+    // }
+
+    // // Non-blocking receive using CompletableFuture
+    // public CompletableFuture<GraceObject> receiveAsync() {
+    //     return CompletableFuture.supplyAsync(() -> {
+    //         try {
+    //             return port.receive();
+    //         } catch (InterruptedException e) {
+    //             throw new RuntimeException("Interrupted while waiting for response from worker thread.", e);
+    //         }
+    //     });
+    // }
+
+    public void sendRequest(Request request) {
         try {
-            port.send(message);
+            port.send(request);
         } catch (InterruptedException e) {
-            throw new RuntimeException("Interrupted while sending message to worker thread.", e);
+            throw new RuntimeException("Interrupted while sending request to worker thread.", e);
         }
     }
-
-    // Method to retrieve a message from the worker thread
-    public GraceObject receive() {
+    
+    public GraceObject receiveResponse() {
         try {
             return port.receive();
         } catch (InterruptedException e) {
-            throw new RuntimeException("Interrupted while waiting for message from worker thread.", e);
+            throw new RuntimeException("Interrupted while waiting for response from worker thread.", e);
         }
     }
 
-    // // Method to retrieve the result when ready
-    // public GraceObject getResult() {
-    //     try {
-    //         return port.receive(); // Blocks until a result is available
-    //     } catch (InterruptedException e) {
-    //         throw new RuntimeException("Interrupted while waiting for result.", e);
-    //     }
-    // }
     @Override
     public GraceObject request(Request request) {
         if (request.parts.size() == 1) {
             String methodName = request.parts.get(0).getName();
             if (methodName.equals("getResult")) {
-                return receive();
+                return receiveResponse();
             } else if (methodName.equals("sendMessage")) {
-                send(request.parts.get(0).getArgs().get(0)); // Assuming 1 argument
+                sendRequest(request);   // dodgy?
+                // send(request.parts.get(0).getArgs().get(0)); // Assuming 1 argument
                 // return GraceObject.NIL; // or appropriate return
             }
         }
         throw new RuntimeException("No such method: " + request.getName());
     }
-    // @Override
-    // public GraceObject request(Request request) {
-    //     if (request.parts.size() == 1 && request.parts.get(0).getName().equals("getResult")) {
-    //         return getResult();
-    //     }
-    //     throw new RuntimeException("No such method: " + request.getName());
-    // }
 
     @Override
     public GraceObject findReceiver(String name) {
