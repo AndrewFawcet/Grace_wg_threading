@@ -6,36 +6,25 @@ import java.util.concurrent.BlockingQueue;
 
 // This class represents one end of a communication channel that can send and receive messages.
 // The Port class encapsulates a bidirectional communication mechanism using two blocking queues, enabling synchronized message passing between threads while supporting blocking behavior for backpressure.
-public class GracePort<T> implements GraceObject {
-    private final BlockingQueue<T> writeQueue;
-    private final BlockingQueue<T> readQueue;
-    private volatile boolean closed = false; // Flag to indicate closure
+// Represents one end of a duplex channel, with the ability to send and receive messages of different types.
+// GracePort provides an abstraction over BlockingQueue to handle message passing in a thread-safe manner.
+public class GracePort<SendT, ReceiveT> implements GraceObject{
+    private final BlockingQueue<SendT> sendQueue;
+    private final BlockingQueue<ReceiveT> receiveQueue;
 
-    public GracePort(BlockingQueue<T> writeQueue, BlockingQueue<T> readQueue) {
-        this.writeQueue = writeQueue;
-        this.readQueue = readQueue;
+    public GracePort(BlockingQueue<SendT> sendQueue, BlockingQueue<ReceiveT> receiveQueue) {
+        this.sendQueue = sendQueue;
+        this.receiveQueue = receiveQueue;
     }
 
-    public void put(T message) throws InterruptedException {
-        if (closed) {
-            throw new IllegalStateException("Port is closed and cannot accept new messages.");
-        }
-        writeQueue.put(message); // Blocks if the queue is full
+    // Sends a message to the connected port
+    public void send(SendT message) throws InterruptedException {
+        sendQueue.put(message);
     }
 
-    public T take() throws InterruptedException {
-        // return readQueue.take(); // Blocks if the queue is empty
-        T message = readQueue.take(); // Blocks if the queue is empty
-        if (message == null) { // Null indicates the port has been closed
-            throw new IllegalStateException("Port is closed and no further messages are available.");
-        }
-        return message;
-    }
-
-    public void close() throws InterruptedException {
-        closed = true;
-        writeQueue.put(null);   // for graceful closure.
-        readQueue.put(null);    // for graceful closure.
+    // Receives a message from the connected port
+    public ReceiveT receive() throws InterruptedException {
+        return receiveQueue.take();
     }
 
     @Override

@@ -5,7 +5,7 @@ def xObject := object{
     var value :=  1 
 }
 
-var block := {x, y ->  while {x.value < 10} do {
+var block := {x, y ->  while {x.value < 1000} do {
         x.value := x.value + y print (xObject.value)
         } 
     }
