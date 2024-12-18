@@ -44,7 +44,7 @@ public class GraceBlock implements GraceObject {
 
         DuplexChannel<Request, GraceObject> channel = new DuplexChannel<>(10);
         GracePort<Request, GraceObject> portMain = channel.createPort1(); // Main thread's port
-        GracePort<GraceObject, Request> portWorker = channel.createPort2(); // Main thread's port
+        GracePort<GraceObject, Request> portWorker = channel.createPort2(); // Worker thread's port
 
         // Spawn the thread
         Thread workerThread = new Thread(() -> {
@@ -60,25 +60,25 @@ public class GraceBlock implements GraceObject {
         });
 
         workerThread.start();
-        try {
-                portMain.send(request); // Send request to the worker
-                // GraceObject response = portMain.receive(); // Wait for response from worker
-                System.out.println("Worker thread sending GraceChannelWrapper ");
-                return new GraceChannelWrapper(portMain);
-            
-            } catch (InterruptedException e) {
-                throw new RuntimeException("Error in communication between threads.", e);
-            }
-
-        // // Send the request and receive the response
         // try {
-        //     portMain.send(request); // Send request to the worker
-        //     GraceObject response = portMain.receive(); // Wait for response from worker
-        //     System.out.println("Main thread received response: " + response);
-        //     return response; // Return the response to the caller
-        // } catch (InterruptedException e) {
-        //     throw new RuntimeException("Error in communication between threads.", e);
-        // }
+        //         portMain.send(request); // Send request to the worker
+        //         // GraceObject response = portMain.receive(); // Wait for response from worker
+        //         System.out.println("Worker thread sending GraceChannelWrapper ");
+        //         // return new GraceWorkerPortWrapper(portMain);   // for an async return
+            
+        //     } catch (InterruptedException e) {
+        //         throw new RuntimeException("Error in communication between threads.", e);
+        //     }
+
+        // Send the request and receive the response
+        try {
+            portMain.send(request); // Send request to the worker
+            GraceObject response = portMain.receive(); // Wait for response from worker
+            System.out.println("Main thread received response: " + response);
+            return response; // Return the response to the caller
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Error in communication between threads.", e);
+        }
     }
 
 
