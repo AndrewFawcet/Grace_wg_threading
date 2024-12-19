@@ -54,14 +54,14 @@ public class GraceWorkerPortWrapper implements GraceObject {
     @Override
     public GraceObject request(Request request) {
         if (request.parts.size() == 1) {
-            String methodName = request.parts.get(0).getName();
-            if (methodName.equals("getResult")) {
-                return receiveResponse();
-            } else if (methodName.equals("sendMessage")) {
-                sendRequest(request); // dodgy?
-                // send(request.parts.get(0).getArgs().get(0)); // Assuming 1 argument
-                // return GraceObject.NIL; // or appropriate return
-            }
+            // String methodName = request.parts.get(0).getName();
+            // if (methodName.equals("getResult")) {
+            //     return receiveResponse();
+            // } else if (methodName.equals("sendMessage")) {
+            //     sendRequest(request); // dodgy?
+            //     // send(request.parts.get(0).getArgs().get(0)); // Assuming 1 argument
+            //     // return GraceObject.NIL; // or appropriate return
+            // }
         }
         throw new RuntimeException("No such method: " + request.getName());
     }
