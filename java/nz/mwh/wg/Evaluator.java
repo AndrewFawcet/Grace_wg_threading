@@ -417,6 +417,24 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     static BaseObject basePrelude() {
 
         BaseObject lexicalParent = new BaseObject(null);
+
+        lexicalParent.addMethod("spawn(1)", request -> {
+            GraceBlock block = (GraceBlock)request.getParts().get(0).getArgs().get(0);
+            DuplexChannel dchan1 = new DuplexChannel(1);
+            DuplexChannel dchan2 = new DuplexChannel(1);
+            GraceChannel chan1 = new GraceChannel(dchan1.createPort1(), dchan2.createPort1());
+            GraceChannel chan2 = new GraceChannel(dchan2.createPort2(), dchan1.createPort2());
+            new Thread(() -> {
+                try {
+                    block.request(new Request(new Evaluator(),
+                        Collections.singletonList(new RequestPartR("apply", Collections.singletonList(chan1)))));
+                } catch (ReturnException e) {
+                    System.out.println("Thread returned: " + e.getValue());
+                }
+            }).start();
+            return chan2;
+        });
+        
         lexicalParent.addMethod("print(1)", request -> {
             System.out.println(request.getParts().get(0).getArgs().get(0).toString());
             return done;
