@@ -8,15 +8,16 @@ public abstract class ASTNode{
 
     public abstract <T> T accept(T context, Visitor<T> visitor);
 
-    // Overloaded accept method for threaded communication
-    // public <T> T accept(T context, Visitor<T> visitor, GracePort<GraceObject> port) {
-    //     // Default implementation calls the original accept method
-    //     return accept(context, visitor);
-    // }
-    public <T, SendT, ReceiveT> T accept(T context, Visitor<T> visitor, GracePort<SendT, ReceiveT> port) {
+    // Overloaded accept method for threaded communication, does not use generics
+    public GraceObject accept(GraceObject context, Visitor<GraceObject> visitor, GracePort port) {
         // Default implementation calls the original accept method
-        return accept(context, visitor);  // Assuming another accept method exists for this type
+        return accept(context, visitor);
     }
+    //TODO fix up below with generics if this method is needed... 
+    // public <T, SendT, ReceiveT> T accept(T context, Visitor<T> visitor, GracePort port) {
+    //     // Default implementation calls the original accept method
+    //     return accept(context, visitor);  // Assuming another accept method exists for this type
+    // }
 
 
     protected static String escapeString(String value) {
