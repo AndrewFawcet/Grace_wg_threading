@@ -13,7 +13,7 @@ public abstract class ASTNode{
         // Default implementation calls the original accept method
         return accept(context, visitor);
     }
-    //TODO fix up below with generics if this method is needed... 
+    // with generics as alternative... 
     // public <T, SendT, ReceiveT> T accept(T context, Visitor<T> visitor, GracePort port) {
     //     // Default implementation calls the original accept method
     //     return accept(context, visitor);  // Assuming another accept method exists for this type

@@ -9,30 +9,23 @@ var objectX:= object {
 }
 
 
-method bar is thread {
-        print ("meth")
-        print ("meth")
-        print ("meth")
-        print ("meth")
-        print ("meth")        
-    }
-
-
-print ""
-print ""
+objectX.foo()
 
 
 print "after"
 print ""
 
-// objectX.foo()
+objectX.variableX := 12
+
+objectX.foo()
 
 print ""
-print ""
 
-bar()
+objectX.variableX := objectX.variableX + 12
 
-print ""
+objectX.foo()
+
+
 print ""
 
 
