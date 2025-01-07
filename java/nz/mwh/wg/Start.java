@@ -19,11 +19,12 @@ public class Start {
         // String filename = "BasicThreadObjects2.grace";
         // String filename = "BasicThreadObjectsSafe.grace";
         // String filename = "testSpawn.grace"; //
-        // String filename = "testSpawnLocal1.grace"; //
-        // String filename = "testSpawnImmutable1.grace"; //
-        // String filename = "testSpawnImmutable2.grace"; //
-        // String filename = "testSpawnIsolated1.grace"; //
-        String filename = "b1.grace"; //
+        // String filename = "testSpawnLocal.grace"; // ok
+        // String filename = "testSpawnLocal1.grace"; // okFail
+        // String filename = "testSpawnImmutable1.grace"; // ok
+        // String filename = "testSpawnImmutable2.grace"; // okFail
+        String filename = "testSpawnIsolated1.grace"; // okFail
+        // String filename = "b1.grace"; //
         
         
         

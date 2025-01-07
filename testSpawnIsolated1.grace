@@ -7,8 +7,9 @@ var objectX := object is isolated{
 
 def c1 = spawn { c2 ->
     var objectY := c2.receive
-    print "Thread received object with field value: {objectY.getField}"
+    print " Thread received object with field value: {objectY.getField}"
 
 }
 
 c1.send(objectX)
+print(" main end ")

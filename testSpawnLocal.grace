@@ -12,3 +12,5 @@ def c1 = spawn { c2 ->
 }
 
 c1.send(objectX)
+
+print("main end")

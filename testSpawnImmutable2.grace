@@ -1,6 +1,6 @@
 // new reference to an immutable object then attempting to change via new reference
 
-var objectX := object {
+var objectX := object is immutable{
     var fieldX : Number := 10
     method getField -> Number {
         fieldX
@@ -10,9 +10,10 @@ var objectX := object {
 def c1 = spawn { c2 ->
     var objectY := c2.receive
     print "Thread received object with field value: {objectY.getField}"
-    var objectY.fieldX := objectY.getField + 1
+    objectY.fieldX := 20
     print "Thread received object with new field value: {objectY.getField}"
     
 }
 
 c1.send(objectX)
+print(" main end ")
