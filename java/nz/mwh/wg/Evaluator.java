@@ -143,8 +143,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         GraceObject receiver = context.findReceiver(request.getName());
 
         if (receiver instanceof BaseObject) {
-            BaseObject test = (BaseObject) receiver;
-            if (test.isLocal()){
+            BaseObject receiverBaseObject = (BaseObject) receiver;
+            if (receiverBaseObject.isLocal()){
                 System.out.println( "is local object as reciever ");
             } else {
                 // System.out.println("asdfasdf");
@@ -224,7 +224,17 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         if (node.getValue() != null) {
 
+            System.out.println("---------------------------VarDecl node");
+            if (context instanceof BaseObject) {
+                BaseObject contextBaseObject = (BaseObject) context;
+                if (contextBaseObject.isLocal()) {
+                    System.out.println("in the visit for variable declaration -----------+++");
+                    System.out.println("ref number " + contextBaseObject.getReferenceCount());
+                }
+            }
+
             new LexicalRequest(new Cons<Part>(
+
                     new Part(node.getName() + ":=", new Cons<ASTNode>(node.getValue(), Cons.<ASTNode>nil())),
                     Cons.<Part>nil())).accept(context, this);
         }
@@ -312,6 +322,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     public GraceObject visit(GraceObject context, Assign node) {
 
         if (node.getTarget() instanceof LexicalRequest) {
+            System.out.println("---------------------------LexicalRequest");
             LexicalRequest target = (LexicalRequest) node.getTarget();
             String name = target.getParts().get(0).getName();
             List<RequestPartR> parts = new ArrayList<>();
@@ -321,6 +332,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             receiver.request(request);
             return done;
         } else if (node.getTarget() instanceof ExplicitRequest) {
+            System.out.println("---------------------------ExplicitRequest");
             ExplicitRequest target = (ExplicitRequest) node.getTarget();
             String name = target.getParts().get(0).getName();
             List<RequestPartR> parts = new ArrayList<>();

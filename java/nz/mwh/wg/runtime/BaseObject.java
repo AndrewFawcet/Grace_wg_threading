@@ -102,7 +102,6 @@ public class BaseObject implements GraceObject {
         referenceCount--;
     }
 
-    // New method to get the reference count
     public int getReferenceCount() {
         return referenceCount;
     }
@@ -123,8 +122,8 @@ public class BaseObject implements GraceObject {
         // System.out.println("getting a request for a field or method from a baseObject------------");
         Function<Request, GraceObject> method = methods.get(request.getName());
         if (isLocal()){
-            System.out.println("objectThread " + objectThread);
-            System.out.println(" Thread.currentThread() " + Thread.currentThread());
+            // System.out.println("objectThread " + objectThread);
+            // System.out.println(" Thread.currentThread() " + Thread.currentThread());
             validateThreadAccess();
         }
         
@@ -182,8 +181,8 @@ public class BaseObject implements GraceObject {
                 // this looks at the accessing a local object (not what a local object accesses)
                 if (objectBeingAssigned.isLocal){
                     Thread currentThread = Thread.currentThread();
-                    System.out.println("current thread " + currentThread);
-                    System.out.println("objectThread " + objectThread);
+                    // System.out.println("current thread " + currentThread);
+                    // System.out.println("objectThread " + objectThread);
                     // if (currentThread != objectBeingAssigned.getObjectThread()){
                     //     throw new RuntimeException("Capability Violation: Local object accessed from a different thread. (from baseOject)");
                     // } else {

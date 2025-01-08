@@ -23,8 +23,8 @@ public class Start {
         // String filename = "testSpawnLocal1.grace"; // okFail
         // String filename = "testSpawnImmutable1.grace"; // ok
         // String filename = "testSpawnImmutable2.grace"; // okFail
-        String filename = "testSpawnIsolated1.grace"; // okFail
-        // String filename = "b1.grace"; //
+        // String filename = "testSpawnIsolated1.grace"; // okFail
+        String filename = "b1.grace"; //
         
         
         
