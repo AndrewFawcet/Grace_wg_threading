@@ -52,7 +52,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             BaseObject contextBaseObject = (BaseObject) context;
             if (contextBaseObject.isLocal()) {
                 System.out.println("in the visit -----------");
-            
+
             }
             if (contextBaseObject.isIsolated()) {
                 if (isNewObjectLocal) {
@@ -125,15 +125,16 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // System.out.println("getting an arg");
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
 
-            // System.out.println(" Request in here------------------------ " + part.getName());
+            // System.out.println(" Request in here------------------------ " +
+            // part.getName());
 
             // if (args.get(0) instanceof BaseObject && args.size() > 0 ){
-            //     BaseObject a = (BaseObject) args.get(0);
-            //     if (a.isLocal()){
-            //         System.out.println( "is local object as args ");
-            //     } else {
-            //         System.out.println("asdfasdf");
-            //     }    
+            // BaseObject a = (BaseObject) args.get(0);
+            // if (a.isLocal()){
+            // System.out.println( "is local object as args ");
+            // } else {
+            // System.out.println("asdfasdf");
+            // }
             // }
 
             parts.add(new RequestPartR(part.getName(), args));
@@ -144,8 +145,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         if (receiver instanceof BaseObject) {
             BaseObject receiverBaseObject = (BaseObject) receiver;
-            if (receiverBaseObject.isLocal()){
-                System.out.println( "is local object as reciever ");
+            if (receiverBaseObject.isLocal()) {
+                System.out.println("is local object as reciever ");
             } else {
                 // System.out.println("asdfasdf");
             }
@@ -231,10 +232,19 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     System.out.println("in the visit for variable declaration -----------+++");
                     System.out.println("ref number " + contextBaseObject.getReferenceCount());
                 }
+                if (node.getName().equals("objectY")) {
+                    System.out.println("asdfasdf");
+                }
             }
 
+            System.out.println("node name " + node.getName());
+            // System.out.println("context " + context.toString()) ;
+            if (node.getName().equals("objectY")) {
+                System.out.println("its a reassignment");
+            }
             new LexicalRequest(new Cons<Part>(
 
+                    // figure out how exactly this works, to insert a destructive read, thus allowing an isolated to be reassigned.
                     new Part(node.getName() + ":=", new Cons<ASTNode>(node.getValue(), Cons.<ASTNode>nil())),
                     Cons.<Part>nil())).accept(context, this);
         }
@@ -370,7 +380,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         return new GraceBlock(context, parameters, body);
     }
 
-
     // Purpose: Handles return statements within method bodies.
     // Details: Evaluates the return value and throws a ReturnException to exit the
     // method.
@@ -431,7 +440,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         BaseObject lexicalParent = new BaseObject(null);
 
         lexicalParent.addMethod("spawn(1)", request -> {
-            GraceBlock block = (GraceBlock)request.getParts().get(0).getArgs().get(0);
+            GraceBlock block = (GraceBlock) request.getParts().get(0).getArgs().get(0);
             DuplexChannel dchan1 = new DuplexChannel(1);
             DuplexChannel dchan2 = new DuplexChannel(1);
             GraceChannel chan1 = new GraceChannel(dchan1.createPort1(), dchan2.createPort1());
@@ -439,14 +448,14 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             new Thread(() -> {
                 try {
                     block.request(new Request(new Evaluator(),
-                        Collections.singletonList(new RequestPartR("apply", Collections.singletonList(chan1)))));
+                            Collections.singletonList(new RequestPartR("apply", Collections.singletonList(chan1)))));
                 } catch (ReturnException e) {
                     System.out.println("Thread returned: " + e.getValue());
                 }
             }).start();
             return chan2;
         });
-        
+
         lexicalParent.addMethod("print(1)", request -> {
             System.out.println(request.getParts().get(0).getArgs().get(0).toString());
             return done;

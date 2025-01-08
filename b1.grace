@@ -10,7 +10,7 @@ var objectZ := object {
 
 
 print ""
-print " after 1 "
+print " after 1 - object new ref!!"
 
 var objectY := objectX
 

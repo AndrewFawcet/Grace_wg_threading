@@ -33,6 +33,7 @@ public class VarDecl extends ASTNode {
         return annotations;
     }
 
+    // this is needed to get the value(s) for an existing object, byt referring to the reference of the object.
     public ASTNode getValue() {
         return value;
     }

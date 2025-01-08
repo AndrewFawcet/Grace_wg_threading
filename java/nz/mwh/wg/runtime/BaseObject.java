@@ -168,9 +168,6 @@ public class BaseObject implements GraceObject {
     public void addFieldWriter(String name) {
         methods.put(name + ":=(1)", request -> {
 
-            // this causes errors with the fields being made in a local object
-            // validateThreadAccess(callingThread); // Check thread access
-
             // incrementing the BaseObject being referenced.
             fields.put(name, request.getParts().get(0).getArgs().get(0));
             GraceObject valueBeingAssigned = request.getParts().get(0).getArgs().get(0); // Get the object being assigned
