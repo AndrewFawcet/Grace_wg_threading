@@ -1,7 +1,7 @@
 
 print "Hello beautiful world-----------------------------------------------------------------"
 
-var objectX:= object is isolated {
+var objectX:= object {
     var variableX := 1
 }
 

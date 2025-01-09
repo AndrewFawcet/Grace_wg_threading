@@ -237,6 +237,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                             new Cons<ASTNode>(node.getValue(), Cons.<ASTNode>nil())),
                     Cons.<Part>nil())).accept(context, this);
 
+            // destroy the old one... something like this
+            // context.setReceiver(node.getName(), null);
+
             // Return the old value as the result of this expression
             // return oldValue != null ? oldValue : GraceObject.NIL;
             return oldValue != null ? oldValue : done;
