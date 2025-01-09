@@ -220,37 +220,76 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
     // Purpose: Declares a variable and optionally initializes it.
     // Details: Creates a setter method if a value is provided.
+    // TODO have a destructive read in here???
+    // TODO returns oldvalue. still fails on isolated objects.
     @Override
     public GraceObject visit(GraceObject context, VarDecl node) {
-
         if (node.getValue() != null) {
-
             System.out.println("---------------------------VarDecl node");
-            if (context instanceof BaseObject) {
-                BaseObject contextBaseObject = (BaseObject) context;
-                if (contextBaseObject.isLocal()) {
-                    System.out.println("in the visit for variable declaration -----------+++");
-                    System.out.println("ref number " + contextBaseObject.getReferenceCount());
-                }
-                if (node.getName().equals("objectY")) {
-                    System.out.println("asdfasdf");
-                }
-            }
 
-            System.out.println("node name " + node.getName());
-            // System.out.println("context " + context.toString()) ;
-            if (node.getName().equals("objectY")) {
-                System.out.println("its a reassignment");
-            }
+            // Retrieve the old value before assignment
+            // GraceObject oldValue = context.lookup(node.getName());
+            GraceObject oldValue = context.findReceiver(node.getName());
+
+            // Process the assignment (new value is set)
             new LexicalRequest(new Cons<Part>(
-
-                    // figure out how exactly this works, to insert a destructive read, thus allowing an isolated to be reassigned.
-                    new Part(node.getName() + ":=", new Cons<ASTNode>(node.getValue(), Cons.<ASTNode>nil())),
+                    new Part(node.getName() + ":=",
+                            new Cons<ASTNode>(node.getValue(), Cons.<ASTNode>nil())),
                     Cons.<Part>nil())).accept(context, this);
+
+            // Return the old value as the result of this expression
+            // return oldValue != null ? oldValue : GraceObject.NIL;
+            return oldValue != null ? oldValue : done;
         }
 
         return done;
     }
+
+    // Purpose: Declares a variable and optionally initializes it.
+    // Details: Creates a setter method if a value is provided.
+    // // TODO have a destructive read in here???
+    // @Override
+    // public GraceObject visit(GraceObject context, VarDecl node) {
+
+    // // checks if the variable is initialized
+    // if (node.getValue() != null) {
+
+    // System.out.println("---------------------------VarDecl node");
+    // // if (context instanceof BaseObject) {
+    // // BaseObject contextBaseObject = (BaseObject) context;
+    // // if (contextBaseObject.isLocal()) {
+    // // System.out.println("in the visit for variable declaration
+    // -----------+++");
+    // // System.out.println("ref number " + contextBaseObject.getReferenceCount());
+    // // }
+    // // if (node.getName().equals("objectY")) {
+    // // System.out.println("asdfasdf");
+    // // }
+    // // }
+    // // System.out.println("node name " + node.getName());
+    // // // System.out.println("context " + context.toString()) ;
+    // // if (node.getName().equals("objectY")) {
+    // // System.out.println("its a reassignment");
+    // // }
+
+    // // is initialized, so it creates a setter method to assign the value.
+    // // A LexicalRequest is generated to record or process this declaration and
+    // its
+    // // value.
+    // new LexicalRequest(new Cons<Part>(
+
+    // // figure out how exactly this works, to insert a destructive read, thus
+    // // allowing an isolated to be reassigned.
+    // // the node.getValue goes into a lexicalRequest for the old object name e.g
+    // // 'objectX', referencing it for use.
+    // //
+    // new Part(node.getName() + ":=", new Cons<ASTNode>(node.getValue(),
+    // Cons.<ASTNode>nil())),
+    // Cons.<Part>nil())).accept(context, this);
+    // }
+
+    // return done;
+    // }
 
     // Purpose: Declares a method and adds it to the current object context.
     // Details: Processes the method’s parts and body, setting up parameter handling

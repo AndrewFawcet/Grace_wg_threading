@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import nz.mwh.wg.Evaluator;
 
+// represents an object in the runtime with properties like fields, methods, and scope (lexicalParent).
 public class BaseObject implements GraceObject {
     // if you look up something it will look in here the lexicalParent, if it
     // doesn't find it it will then look in the parent. It is all one linked list of

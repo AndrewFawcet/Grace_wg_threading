@@ -4,6 +4,8 @@ import java.util.List;
 
 import nz.mwh.wg.Visitor;
 
+// Represents a request involving parts of a variable or method call (e.g., reassigning a variable).
+// encapsulated in a structured format to be used as a visitor.
 public class LexicalRequest extends ASTNode {
     List<? extends Part> parts;
 

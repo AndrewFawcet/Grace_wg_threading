@@ -4,6 +4,11 @@ import java.util.List;
 
 import nz.mwh.wg.Visitor;
 
+//represents a variable declaration in the syntax tree of a program. It stores the following information about a variable:
+// Name: The variable's identifier (e.g., x or objectY).
+// Type: The data type of the variable (e.g., int, String).
+// Annotations: Additional metadata about the variable (e.g., @local, @immutable).
+// Value: The initial value assigned to the variable (if any).
 public class VarDecl extends ASTNode {
     String name;
     ASTNode type;
