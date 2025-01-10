@@ -1,7 +1,7 @@
 
 print "Hello beautiful world-----------------------------------------------------------------"
 
-var objectX:= object {
+var objectX:= object is isolated{
     var variableX := 1
 }
 
@@ -14,7 +14,7 @@ var objectY := objectX
 print ""
 print " after 2 "
 
-objectX.variableX := 2
+// objectX.variableX := 2
 
 print ""
 print " after 3 "
@@ -24,7 +24,7 @@ print (objectY.variableX)
 print ""
 print " after 4 "
 
-print (objectX.variableX)
+// print (objectX.variableX)
 
 print ""
 print " after 5 "
