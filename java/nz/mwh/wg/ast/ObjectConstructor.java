@@ -14,9 +14,12 @@ public class ObjectConstructor extends ASTNode {
     public ObjectConstructor(Cons<ASTNode> body, Cons<String> annotations) {
         this.body = body.toList();
         this.annotations = annotations.toList();
-        this.isLocal = annotations.toString().contains("local");
-        this.isIsolated = annotations.toString().contains("isolated");
-        this.isImmutable = annotations.toString().contains("immutable");
+        // this.isLocal = annotations.toString().contains("local");
+        // this.isIsolated = annotations.toString().contains("isolated");
+        // this.isImmutable = annotations.toString().contains("immutable");
+        this.isLocal = annotations.toString().contains("loc");
+        this.isIsolated = annotations.toString().contains("iso");
+        this.isImmutable = annotations.toString().contains("imm");
     }
 
     public <T> T accept(T context, Visitor<T> visitor) {

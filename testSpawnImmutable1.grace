@@ -1,4 +1,4 @@
-var objectX := object is immutable{
+var objectX := object is imm {
     var fieldX : Number := 10
     method getField -> Number {
         fieldX

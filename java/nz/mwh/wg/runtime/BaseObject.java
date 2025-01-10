@@ -85,9 +85,9 @@ public class BaseObject implements GraceObject {
         this.isIsolated = isIsolated;
     }
 
-    public void setImmutable(boolean immutable) {
-        isImmutable = immutable;
-    }
+    // public void setImmutable(boolean immutable) {
+    //     isImmutable = immutable;
+    // }
 
     public Thread getObjectThread() {
         return objectThread;
@@ -172,7 +172,8 @@ public class BaseObject implements GraceObject {
 
             GraceObject valueBeingAssigned = request.getParts().get(0).getArgs().get(0);
 
-            // Check if the assigned value is null and throw an exception
+            // Check if the assigned value is null and throw an exception. 
+            // (Will occur if a previous isolated reference has been deleted)
             if (valueBeingAssigned == null) {
                 String errorMessage = String.format(
                         "Capability Violation: Attempt to assign null to field '%s'. This is not allowed and may indicate an erroneous object assignment.",

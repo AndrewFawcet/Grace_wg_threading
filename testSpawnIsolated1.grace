@@ -1,4 +1,4 @@
-var objectX := object is isolated{
+var objectX := object is iso {
     var fieldX : Number := 10
     method getField -> Number {
         fieldX

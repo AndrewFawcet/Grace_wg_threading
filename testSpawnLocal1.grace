@@ -1,4 +1,4 @@
-var objectX := object is local{
+var objectX := object is loc {
     var fieldX : Number := 10
     method getField -> Number {
         fieldX
