@@ -14,5 +14,10 @@ print ""
 
 var objectY := objectX
 
+print (objectY.foo)
+
+//this should fail, as now accessing a null reference with destructive reads
+print (objectX.foo)  
+
 print ""
 print "Goodbye cruel world"

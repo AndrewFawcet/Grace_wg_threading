@@ -13,10 +13,10 @@ var objectX := object is isolated{
 }
 print ""
 
-// var objectY := objectX.nestedObject1.nestedObject2.nestedObject3
-var objectY := objectX
+// var objectY := objectX.nestedObject1.nestedObject2
+// var objectY := objectX
 
-print (objectY.nestedObject1.nestedObject2.nestedObject3.fieldX)
+print (objectY.nestedObject3.fieldX)
 
 print "----"
 
