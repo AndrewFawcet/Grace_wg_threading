@@ -176,7 +176,7 @@ public class BaseObject implements GraceObject {
             // (Will occur if a previous isolated reference has been deleted)
             if (valueBeingAssigned == null) {
                 String errorMessage = String.format(
-                        "Capability Violation: Attempt to assign null to field '%s'. This is not allowed and may indicate an erroneous object assignment.",
+                        "Capability Violation: Attempt to assign null to field '%s'. This is not allowed and may indicate an erroneous object assignment or an alias transferring access to a isolated object.",
                         name);
                 System.out.println(errorMessage);
                 throw new RuntimeException(errorMessage);
