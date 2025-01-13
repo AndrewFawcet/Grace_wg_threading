@@ -199,16 +199,7 @@ public class BaseObject implements GraceObject {
                 // System.out.println(name + " assigned to a baseObject ----------");
                 BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned;
 
-                // this looks at the accessing a local object (not what a local object accesses)
-                // if (objectBeingAssigned.isLocal){
-                // Thread currentThread = Thread.currentThread();
-                // }
-
-                if (objectBeingAssigned.isIsolated) {
-                    objectBeingAssigned.incrementReferenceCount();
-                }
-                // objectBeingAssigned.logThreadInfo("assigned to a field '" + name + "'"); //
-                // junk?
+                objectBeingAssigned.incrementReferenceCount();
 
                 // checking if isolated, and runtime exception if too many references
                 if (objectBeingAssigned.isIsolated()) {

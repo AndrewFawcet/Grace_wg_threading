@@ -13,9 +13,9 @@ var objectX := object is isolated{
 }
 print ""
 
-var objectY := objectX.nestedObject1.nestedObject2.nestedObject3
+var objectY := objectX.nestedObject1.nestedObject2
 
-print (objectY.fieldX)
+print (objectY.nestedObject3.fieldX)
 
 print "----"
 

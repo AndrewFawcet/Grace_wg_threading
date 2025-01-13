@@ -20,7 +20,7 @@ print (objectY.nestedObject1.nestedObject2.nestedObject3.fieldX)
 
 print "----"
 
-//this should fail, as now accessing a null reference with destructive reads
+//this does fail, as now accessing a null reference with destructive reads
 print (objectX.nestedObject1.nestedObject2.nestedObject3.fieldX)  
 
 
