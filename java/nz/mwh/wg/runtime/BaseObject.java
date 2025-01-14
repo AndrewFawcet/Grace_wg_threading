@@ -188,8 +188,12 @@ public class BaseObject implements GraceObject {
                 BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned;
                 if (objectBeingAssigned.isIsolated) {
                     String previousBaseObjectName = getFieldName(valueBeingAssigned);
-                    fields.remove(previousBaseObjectName);
+                    // fields.remove(previousBaseObjectName);
+                    if (previousBaseObjectName != null) {
+                        removeNestedField(previousBaseObjectName); // Use the helper method
+                    }
                     if (objectBeingAssigned.getReferenceCount() > 0){
+                        // only decrement if established object with a ref count > 0 
                         objectBeingAssigned.decrementReferenceCount();
                     }
                 }
@@ -320,5 +324,37 @@ public class BaseObject implements GraceObject {
     
         // Return null if the object is not found in this or nested objects
         return null;
+    }
+    private void removeNestedField(String fullPath) {
+        String[] pathParts = fullPath.split("\\."); // Split by "."
+        Map<String, GraceObject> currentMap = fields;
+        GraceObject target = null;
+    
+        for (int i = 0; i < pathParts.length - 1; i++) {
+            String key = pathParts[i];
+            if (currentMap.get(key) instanceof BaseObject) {
+                currentMap = ((BaseObject) currentMap.get(key)).fields; // Navigate to nested fields
+            } else {
+                throw new RuntimeException("Invalid path: " + fullPath);
+            }
+        }
+    
+        // these two lines may be wrong.
+        String finalKey = pathParts[pathParts.length -1];
+        target = currentMap.remove(finalKey); // Remove the final key
+    
+        // If the removed field is a BaseObject, recursively clear its fields
+        if (target instanceof BaseObject) {
+            ((BaseObject) target).clearAllFields();
+        }
+    }
+
+    public void clearAllFields() {
+        // for (GraceObject value : fields.values()) {
+        //     if (value instanceof BaseObject) {
+        //         ((BaseObject) value).clearAllFields(); // Recursive cleanup
+        //     }
+        // }
+        // fields.clear(); // Clear current fields
     }
 }

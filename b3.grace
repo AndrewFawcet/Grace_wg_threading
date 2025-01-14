@@ -17,6 +17,8 @@ print ">>>>"
 
 var objectY := objectX.nestedObject1.nestedObject2
 
+print "<<<<<"
+
 print (objectY.nestedObject3.fieldX)
 
 print "----"
