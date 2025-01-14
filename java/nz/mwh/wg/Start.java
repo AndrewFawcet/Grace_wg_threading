@@ -25,7 +25,8 @@ public class Start {
         // String filename = "testSpawnImmutable2.grace"; // okFail
         // String filename = "testSpawnIsolated1.grace"; // okFail
         // String filename = "b1.grace"; //
-        String filename = "b2.grace"; //
+        // String filename = "b2.grace"; //
+        String filename = "b3.grace"; //
 
         boolean printAST = false;
         String updateFile = null;

@@ -194,7 +194,8 @@ public class BaseObject implements GraceObject {
             }
 
             // incrementing the BaseObject being referenced.
-            fields.put(name, request.getParts().get(0).getArgs().get(0));
+            // fields.put(name, request.getParts().get(0).getArgs().get(0));
+            fields.put(name, valueBeingAssigned);
             if (valueBeingAssigned instanceof BaseObject) {
                 // System.out.println(name + " assigned to a baseObject ----------");
                 BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned;
@@ -209,7 +210,7 @@ public class BaseObject implements GraceObject {
                                         + "' cannot have more than one reference.");
                     }
                 }
-                // checking if isolated and if imutable, and runtime exception if multiple
+                // checking if isolated and imutable, and runtime exception if multiple
                 // capabilities
                 if (objectBeingAssigned.isIsolated() && objectBeingAssigned.isImmutable()) {
                     throw new RuntimeException(
@@ -290,12 +291,32 @@ public class BaseObject implements GraceObject {
 
     }
 
+    // public String getFieldName(GraceObject object) {
+    //     for (Map.Entry<String, GraceObject> entry : fields.entrySet()) {
+    //         if (entry.getValue() == object) {
+    //             return entry.getKey();
+    //         }
+    //     }
+    //     return null; // Return null if not found
+    // }
+
     public String getFieldName(GraceObject object) {
+        // Check current object's fields
         for (Map.Entry<String, GraceObject> entry : fields.entrySet()) {
             if (entry.getValue() == object) {
                 return entry.getKey();
             }
+    
+            // If the field is a BaseObject, search its nested fields recursively
+            if (entry.getValue() instanceof BaseObject) {
+                String nestedFieldName = ((BaseObject) entry.getValue()).getFieldName(object);
+                if (nestedFieldName != null) {
+                    return entry.getKey() + "." + nestedFieldName;
+                }
+            }
         }
-        return null; // Return null if not found
+    
+        // Return null if the object is not found in this or nested objects
+        return null;
     }
 }
