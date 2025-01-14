@@ -15,7 +15,7 @@ public class BaseObject implements GraceObject {
     private GraceObject lexicalParent; // scope that surrounds this object
     private Map<String, GraceObject> fields = new HashMap<>();
     private Map<String, Function<Request, GraceObject>> methods = new HashMap<>();
-    private int referenceCount = 0; // Reference count field
+    private int referenceCount = 0;
     private boolean isIsolated = false;
     private boolean isImmutable = false;
     private boolean isLocal = false;
@@ -183,13 +183,15 @@ public class BaseObject implements GraceObject {
             }
 
             // this checks if valueBeingAssigned (the baseobject) already exists in the
-            // fields hashmap, and if so it deletes it.
+            // fields hashmap, and if so and is an iso it deletes it.
             if (valueBeingAssigned instanceof BaseObject) {
                 BaseObject objectBeingAssigned = (BaseObject) valueBeingAssigned;
                 if (objectBeingAssigned.isIsolated) {
                     String previousBaseObjectName = getFieldName(valueBeingAssigned);
                     fields.remove(previousBaseObjectName);
-                    objectBeingAssigned.decrementReferenceCount();
+                    if (objectBeingAssigned.getReferenceCount() > 0){
+                        objectBeingAssigned.decrementReferenceCount();
+                    }
                 }
             }
 
