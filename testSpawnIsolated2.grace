@@ -19,7 +19,7 @@ def c1 = spawn { c2 ->
     print " Thread received object with field value: {objectXX.fieldX}"
     print " Thread received object with field value: {objectXX.objectY.fieldY}"
     var objectZ is iso := objectX.objectY
-    print " objectZ now holds value: {objectZ.fieldY}"
+    print "Thread objectZ now holds value: {objectZ.fieldY}"
     c2.send(objectXX)
     var objectAA := c2.receive
     print ( " Thread received objectAA holds value: {objectAA.fieldA} ")

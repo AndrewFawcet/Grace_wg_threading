@@ -278,15 +278,8 @@ public class BaseObject implements GraceObject {
         return fields;
     }
 
-    // private void logThreadInfo(String action) {
-    // if (isLocal) { // Only log for local-annotated objects
-    // Thread thread = Thread.currentThread();
-    // objectThread = thread; // Update the current thread
-    // }
-    // }
-
     private void validateThreadAccess() {
-        // System.out.println("checking if it is looking at a local object.");
+        // checking if it is looking at a local object;
         if (isLocal) {
             if (objectThread != Thread.currentThread()) {
                 throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
@@ -296,15 +289,6 @@ public class BaseObject implements GraceObject {
         }
 
     }
-
-    // public String getFieldName(GraceObject object) {
-    //     for (Map.Entry<String, GraceObject> entry : fields.entrySet()) {
-    //         if (entry.getValue() == object) {
-    //             return entry.getKey();
-    //         }
-    //     }
-    //     return null; // Return null if not found
-    // }
 
     public String getFieldName(GraceObject object) {
         // Check current object's fields
@@ -341,19 +325,5 @@ public class BaseObject implements GraceObject {
     
         String finalKey = pathParts[pathParts.length -1];
         target = currentMap.remove(finalKey); // Remove the final key
-    
-        // If the removed field is a BaseObject, recursively clear its fields (not needed as removed previously from currentMap)
-        // if (target instanceof BaseObject) {
-        //     ((BaseObject) target).clearAllFields();
-        // }
     }
-
-    // public void clearAllFields() {
-    //     for (GraceObject value : fields.values()) {
-    //         if (value instanceof BaseObject) {
-    //             ((BaseObject) value).clearAllFields(); // Recursive cleanup
-    //         }
-    //     }
-    //     fields.clear(); // Clear current fields
-    // }
 }
