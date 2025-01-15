@@ -339,22 +339,21 @@ public class BaseObject implements GraceObject {
             }
         }
     
-        // these two lines may be wrong.
         String finalKey = pathParts[pathParts.length -1];
         target = currentMap.remove(finalKey); // Remove the final key
     
-        // If the removed field is a BaseObject, recursively clear its fields
-        if (target instanceof BaseObject) {
-            ((BaseObject) target).clearAllFields();
-        }
+        // If the removed field is a BaseObject, recursively clear its fields (not needed as removed previously from currentMap)
+        // if (target instanceof BaseObject) {
+        //     ((BaseObject) target).clearAllFields();
+        // }
     }
 
-    public void clearAllFields() {
-        // for (GraceObject value : fields.values()) {
-        //     if (value instanceof BaseObject) {
-        //         ((BaseObject) value).clearAllFields(); // Recursive cleanup
-        //     }
-        // }
-        // fields.clear(); // Clear current fields
-    }
+    // public void clearAllFields() {
+    //     for (GraceObject value : fields.values()) {
+    //         if (value instanceof BaseObject) {
+    //             ((BaseObject) value).clearAllFields(); // Recursive cleanup
+    //         }
+    //     }
+    //     fields.clear(); // Clear current fields
+    // }
 }
