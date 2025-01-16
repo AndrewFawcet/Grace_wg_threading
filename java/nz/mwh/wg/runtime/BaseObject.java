@@ -287,7 +287,6 @@ public class BaseObject implements GraceObject {
                 System.out.println("all ok with the access on this local object +++++");
             }
         }
-
     }
 
     public String getFieldName(GraceObject object) {
