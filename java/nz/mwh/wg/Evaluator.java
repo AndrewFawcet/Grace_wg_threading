@@ -97,8 +97,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             } else if (part instanceof VarDecl) {
                 VarDecl var = (VarDecl) part;
                 object.addField(var.getName());
-
-                object.addFieldWriter(var.getName());
+                // for new object field
+                if (object.isIsolated()){
+                    object.addAndRemoveFieldWriter(var.getName());  // TODO do for iso objects???
+                } else {
+                    object.addFieldWriter(var.getName());       
+                }
             } else if (part instanceof ImportStmt) {
                 ImportStmt imp = (ImportStmt) part;
                 object.addField(imp.getName());
@@ -271,8 +275,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     } else if (part instanceof VarDecl) {
                         VarDecl var = (VarDecl) part;
                         methodContext.addField(var.getName());
-
-                        methodContext.addFieldWriter(var.getName());
+                        // parameter handling, each method part will contain parts of this.
+                        // how to manage the reference counting in this case?
+                        methodContext.addFieldWriter(var.getName());        // TODO do for iso methods???
                     }
                 }
                 try {

@@ -3,18 +3,17 @@ print "Hello beautiful world----------------------------------------------------
 
 // not sure what this should prove?
 
-// var x := object is iso {}
 
-print "+++"
+var x := object is iso {
+    method asString { "Hello, World!" }
+}
+var z := object is iso {
+    var inner
+}
+var y := z
+y.inner := x
+print(y.inner)
+print(x)
 
-// var y := (x := 1)
-
-def x := 5
-
-print "+++ {x}" 
-
-def x := 10
-
-print "+++ {x}" 
 
 print "Goodbye cruel world"

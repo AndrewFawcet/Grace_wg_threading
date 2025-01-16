@@ -4,6 +4,7 @@ import java.util.List;
 
 import nz.mwh.wg.Visitor;
 
+// immutable field declaration
 public class DefDecl extends ASTNode {
     String name;
     ASTNode type;
