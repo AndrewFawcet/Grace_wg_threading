@@ -94,7 +94,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             if (part instanceof DefDecl) {
                 DefDecl def = (DefDecl) part;
                 object.addField(def.getName());
-            } else if (part instanceof VarDecl) {
+            } else if (part instanceof VarDecl) {           // TODO could make a variable Consume and Declare
                 VarDecl var = (VarDecl) part;
                 object.addField(var.getName());
                 // for new object field

@@ -26,7 +26,7 @@ public class Start {
         // String filename = "testSpawnIsolated1.grace"; // okFail
         // String filename = "testSpawnIsolated2.grace"; // okFail
         // String filename = "b1.grace"; //
-        String filename = "b2.grace"; //
+        String filename = "b6.grace"; //
         // String filename = "b3.grace"; //
         // String filename = "b4.grace"; //
         // String filename = "b5.grace"; //
