@@ -15,6 +15,13 @@ import nz.mwh.wg.ast.ObjectConstructor;
 
 public class Start {
     public static void main(String[] args) {
+        //testing :)
+        args = new String[]{
+            "-u",
+            // "nz/mwh/wg/parserData.java",
+            "java/nz/mwh/wg/parserData.java",
+            "parser.grace"
+        };
         // String filename = "blockTest18.grace"; //
         // String filename = "BasicThreadObjects2.grace";
         // String filename = "BasicThreadObjectsSafe.grace";
@@ -41,7 +48,7 @@ public class Start {
             } else if (arg.equals("-u")) {
                 updateFile = "";
             } else if (updateFile != null && updateFile.isEmpty()) {
-                updateFile = arg;
+                updateFile = arg; // first find the update file
             } else if (arg.equals("-i")) {
                 inlineImports = true;
             } else {
@@ -63,7 +70,7 @@ public class Start {
                 Evaluator.evaluateProgram(ast);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error reading file: " + filename);
+            throw new RuntimeException("Error reading file: " + filename, e);
         }
     }
 
@@ -107,7 +114,8 @@ public class Start {
             }
             Files.writeString(Path.of(filename), String.join("\n", newSource));
         } catch (IOException e) {
-            throw new RuntimeException("Error writing file: " + filename);
+            // throw new RuntimeException("Error writing file: " + filename, e);
+            throw new RuntimeException("Error writing file: " + filename, e);
         }
     }
 }
