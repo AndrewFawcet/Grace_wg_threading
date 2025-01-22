@@ -627,7 +627,7 @@ method parseExpression(lxr) {
         lxr.advance
         def right = parseExpression(lxr)
         left := ast.assign(left, right)
-   }
+    }
     return left
 }
 

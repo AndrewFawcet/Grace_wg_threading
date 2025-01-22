@@ -240,6 +240,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     Cons.<Part>nil())).accept(context, this);
         }
 
+        System.out.println("here---");
         return done;
     }
 
@@ -294,6 +295,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     }
                 }
             });
+            System.out.println("in here");
             return done;
         }
         throw new UnsupportedOperationException("method can only be defined in object context");
@@ -331,7 +333,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             Request request = new Request(this, parts);
             GraceObject receiver = context.findReceiver(request.getName());
             receiver.request(request);
-            return done;
+
+            System.out.println("hi");
+            // return num;
+           return done;
         } else if (node.getTarget() instanceof ExplicitRequest) {
             ExplicitRequest target = (ExplicitRequest) node.getTarget();
             String name = target.getParts().get(0).getName();
