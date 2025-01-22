@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Start",
+            "request": "launch",
+            "mainClass": "nz.mwh.wg.Start",
+            "projectName": "wg_eafa1fc5"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

@@ -16,12 +16,11 @@ import nz.mwh.wg.ast.ObjectConstructor;
 public class Start {
     public static void main(String[] args) {
         //testing :)
-        args = new String[]{
-            "-u",
-            // "nz/mwh/wg/parserData.java",
-            "java/nz/mwh/wg/parserData.java",
-            "parser.grace"
-        };
+        // args = new String[]{
+        //     "-u",
+        //     "java/nz/mwh/wg/parserData.java",
+        //     "parser.grace"
+        // };
         // String filename = "blockTest18.grace"; //
         // String filename = "BasicThreadObjects2.grace";
         // String filename = "BasicThreadObjectsSafe.grace";
@@ -33,10 +32,12 @@ public class Start {
         // String filename = "testSpawnIsolated1.grace"; // okFail
         // String filename = "testSpawnIsolated2.grace"; // okFail
         // String filename = "b1.grace"; //
-        String filename = "b6.grace"; //
         // String filename = "b3.grace"; //
         // String filename = "b4.grace"; //
         // String filename = "b5.grace"; //
+        String filename = "b6.grace"; //
+        // String filename = "destructive.grace"; //
+        
 
 
         boolean printAST = false;
