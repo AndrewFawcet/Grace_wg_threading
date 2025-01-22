@@ -190,6 +190,13 @@ public class BaseObject implements GraceObject {
 
             GraceObject objectBeingRemoved = null;
 
+            objectBeingRemoved = fields.get(name);
+            if (objectBeingRemoved instanceof BaseObject) {
+                objectBeingRemoved = fields.remove(name);
+                BaseObject baseObjectBeingRemoved = (BaseObject) objectBeingRemoved;
+                baseObjectBeingRemoved.decrementReferenceCount();
+            }
+
             fields.put(name, objectBeingAssigned);
             if (objectBeingAssigned instanceof BaseObject) {
                 // System.out.println(name + " assigned to a baseObject ----------");
@@ -243,100 +250,100 @@ public class BaseObject implements GraceObject {
     // puts the writer method into the object or scope
     // return the old value/object instead of 'done'
     // decrement or unassign the returned value/object
-    public void addAndRemoveFieldWriter(String name) {
-        methods.put(name + ":=(1)", request -> {
+    // public void addAndRemoveFieldWriter(String name) {
+    //     methods.put(name + ":=(1)", request -> {
 
-            GraceObject objectBeingAssigned = request.getParts().get(0).getArgs().get(0);
+    //         GraceObject objectBeingAssigned = request.getParts().get(0).getArgs().get(0);
 
-            // Check if the assigned value is null and throw an exception.
-            // (Will occur if a previous isolated reference has been deleted)
-            if (objectBeingAssigned == null) {
-                String errorMessage = String.format(
-                        "Capability Violation: Attempt to assign null to field '%s'. This is not allowed and may indicate an erroneous object assignment or an alias transferring access to a isolated object.",
-                        name);
-                System.out.println(errorMessage);
-                throw new RuntimeException(errorMessage);
-            }
+    //         // Check if the assigned value is null and throw an exception.
+    //         // (Will occur if a previous isolated reference has been deleted)
+    //         if (objectBeingAssigned == null) {
+    //             String errorMessage = String.format(
+    //                     "Capability Violation: Attempt to assign null to field '%s'. This is not allowed and may indicate an erroneous object assignment or an alias transferring access to a isolated object.",
+    //                     name);
+    //             System.out.println(errorMessage);
+    //             throw new RuntimeException(errorMessage);
+    //         }
 
-            // incrementing the BaseObject being referenced.
-            // fields.put(name, request.getParts().get(0).getArgs().get(0));
-            // TODO pull the existing value out here, and return it at the end.
-            // i think just put a token zero reference object here. Could act as tombstone.
+    //         // incrementing the BaseObject being referenced.
+    //         // fields.put(name, request.getParts().get(0).getArgs().get(0));
+    //         // TODO pull the existing value out here, and return it at the end.
+    //         // i think just put a token zero reference object here. Could act as tombstone.
 
-            GraceObject objectBeingRemoved = null;
+    //         GraceObject objectBeingRemoved = null;
 
-            if (objectBeingAssigned instanceof BaseObject) {
+    //         if (objectBeingAssigned instanceof BaseObject) {
                 
 
-                // Ensure the map contains only one object
-                if (fields.size() == 1) {
-                    // Get the single entry in the map
-                    Map.Entry<String, GraceObject> entry = fields.entrySet().iterator().next();
+    //             // Ensure the map contains only one object
+    //             if (fields.size() == 1) {
+    //                 // Get the single entry in the map
+    //                 Map.Entry<String, GraceObject> entry = fields.entrySet().iterator().next();
 
-                    objectBeingRemoved = entry.getValue();
-                    String key = entry.getKey();
+    //                 objectBeingRemoved = entry.getValue();
+    //                 String key = entry.getKey();
 
-                    fields.remove(key);
+    //                 fields.remove(key);
 
-                    // decrement reference count
-                    if (objectBeingRemoved instanceof BaseObject){
-                        BaseObject baseObjectBeingRemoved = (BaseObject) objectBeingRemoved;
-                        baseObjectBeingRemoved.decrementReferenceCount();
-                    }
+    //                 // decrement reference count
+    //                 if (objectBeingRemoved instanceof BaseObject){
+    //                     BaseObject baseObjectBeingRemoved = (BaseObject) objectBeingRemoved;
+    //                     baseObjectBeingRemoved.decrementReferenceCount();
+    //                 }
 
-                } else {
-                    System.out.println("Error: Expected only one object in the fields map, but found " + fields.size());
-                }
-            }
+    //             } else {
+    //                 System.out.println("Error: Expected only one object in the fields map, but found " + fields.size());
+    //             }
+    //         }
 
-            fields.put(name, objectBeingAssigned);
-            if (objectBeingAssigned instanceof BaseObject) {
-                // System.out.println(name + " assigned to a baseObject ----------");
-                BaseObject baseObjectBeingAssigned = (BaseObject) objectBeingAssigned;
+    //         fields.put(name, objectBeingAssigned);
+    //         if (objectBeingAssigned instanceof BaseObject) {
+    //             // System.out.println(name + " assigned to a baseObject ----------");
+    //             BaseObject baseObjectBeingAssigned = (BaseObject) objectBeingAssigned;
 
-                baseObjectBeingAssigned.incrementReferenceCount();
+    //             baseObjectBeingAssigned.incrementReferenceCount();
 
-                // checking if isolated, and runtime exception if too many references
-                if (baseObjectBeingAssigned.isIsolated()) {
-                    if (baseObjectBeingAssigned.getReferenceCount() > 1) {
-                        throw new RuntimeException(
-                                "Capability Violation: Isolated object '" + name
-                                        + "' cannot have more than one reference.");
-                    }
-                }
-                // checking if isolated and imutable, and runtime exception if multiple
-                // capabilities
-                if (baseObjectBeingAssigned.isIsolated() && baseObjectBeingAssigned.isImmutable()) {
-                    throw new RuntimeException(
-                            "Capability Violation: Object '" + name
-                                    + "' cannot have both capabilities 'isolated' and 'immutable' assigned.");
-                }
-            }
+    //             // checking if isolated, and runtime exception if too many references
+    //             if (baseObjectBeingAssigned.isIsolated()) {
+    //                 if (baseObjectBeingAssigned.getReferenceCount() > 1) {
+    //                     throw new RuntimeException(
+    //                             "Capability Violation: Isolated object '" + name
+    //                                     + "' cannot have more than one reference.");
+    //                 }
+    //             }
+    //             // checking if isolated and imutable, and runtime exception if multiple
+    //             // capabilities
+    //             if (baseObjectBeingAssigned.isIsolated() && baseObjectBeingAssigned.isImmutable()) {
+    //                 throw new RuntimeException(
+    //                         "Capability Violation: Object '" + name
+    //                                 + "' cannot have both capabilities 'isolated' and 'immutable' assigned.");
+    //             }
+    //         }
 
-            // this looks at the current object and as the fields are being changed checks
-            // if the object is:
-            // -immutable
-            // -does it have one or more references (less than one indicates in
-            // construction)
-            // This functions in conjunction with the downward propagation of immutable
-            // capabilities in the public GraceObject visit(GraceObject context,
-            // ObjectConstructor node) method
-            if (isImmutable) {
-                if (getReferenceCount() != 0) {
-                    throw new RuntimeException(
-                            "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name
-                                    + "'.");
-                } else {
-                    System.out.println("all ok, in construction as no references ");
-                }
-            }
+    //         // this looks at the current object and as the fields are being changed checks
+    //         // if the object is:
+    //         // -immutable
+    //         // -does it have one or more references (less than one indicates in
+    //         // construction)
+    //         // This functions in conjunction with the downward propagation of immutable
+    //         // capabilities in the public GraceObject visit(GraceObject context,
+    //         // ObjectConstructor node) method
+    //         if (isImmutable) {
+    //             if (getReferenceCount() != 0) {
+    //                 throw new RuntimeException(
+    //                         "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name
+    //                                 + "'.");
+    //             } else {
+    //                 System.out.println("all ok, in construction as no references ");
+    //             }
+    //         }
 
-            // should be value that has been removed, with a decremented reference count.
-            // (to zero for an iso)
-            // this then should be stored somehwere else...
-            return objectBeingRemoved;
-        });
-    }
+    //         // should be value that has been removed, with a decremented reference count.
+    //         // (to zero for an iso)
+    //         // this then should be stored somehwere else...
+    //         return objectBeingRemoved;
+    //     });
+    // }
 
     public void setField(String name, GraceObject value) {
         fields.put(name, value);

@@ -1,14 +1,15 @@
 print "Destructive test start-------------------------------------------------------------------"
 print "Hello beautiful world-----------------------------------------------------------------"
 
+
+// object example
 var a := object {  1 }
 var b := object { 2 }
 b :=  (a := 3)
 print(" a is {a}")
 print (" and b is {b} ")
 
-
-
+// variable example
 var x :=  1 
 var y := 3
 print (" x is {x}")

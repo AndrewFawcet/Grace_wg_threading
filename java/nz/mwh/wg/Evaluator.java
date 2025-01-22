@@ -98,11 +98,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 VarDecl var = (VarDecl) part;
                 object.addField(var.getName());
                 // for new object field
-                if (object.isIsolated()){
-                    object.addAndRemoveFieldWriter(var.getName());  // TODO do for iso objects???
-                } else {
-                    object.addFieldWriter(var.getName());       
-                }
+                object.addFieldWriter(var.getName());
             } else if (part instanceof ImportStmt) {
                 ImportStmt imp = (ImportStmt) part;
                 object.addField(imp.getName());
@@ -239,8 +235,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                             Cons.<ASTNode>nil())),
                     Cons.<Part>nil())).accept(context, this);
         }
-
-        System.out.println("here---");
         return done;
     }
 
@@ -295,7 +289,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     }
                 }
             });
-            System.out.println("in here");
             return done;
         }
         throw new UnsupportedOperationException("method can only be defined in object context");
@@ -334,7 +327,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             GraceObject receiver = context.findReceiver(request.getName());
             receiver.request(request);
 
-            System.out.println("hi");
             // return num;
            return done;
         } else if (node.getTarget() instanceof ExplicitRequest) {
@@ -351,7 +343,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 int refCount = ((BaseObject) receiver).getReferenceCount(); // not used..
                 // System.out.println("Receiver's reference count: " + refCount);
                 // throw a fail in here if ref count > 0;
-
             } else {
                 System.out.println("Receiver is not an instance of BaseObject");
             }
