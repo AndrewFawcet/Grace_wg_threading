@@ -117,7 +117,7 @@ public class BaseObject implements GraceObject {
         methods.put(name, method);
     }
 
-    // TODO !!!!!!!!!!!!!!
+    // TODO 
     @Override
     public GraceObject request(Request request) {
         // System.out.println("getting a request for a field or method from a
@@ -184,16 +184,8 @@ public class BaseObject implements GraceObject {
             }
 
             // TODO pulls the existing value out here, and returns it at the end.
-            // could put a token zero reference object here. Could act as tombstone.
+            // could put a token zero reference object here, which acts as a tombstone.
             GraceObject objectBeingRemoved = null;
-
-            // junk for testing
-            if (name.equals("x" )){
-                System.out.println("its name is x");
-            }
-            if (name.equals("y")){
-                System.out.println("its name is y");
-            }
 
             objectBeingRemoved = fields.remove(name);
             if (objectBeingRemoved instanceof BaseObject) {
@@ -245,7 +237,7 @@ public class BaseObject implements GraceObject {
 
             // should be value that has been removed, with a decremented reference count.
             // (to zero for an iso)
-            // this then should be stored somehwere else...
+            // this then should be stored somewhere else...
             return objectBeingRemoved;
         });
     }
