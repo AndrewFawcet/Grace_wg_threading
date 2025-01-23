@@ -338,6 +338,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             GraceObject receiver = context.findReceiver(request.getName());
             
             // receiver.request(request);
+            // changed to send the previous value through for destructive reads of variables
             GraceObject previous = receiver.request(request);
 
             return previous;
