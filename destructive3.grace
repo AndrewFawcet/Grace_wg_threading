@@ -12,8 +12,8 @@ print (" b.bb is {b.bb} ")
 print (" c.cc is {c.cc} ")
 
 print "-- destructive read --"
-// b.bb := {a.aaa := c.cc}.apply
-b.bb := (a.aa := c.cc)
+b.bb := {a.aa := c.cc}.apply
+// b.bb := (a.aa := c.cc)
 
 print ("--")
 print(" a.aa is {a.aa}")
