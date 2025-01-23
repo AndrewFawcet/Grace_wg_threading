@@ -7,19 +7,16 @@ var a := object {  var aa := 1 }
 var b := object { var bb := 2 }
 var c := object { var cc := 3}
 
-print (" b is {b.bb} ")
-print "--"
+print (" a.aa is {a.aa} ")
+print (" b.bb is {b.bb} ")
+print (" c.cc is {c.cc} ")
 
-// b.bb := {a.aa := 3}.apply
-// b := {a := c}.apply
-b := (a := c)
+print "-- destructive read --"
+// b.bb := {a.aaa := c.cc}.apply
+b.bb := (a.aa := c.cc)
 
-print ("herere")
-
-// b := (a := 3)
-// b := (a := 3)
-print "++"
-print(" a.cc is {a.cc}")
-print (" and b.aa is {b.aa} ")
+print ("--")
+print(" a.aa is {a.aa}")
+print (" and b.bb is {b.bb} ")
 
 print("Goodbye cruel world")

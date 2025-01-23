@@ -338,11 +338,11 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             GraceObject receiver = context.findReceiver(request.getName());
             
             // receiver.request(request);
-            // changed to send the previous value through for destructive reads of variables
             GraceObject previous = receiver.request(request);
+            // changed to send the previous value through for destructive reads of variables
 
             return previous;
-        //    return done;
+            // return done;
         } else if (node.getTarget() instanceof ExplicitRequest) {
             ExplicitRequest target = (ExplicitRequest) node.getTarget();
             String name = target.getParts().get(0).getName();
@@ -351,18 +351,11 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             Request request = new Request(this, parts);
             GraceObject receiver = target.getReceiver().accept(context, this);
 
-            // Print reference count if receiver is an instance of BaseObject
-            // TODO remove?
-            if (receiver instanceof BaseObject) {
-                int refCount = ((BaseObject) receiver).getReferenceCount(); // not used..
-                System.out.println("Receiver's reference count: " + refCount);
-                // throw a fail in here if ref count > 0;
-            } else {
-                System.out.println("Receiver is not an instance of BaseObject");
-            }
-
-            receiver.request(request);
-            return done;
+            // receiver.request(request);
+            GraceObject previous = receiver.request(request);
+            // changed to send the previous value through for destructive reads of fields
+            return previous;
+            // return done;
         }
         throw new UnsupportedOperationException(
                 "Invalid assignment to " + node.getTarget().getClass().getName() + " node");
