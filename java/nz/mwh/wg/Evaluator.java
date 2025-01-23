@@ -273,6 +273,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         // parameter handling, each method part will contain parts of this.
                         // how to manage the reference counting in this case?
                         methodContext.addFieldWriter(var.getName());        // TODO do for iso methods???
+                        // GraceObject oldObject = methodContext.addFieldWriter(var.getName());        // TODO do for iso methods???
                     }
                 }
                 try {
@@ -315,6 +316,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // Purpose: Handles assignments to fields or variables.
     // Details: Identifies the target and updates its value through a corresponding
     // request.
+    // TODO do something here for returning stuff...
     @Override
     public GraceObject visit(GraceObject context, Assign node) {
 
@@ -341,7 +343,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // TODO remove?
             if (receiver instanceof BaseObject) {
                 int refCount = ((BaseObject) receiver).getReferenceCount(); // not used..
-                // System.out.println("Receiver's reference count: " + refCount);
+                System.out.println("Receiver's reference count: " + refCount);
                 // throw a fail in here if ref count > 0;
             } else {
                 System.out.println("Receiver is not an instance of BaseObject");

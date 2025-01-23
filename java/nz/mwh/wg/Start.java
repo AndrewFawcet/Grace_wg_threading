@@ -36,7 +36,9 @@ public class Start {
         // String filename = "b4.grace"; //
         // String filename = "b5.grace"; //
         // String filename = "b6.grace"; //
-        String filename = "destructive.grace"; //
+        // String filename = "destructive1.grace"; //
+        // String filename = "destructive2.grace"; //
+        String filename = "destructive3.grace"; //
         
 
 
