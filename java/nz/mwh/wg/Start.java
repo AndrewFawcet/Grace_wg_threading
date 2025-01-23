@@ -36,8 +36,8 @@ public class Start {
         // String filename = "b4.grace"; //
         // String filename = "b5.grace"; //
         // String filename = "b6.grace"; //
-        // String filename = "destructive1.grace"; //
-        // String filename = "destructive2.grace"; //
+        // String filename = "destructive1.grace"; // variables ok
+        // String filename = "destructive2.grace"; // fields in objects ok
         String filename = "destructive3.grace"; //
         
 
