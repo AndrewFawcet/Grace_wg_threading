@@ -323,14 +323,25 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         if (node.getTarget() instanceof LexicalRequest) {
             LexicalRequest target = (LexicalRequest) node.getTarget();
             String name = target.getParts().get(0).getName();
+
+            // junk for testing
+            if (name.equals("x" )){
+                System.out.println("its name is x");
+            }
+            if (name.equals("y")){
+                System.out.println("its name is y");
+            }
+
             List<RequestPartR> parts = new ArrayList<>();
             parts.add(new RequestPartR(name + ":=", Collections.singletonList(node.getValue().accept(context, this))));
             Request request = new Request(this, parts);
             GraceObject receiver = context.findReceiver(request.getName());
-            receiver.request(request);
+            
+            // receiver.request(request);
+            GraceObject previous = receiver.request(request);
 
-            // return num;
-           return done;
+            return previous;
+        //    return done;
         } else if (node.getTarget() instanceof ExplicitRequest) {
             ExplicitRequest target = (ExplicitRequest) node.getTarget();
             String name = target.getParts().get(0).getName();

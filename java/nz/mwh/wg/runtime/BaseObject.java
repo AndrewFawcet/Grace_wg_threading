@@ -117,7 +117,7 @@ public class BaseObject implements GraceObject {
         methods.put(name, method);
     }
 
-    // TODO 
+    // TODO !!!!!!!!!!!!!!
     @Override
     public GraceObject request(Request request) {
         // System.out.println("getting a request for a field or method from a
@@ -246,7 +246,6 @@ public class BaseObject implements GraceObject {
             // should be value that has been removed, with a decremented reference count.
             // (to zero for an iso)
             // this then should be stored somehwere else...
-            System.out.println("--------------++++++++++--");
             return objectBeingRemoved;
         });
     }
