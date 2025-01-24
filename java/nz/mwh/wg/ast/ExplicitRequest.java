@@ -4,6 +4,7 @@ import java.util.List;
 
 import nz.mwh.wg.Visitor;
 
+// Represents a request for a field or method call on a specific receiver object.
 public class ExplicitRequest extends ASTNode {
     ASTNode receiver;
     List<? extends Part> parts;

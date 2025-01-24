@@ -316,14 +316,13 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // Purpose: Handles assignments to fields or variables.
     // Details: Identifies the target and updates its value through a corresponding
     // request.
-    // TODO do something here for returning stuff...
+    // TODO done something here for returning stuff allowing destructive reads
     @Override
     public GraceObject visit(GraceObject context, Assign node) {
 
         if (node.getTarget() instanceof LexicalRequest) {
             LexicalRequest target = (LexicalRequest) node.getTarget();
             String name = target.getParts().get(0).getName();
-
             List<RequestPartR> parts = new ArrayList<>();
             parts.add(new RequestPartR(name + ":=", Collections.singletonList(node.getValue().accept(context, this))));
             Request request = new Request(this, parts);
@@ -331,8 +330,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             
             // receiver.request(request);
             GraceObject previous = receiver.request(request);
-            // changed to send the previous value through for destructive reads of variables
-
+            // changed to send the previous object through for destructive reads of variables and objects
             return previous;
             // return done;
         } else if (node.getTarget() instanceof ExplicitRequest) {
@@ -345,7 +343,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
             // receiver.request(request);
             GraceObject previous = receiver.request(request);
-            // changed to send the previous value through for destructive reads of fields
+            // changed to send the previous object through for destructive reads of fields
             return previous;
             // return done;
         }

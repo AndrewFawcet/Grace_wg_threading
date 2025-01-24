@@ -21,7 +21,8 @@ print (" and b.aa is {b.aa} ")
 
 var d := a
 print ("now accessing 'a' object fields through d.cc  {d.cc}")
-var e := b  // this will not work as object b has inherited the iso capability
+var e := b  // this will not work as var b has been assigned the object with iso capability
 print ("now accessing 'b' object fields through e.aa  {e.aa}")
 
+// print ( "this will also fail {a.aa}")
 print("Goodbye cruel world")
