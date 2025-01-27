@@ -21,25 +21,16 @@ public class Start {
         //     "java/nz/mwh/wg/parserData.java",
         //     "parser.grace"
         // };
-        // String filename = "blockTest18.grace"; //
-        // String filename = "BasicThreadObjects2.grace";
-        // String filename = "BasicThreadObjectsSafe.grace";
-        // String filename = "testSpawn.grace"; //
-        // String filename = "testSpawnLocal.grace"; // ok
-        // String filename = "testSpawnLocal1.grace"; // okFail
-        // String filename = "testSpawnImmutable1.grace"; // ok
-        // String filename = "testSpawnImmutable2.grace"; // okFail
-        // String filename = "testSpawnIsolated1.grace"; // okFail
-        // String filename = "testSpawnIsolated2.grace"; // okFail
-        // String filename = "b1.grace"; //
-        // String filename = "b3.grace"; //
-        // String filename = "b4.grace"; //
-        // String filename = "b5.grace"; //
-        // String filename = "b6.grace"; //
-        // String filename = "destructive1.grace"; // variables ok
-        // String filename = "destructive2.grace"; // objects ok
-        // String filename = "destructive3.grace"; // fields in objects ok
-        String filename = "destructive4.grace"; // iso objects okFail
+        // String filename = "bank1.grace"; // iso objects Fail
+        // String filename = "bank2.grace"; // iso objects Fail
+        // String filename = "bank3.grace"; // iso objects ok
+        // String filename = "bank4.grace"; // iso objects ok
+        // String filename = "bank5.grace"; // iso objects ok        
+        // String filename = "bank6.grace"; // iso objects ok        
+        // String filename = "bank7.grace"; // iso objects ok
+        // String filename = "bank8.grace"; // iso objects Fail
+        // String filename = "bank9.grace"; // iso objects Fail
+        String filename = "bank10.grace"; // iso objects Fail
         
 
 
