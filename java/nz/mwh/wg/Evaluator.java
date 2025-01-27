@@ -327,7 +327,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             parts.add(new RequestPartR(name + ":=", Collections.singletonList(node.getValue().accept(context, this))));
             Request request = new Request(this, parts);
             GraceObject receiver = context.findReceiver(request.getName());
-            
+
             // receiver.request(request);
             GraceObject previous = receiver.request(request);
             // changed to send the previous object through for destructive reads of variables and objects
