@@ -25,7 +25,7 @@ public class Start {
         // String filename = "bank2.grace"; // iso objects Fail
         // String filename = "bank3.grace"; // iso objects ok
         // String filename = "bank4.grace"; // iso objects ok
-        String filename = "bank5.grace"; // iso objects ok        
+        // String filename = "bank5.grace"; // iso objects ok        
         // String filename = "bank6.grace"; // iso objects ok        
         // String filename = "bank7.grace"; // iso objects ok
         // String filename = "bank8.grace"; // iso objects Fail
@@ -38,6 +38,11 @@ public class Start {
         // String filename = "bank15.grace"; // looking at lists rubbish
         // String filename = "bank16.grace"; // looking at lists
         // String filename = "bank17.grace"; // basic bank working
+        // String filename = "bank18.grace"; // initialised nested objects working
+        // String filename = "bank19.grace"; // initialised nested iso objects working
+        // String filename = "bank20.grace"; // initialised nested iso, imm objects working
+        // String filename = "bank21.grace"; // initialised nested loc, iso, imm objects working
+        String filename = "bank22.grace"; // initialised nested loc, iso, imm objects working, fails on iso alasing
         
 
 
