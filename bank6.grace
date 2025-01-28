@@ -4,7 +4,7 @@ print "Grace Example with .self Start--------------------------------"
 
 // Object factory using .self for initialization
 var makeObject := object {
-    method new(value: String, number: Number) -> Object {
+    method new(value, number) -> Object {
         object {
             var textField := ""     // Initialized with a default value
             var numberField := 0   // Initialized with a default value

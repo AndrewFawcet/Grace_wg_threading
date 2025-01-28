@@ -25,12 +25,19 @@ public class Start {
         // String filename = "bank2.grace"; // iso objects Fail
         // String filename = "bank3.grace"; // iso objects ok
         // String filename = "bank4.grace"; // iso objects ok
-        // String filename = "bank5.grace"; // iso objects ok        
+        String filename = "bank5.grace"; // iso objects ok        
         // String filename = "bank6.grace"; // iso objects ok        
         // String filename = "bank7.grace"; // iso objects ok
         // String filename = "bank8.grace"; // iso objects Fail
         // String filename = "bank9.grace"; // iso objects Fail
-        String filename = "bank10.grace"; // iso objects Fail
+        // String filename = "bank10.grace"; // iso objects Fail
+        // String filename = "bank11.grace"; // iso objects thread iso ok
+        // String filename = "bank12.grace"; // iso objects thread iso ok
+        // String filename = "bank13.grace"; // iso objects bank stuff does nothing but ok
+        // String filename = "bank14.grace"; // looking at lists rubbish
+        // String filename = "bank15.grace"; // looking at lists rubbish
+        // String filename = "bank16.grace"; // looking at lists
+        // String filename = "bank17.grace"; // basic bank working
         
 
 
