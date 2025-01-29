@@ -231,7 +231,7 @@ public class BaseObject implements GraceObject {
                             "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name
                                     + "'.");
                 } else {
-                    System.out.println("all ok, in construction as no references ");
+                    // System.out.println("all ok, in construction as no references ");
                 }
             }
 

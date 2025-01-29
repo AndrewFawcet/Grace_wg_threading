@@ -6,37 +6,21 @@ var makeNestedObject := object {
     method new(nameValue) -> Object {
         object {
             var name := nameValue
-
-            method getName -> String {
-                name
-            }
         }
     }
     method newLoc(nameValue) -> Object {
         object is loc {
             var name := nameValue
-
-            method getName -> String {
-                name
-            }
         }
     }
     method newIso(nameValue) -> Object {
         object is iso {
             var name := nameValue
-
-            method getName -> String {
-                name
-            }
         }
     }
     method newImm(nameValue) -> Object {
         object is imm {
             var name := nameValue
-
-            method getName -> String {
-                name
-            }
         }
     }
 
@@ -44,40 +28,14 @@ var makeNestedObject := object {
 
 // Main object factory with nested object initialization
 var makeObject := object {
-    method new(value, number, nestedName, nestedLocName, nestedIsoName, nestedImmName) -> Object {
+    method new(name, number, nestedName, nestedLocName, nestedIsoName, nestedImmName) -> Object {
         object {
-            var textField := value   // Initialize with passed value
+            var textField := name   // Initialize with passed name
             var numberField := number // Initialize with passed number
             var nestedObject := makeNestedObject.new(nestedName) // Nested object
             var nestedLocObject := makeNestedObject.newLoc(nestedLocName) // Nested loc object
             var nestedIsoObject := makeNestedObject.newIso(nestedIsoName) // Nested iso object
             var nestedImmObject := makeNestedObject.newImm(nestedImmName) // Nested imm object
-
-            // Getter methods
-            method getText -> String {
-                textField
-            }
-
-            method getNumber -> Number {
-                numberField
-            }
-
-            method getNestedName -> String {
-                nestedObject.getName
-            }
-
-            method getNestedLocName -> String {
-                nestedLocObject.getName
-            }
-
-            method getNestedIsoName -> String {
-                nestedIsoObject.getName
-            }
-
-            method getNestedImmName -> String {
-                nestedImmObject.getName
-            }
-
         }
     }
 }
@@ -86,23 +44,23 @@ var makeObject := object {
 var myObject := makeObject.new("Hello Grace!", 42, "Nested Bank Account", "loc Bank Account Object", "iso Bank Account Object", "imm Bank Account Object")
 
 // Access fields via methods
-print "Text field: {myObject.getText}"
-print "Number field: {myObject.getNumber}"
-print "Nested object name: {myObject.getNestedName}"
-print "Nested object name: {myObject.getNestedLocName}"
-print "Nested object name: {myObject.getNestedIsoName}"
-print "Nested object name: {myObject.getNestedImmName}"
+print "Text field: {myObject.textField}"
+print "Number field: {myObject.numberField}"
+print "Nested object name: {myObject.nestedObject.name}"
+print "Nested object name: {myObject.nestedLocObject.name}"
+print "Nested object name: {myObject.nestedIsoObject.name}"
+print "Nested object name: {myObject.nestedImmObject.name}"
 
 // Create another instance with a different nested object
 var myObject2 := makeObject.new("Hello Graceeeeeeeeeeee!", 4242, "Another Nested Account", "another loc Bank Account Object", "another iso Bank Account Object" , "another imm Bank Account Object" )
 
 // Access fields via methods
-print "Text field: {myObject2.getText}"
-print "Number field: {myObject2.getNumber}"
-print "Nested object name: {myObject2.getNestedName}"
-print "Nested object name: {myObject2.getNestedLocName}"
-print "Nested object name: {myObject2.getNestedIsoName}"
-print "Nested object name: {myObject2.getNestedImmName}"
+print "Text field: {myObject2.textField}"
+print "Number field: {myObject2.numberField}"
+print "Nested object name: {myObject2.nestedObject.name}"
+print "Nested object name: {myObject2.nestedLocObject.name}"
+print "Nested object name: {myObject2.nestedIsoObject.name}"
+print "Nested object name: {myObject2.nestedImmObject.name}"
 var normalOb := myObject2.nestedObject
 print (" normalOb alias {normalOb.name} ...")
 var locOb := myObject2.nestedLocObject
@@ -120,10 +78,10 @@ print (" immOb alias {immOb.name} ...")
 def c1 = spawn { c2 ->
     var myObject2NewThread := c2.receive
     print "on new thread"
-    print " Thread received object with field value: {myObject2NewThread.getNestedName} ..."
-    print " Thread received object with field value: {myObject2NewThread.getNestedImmName} ..."
-    print " Thread received object with field value: {myObject2NewThread.getNestedIsoName} ..."
-    //    print " Thread received object with field value: {myObject2NewThread.getNestedLocName} ..." // Capability Violation: Local object
+    print " Thread received object with field value: {myObject2NewThread.nestedObject.name} ..."
+    print " Thread received object with field value: {myObject2NewThread.nestedImmObject.name} ..."
+    print " Thread received object with field value: {myObject2NewThread.nestedIsoObject.name} ..."
+    //    print " Thread received object with field value: {myObject2NewThread.nestedLocObject.name} ..." // Capability Violation: Local object
 
 }
 

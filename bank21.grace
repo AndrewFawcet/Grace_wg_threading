@@ -1,6 +1,5 @@
 print "Banking test start-------------------------------------------------------------------"
 print "Hello beautiful bank-----------------------------------------------------------------"
-print "Grace Example with .self Start--------------------------------"
 
 // Object factory for creating nested objects
 var makeNestedObject := object {

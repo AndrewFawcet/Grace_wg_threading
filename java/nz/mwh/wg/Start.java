@@ -42,7 +42,11 @@ public class Start {
         // String filename = "bank19.grace"; // initialised nested iso objects working
         // String filename = "bank20.grace"; // initialised nested iso, imm objects working
         // String filename = "bank21.grace"; // initialised nested loc, iso, imm objects working
-        String filename = "bank22.grace"; // initialised nested loc, iso, imm objects working, fails on iso alasing
+        // String filename = "bank22.grace"; // initialised nested loc, iso, imm objects working, fails on iso aliasing, loc accessing from a new thread, 
+        // String filename = "bank23.grace"; // not working bank
+        // String filename = "bank24.grace"; // removing getters, simpler..?
+        // String filename = "bank25.grace"; // bank removing getters, not simpler..?
+        String filename = "bank26.grace"; // bank removing getters, stupid simple but working ..
         
 
 
