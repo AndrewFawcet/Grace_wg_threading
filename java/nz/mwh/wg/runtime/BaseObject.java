@@ -262,7 +262,7 @@ public class BaseObject implements GraceObject {
             if (objectThread != Thread.currentThread()) {
                 throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
             } else {
-                System.out.println("all ok with the access on this local object +++++");
+                // System.out.println("all ok with the access on this local object +++++");
             }
         }
     }

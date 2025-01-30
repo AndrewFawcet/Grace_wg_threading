@@ -21,6 +21,9 @@ public class Start {
         //     "java/nz/mwh/wg/parserData.java",
         //     "parser.grace"
         // };
+
+        // String filename = "destructive5.grace"; // iso objects Destructuve sent accross threads ok
+        // String filename = "destructive6.grace"; // iso objects Destructuve sent accross threads ok
         // String filename = "bank1.grace"; // iso objects Fail
         // String filename = "bank2.grace"; // iso objects Fail
         // String filename = "bank3.grace"; // iso objects ok
@@ -46,7 +49,9 @@ public class Start {
         // String filename = "bank23.grace"; // not working bank
         // String filename = "bank24.grace"; // removing getters, simpler..?
         // String filename = "bank25.grace"; // bank removing getters, not simpler..?
-        String filename = "bank26.grace"; // bank removing getters, stupid simple but working ..
+        // String filename = "bank26.grace"; // bank removing getters, stupid simple but working ..
+        // String filename = "bank27.grace"; // bank  ..
+        String filename = "bankDistantObjects1.grace"; // bank removing getters, stupid simple but working ..
         
 
 
