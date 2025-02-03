@@ -22,39 +22,11 @@ public class Start {
         //     "parser.grace"
         // };
 
-        // String filename = "destructive5.grace"; // iso objects Destructive sent across threads ok
-        // String filename = "destructive6.grace"; // iso objects Destructive sent across threads ok
-        // String filename = "bank1.grace"; // iso objects Fail
-        // String filename = "bank2.grace"; // iso objects Fail
-        // String filename = "bank3.grace"; // iso objects ok
-        // String filename = "bank4.grace"; // iso objects ok
-        // String filename = "bank5.grace"; // iso objects ok        
-        // String filename = "bank6.grace"; // iso objects ok        
-        // String filename = "bank7.grace"; // iso objects ok
-        // String filename = "bank8.grace"; // iso objects Fail
-        // String filename = "bank9.grace"; // iso objects Fail
-        // String filename = "bank10.grace"; // iso objects Fail
-        // String filename = "bank11.grace"; // iso objects thread iso ok
-        // String filename = "bank12.grace"; // iso objects thread iso ok
-        // String filename = "bank13.grace"; // iso objects bank stuff does nothing but ok
-        // String filename = "bank14.grace"; // looking at lists rubbish
-        // String filename = "bank15.grace"; // looking at lists rubbish
-        // String filename = "bank16.grace"; // looking at lists
-        // String filename = "bank17.grace"; // basic bank working
-        // String filename = "bank18.grace"; // initialised nested objects working
-        // String filename = "bank19.grace"; // initialised nested iso objects working
-        // String filename = "bank20.grace"; // initialised nested iso, imm objects working
-        // String filename = "bank21.grace"; // initialised nested loc, iso, imm objects working
-        // String filename = "bank22.grace"; // initialised nested loc, iso, imm objects working, fails on iso aliasing, loc accessing from a new thread, 
-        // String filename = "bank23.grace"; // not working bank
-        // String filename = "bank24.grace"; // removing getters, simpler..?
-        // String filename = "bank25.grace"; // bank removing getters, not simpler..?
-        // String filename = "bank26.grace"; // bank removing getters, stupid simple but working ..
-        // String filename = "bank27.grace"; // bank  ..
-        // String filename = "bankDistantObjects1.grace"; // bank with intermediary proxy
-        // String filename = "bankDistantObjects2.grace"; // bank  with intermediary proxy leaking GraceBlock and GraceDone
-        // String filename = "bankDistantObjects3.grace"; // bank not working
-        String filename = "bankDistantObjects4.grace"; // bank not working
+        // String filename = "bankDistantObjects4.grace"; // bank not working
+        // String filename = "test/DataRaceEtc/iso.grace"; // bank not working
+        // String filename = "test/DataRaceEtc/localLociTest.grace"; // bank not working
+        // String filename = "test/DataRaceEtc/dalaLimitationsTest1.grace"; // bank not working
+        String filename = "test/DataRaceEtc/dalaLimitationsTest2.grace"; // bank not working
         
 
         
