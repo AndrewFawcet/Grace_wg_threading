@@ -183,8 +183,8 @@ public class BaseObject implements GraceObject {
                 throw new RuntimeException(errorMessage);
             }
 
-            // TODO pulls the existing value out here, and returns it at the end.
-            // could put a token zero reference object here, which acts as a tombstone.
+            // pulls the existing value out here, and returns it at the end.
+            // TODO could put a token zero reference object here, which acts as a tombstone.
             GraceObject objectBeingRemoved = null;
 
             objectBeingRemoved = fields.remove(name);

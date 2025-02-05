@@ -25,8 +25,13 @@ public class Start {
         // String filename = "bankDistantObjects4.grace"; // bank not working
         // String filename = "test/DataRaceEtc/iso.grace"; // bank not working
         // String filename = "test/DataRaceEtc/localLociTest.grace"; // bank not working
-        // String filename = "test/DataRaceEtc/dalaLimitationsTest1.grace"; // bank not working
-        String filename = "test/DataRaceEtc/dalaLimitationsTest2.grace"; // bank not working
+        // String filename = "test/DataRaceEtc/dalaLimitationsTest1.grace"; // dala limitation test not working
+        // String filename = "test/DataRaceEtc/dalaLimitationsTest2.grace"; // dala limitation test working
+        // String filename = "test/DataRaceEtc/dalaHashmap1.grace"; // dala hashmap test working
+        // String filename = "test/DataRaceEtc/dalaHashmap2.grace"; // dala hashmap test working
+        // String filename = "test/DataRaceEtc/dalaActiveObjects1.grace"; // dala NOT working
+        String filename = "test/DataRaceEtc/dalaActiveObjects2.grace"; // dala NOT working
+        // String filename = "test/DataRaceEtc/dalaDestructive.grace"; // dala hashmap test working
         
 
         
