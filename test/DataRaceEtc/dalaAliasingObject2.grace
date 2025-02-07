@@ -1,85 +1,94 @@
-// Define an Account “class” as an immutable (imm) object.
-var Account := object is imm {
-  // The 'new' method returns a new immutable Account object.
-  method new(initialValue) -> Object {
-    // Each account is created as an immutable object:
+// --- Helper Factories ---
+
+// Factory for creating nested objects in immutable or isolated mode.
+var makeNestedObject := object {
+  // Creates an immutable object that holds a value (for account names)
+  method newImm(value) -> Object {
     object is imm {
-      // Field 'value' holds the account balance.
-      var value := initialValue
-      
-      // A getter to retrieve the account value.
-      method getValue -> Number {
-        value
-      }
-      
-      // NOTE: No method to change 'value' is provided.
-      // Attempting to do something like: value += 10000
-      // would violate immutability and be forbidden.
+      var name := value
     }
   }
-}
-
-// Define a Person “class” as an isolated (iso) object.
-var Person := object is iso {
-  // The 'new' method returns a new isolated Person.
-  method new(initialBalance) -> Object {
+  // Creates an isolated object that holds a numeric value (for balances)
+  method newIso(value) -> Object {
     object is iso {
-      // Each person owns an account (the account is a rep object).
-      var account := Account.new(initialBalance)
-      
-      // The spouse field is meant to be in the same local ownership domain.
-      // (We indicate this by our commentary; in a full system, you might
-      // annotate this as a "loc" reference.)
-      var spouse := -1  // Initially, no spouse.
-      
-      // Getter for the account balance.
-      method getAccountValue -> Number {
-        account.getValue
-      }
-      
-      // Set the spouse. The parameter is expected to be a local (loc) Person.
-      method setSpouse(newSpouse) {
-        spouse := newSpouse
-      }
-      
-      // Getter for spouse.
-      method getSpouse -> Object {
-        spouse
-      }
-      
-      // (No method is provided to change the person's 'account' field;
-      // reassigning a Person's account would be forbidden by the topology.)
+      var amount := value
     }
   }
 }
 
-// Define a Main object to tie things together.
-var Main := object {
-  method demo {
-    // Create two persons with initial balances.
-    var p1 := Person.new(100)
-    var p2 := Person.new(200)
-    
-    // Set them as each other’s spouse.
-    p1.setSpouse(p2)
-    p2.setSpouse(p1)
-    
-    // Retrieve the account balances.
-    var a1 := p1.getAccountValue
-    var a2 := p2.getAccountValue
-    var total := a1 + a2
-    print("Total balance: " + total)
-    
-    // The following commented-out lines illustrate forbidden operations:
-    // ---------------------------------------------------------------
-    // p1.account = p2.account;  // Forbidden by topology: you cannot reassign
-    //                          // a rep (owned) object to a different owner.
-    //
-    // a1.value += 10000;        // Forbidden by encapsulation/immutability:
-    //                          // an immutable object’s state cannot be changed.
-    // ---------------------------------------------------------------
+// Factory for creating immutable transaction objects.
+var makeTransaction := object {
+  method new(amountValue, descriptionValue) -> Object {
+    object is imm {
+      var amount := amountValue
+      var description := descriptionValue
+    }
   }
 }
 
-// Run the demo.
-Main.demo
+// --- Account Factory ---
+// Each account is created as a standard object, enables the holding of spouse variable
+// It holds an immutable account name, an isolated balance,
+// and a reference field for spouse.
+var makeAccount := object {
+  method new(accountNameValue, initialBalance) -> Object {
+    object {
+      // The account's name is an immutable nested object.
+      var accountName := makeNestedObject.newImm(accountNameValue)
+      // The balance is stored in an isolated nested object.
+      var balance := makeNestedObject.newIso(initialBalance)
+      // The spouse field will hold a reference to another account.
+      var spouse := -1
+
+      // Deposit method: creates a transaction and updates balance.
+      method deposit(amount, description) {
+        var transaction := makeTransaction.new(amount, description)
+        // Update the balance (allowed since this is done internally)
+        balance.amount := balance.amount + amount
+      }
+
+      // Withdraw method: checks funds, creates a transaction, and updates balance.
+      method withdraw(amount, description) {
+        if (balance.amount >= amount) then {
+          var transaction := makeTransaction.new(-amount, description)
+          balance.amount := balance.amount - amount
+        } else {
+          print "Insufficient funds for withdrawal."
+        }
+      }
+
+      // Sets the spouse account.
+      method setSpouse(otherAccount) {
+        spouse := otherAccount
+      }
+    }
+  }
+}
+
+// --- Creating Accounts and Linking Them as Spouses ---
+
+// Create two account instances (for example, belonging to two persons)
+print ("creating Account A")
+var accountAlice := makeAccount.new("Alice's Savings Account", 1000)
+print ("creating Account B")
+var accountBob := makeAccount.new("Bob's Savings Account", 800)
+
+
+// Link them by setting each as the other's spouse.
+print ("setting spouse in accountAlice")
+accountAlice.setSpouse(accountBob)
+print ("setting spouse in accountBob")
+accountBob.setSpouse(accountAlice)
+
+// --- Displaying Account Information ---
+
+print "Account A: {accountAlice.accountName.name}, Balance: {accountAlice.balance.amount}"
+print "Account B: {accountBob.accountName.name}, Balance: {accountBob.balance.amount}"
+
+// --- Performing Transactions on Account A ---
+
+accountAlice.deposit(200, "Salary Payment")
+accountAlice.withdraw(150, "Grocery Shopping")
+
+// Display updated balance for account A.
+print "Account A Updated Balance: {accountAlice.balance.amount} ."

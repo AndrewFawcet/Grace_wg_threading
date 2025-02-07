@@ -32,10 +32,8 @@ public class Start {
         // String filename = "test/DataRaceEtc/dalaActiveObjects1.grace"; // dala NOT working
         // String filename = "test/DataRaceEtc/dalaActiveObjects2.grace"; // dala NOT working
         // String filename = "test/DataRaceEtc/dalaDestructive.grace"; // dala destructive read working
-        // String filename = "test/DataRaceEtc/dalaAliasingObject1.grace"; // dala NOT working
-        // String filename = "test/DataRaceEtc/dalaAliasingObject2.grace"; // dala NOT working
-        // String filename = "test/DataRaceEtc/dalaAliasingObject3.grace"; // dala Aliasing example working will fail if spouse set in iso object
-        String filename = "test/DataRaceEtc/dalaAliasingObject4.grace"; // dala Aliasing example working will pass if spouse set in object
+        // String filename = "test/DataRaceEtc/dalaAliasingObject1.grace"; // dala Aliasing example working will fail if spouse set in iso object
+        String filename = "test/DataRaceEtc/dalaAliasingObject2.grace"; // dala Aliasing example working will pass if spouse set in object
         // String filename = "test/bank/bank27.grace"; // dala NOT working
         
 
