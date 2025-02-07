@@ -1,3 +1,5 @@
+// adapted from Dala paper
+
 // Define the 'bucket' object, which stores the key-value pair and a link to the next bucket (in case of collisions)
 bucket: object {
     var key;

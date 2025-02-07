@@ -1,3 +1,5 @@
+// destructive read example
+
 var x := object {
     var message := "Hello from x!"
 }

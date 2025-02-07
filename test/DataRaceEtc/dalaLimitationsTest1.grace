@@ -1,30 +1,31 @@
-// Define an object `x`
-var x := object is isolated {
-    // Declare methods f and g
+// adapted from Dala paper
+
+var x := object is iso {
     method f {
         print "Method f called"
     }
-    
     method g -> Object {
-        // Return an object that calls method f
         object {
             method h {
-                f  // Call method f from the parent object
+                f
             }
         }
     }
 }
 
-// Call the method `g` on `x`
 def y := x.g
 
-// Spawn a thread using a communication channel
+y.h     // "Method f called"
+
 def c := spawn { v ->
-    print "Received value: {←v}  .. "
+    var xThread := v.receive
+    print ("on thread")
+    xThread.g.h
+    xThread.f
 }
 
 // Transfer ownership of `x` using a destructive read
-c.send(consume(x))
+c.send(x := -1) 
 
-// Attempt to call `h` on `y`
+y.h
 y.h

@@ -1,3 +1,5 @@
+// adapted from Dala paper
+
 // Define the 'bucket' object for holding key-value pairs and a link to the next bucket
 bucket: object {
     var key;

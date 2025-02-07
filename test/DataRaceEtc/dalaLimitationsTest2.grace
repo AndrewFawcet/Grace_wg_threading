@@ -1,3 +1,5 @@
+// adapted from Dala paper
+
 // Define an object `x` 
 // The object `x` is intended to be accessible only in its original scope.
 var x := object is iso {
