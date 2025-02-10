@@ -29,15 +29,15 @@ public class Start {
         // String filename = "test/DataRaceEtc/dalaLimitationsTest2.grace"; // dala limitation test working
         // String filename = "test/DataRaceEtc/dalaHashmap1.grace"; // dala hashmap test working
         // String filename = "test/DataRaceEtc/dalaHashmap2.grace"; // dala hashmap test working
+        // String filename = "test/DataRaceEtc/dalaHashmap3.grace"; // dala hashmap test working
         // String filename = "test/DataRaceEtc/dalaActiveObjects1.grace"; // dala NOT working
         // String filename = "test/DataRaceEtc/dalaActiveObjects2.grace"; // dala NOT working
         // String filename = "test/DataRaceEtc/dalaDestructive.grace"; // dala destructive read working
         // String filename = "test/DataRaceEtc/dalaAliasingObject1.grace"; // dala Aliasing example working will fail if spouse set in iso object
-        String filename = "test/DataRaceEtc/dalaAliasingObject2.grace"; // dala Aliasing example working will pass if spouse set in object
-        // String filename = "test/bank/bank27.grace"; // dala NOT working
-        
-
-        
+        // String filename = "test/DataRaceEtc/dalaAliasingObject2.grace"; // dala Aliasing example working will pass if spouse set in object
+        // String filename = "test/bank/bank27.grace"; // dala bank working
+        // String filename = "test/bank/bankDistantObjects2.grace"; // dala dist bank working
+        String filename = "test/DataRaceEtc/dalaLinkedList.grace"; // dala destructive read working
 
 
         boolean printAST = false;
