@@ -8,8 +8,9 @@ var makeNode := object {
             var value := newValue
             var nextNode := -1
 
+            print(" making a node " )
             method setNext(node) { nextNode := node }
-            method getNext() -> Object { return nextNode }
+            method getNext() { return nextNode }
         }
     }
 }
@@ -67,6 +68,7 @@ var makeLinkedList := object {
                     return -1
                 }
                 while {currentNode != -1} do {
+                    print "currentNode "
                     print "Key: {currentNode.key}, Value: {currentNode.value}"
                     currentNode := currentNode.getNext()
                 }
@@ -111,7 +113,9 @@ var makeHashMap := object {
                 var bucket := bucketList.get(bucketIndex)
                 print "--here"
                 if (bucket != -1) then {
+                    // print "----here {bucket.update(key, value)} ...."
                     if (bucket.update(key, value) == 1) then {
+                        print "------here"
                         // Key already exists, value updated
                         return -1
                     }
@@ -119,9 +123,12 @@ var makeHashMap := object {
                 print "----here {bucket} .."
                 // Key doesn't exist; add a new node
                 if (bucket == -1) then {
+                    print "-== -1 bucket -here {bucket} .."
+
                     bucket := makeLinkedList.new()
                     bucketList.add(bucketIndex, bucket)
                 }
+                print ("end of method")
                 // bucket.add(key, value)
             }
 
@@ -151,9 +158,9 @@ var makeHashMap := object {
 var myHashMap := makeHashMap.new(3)
 
 // Add key-value pairs
-myHashMap.put("apple", 10)
-// myHashMap.put("banana", 20)
-// myHashMap.put("pear", 30)
+// myHashMap.put("apple", 10)
+myHashMap.put("banana", 20)
+myHashMap.put("pear", 30)
 // myHashMap.put("kiwi", 40)
 
 // Print hashmap contents
