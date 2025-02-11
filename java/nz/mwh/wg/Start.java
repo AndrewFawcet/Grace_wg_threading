@@ -37,7 +37,9 @@ public class Start {
         // String filename = "test/DataRaceEtc/dalaAliasingObject2.grace"; // dala Aliasing example working will pass if spouse set in object
         // String filename = "test/bank/bank27.grace"; // dala bank working
         // String filename = "test/bank/bankDistantObjects2.grace"; // dala dist bank working
-        String filename = "test/DataRaceEtc/dalaLinkedList.grace"; // dala destructive read working
+        // String filename = "test/DataRaceEtc/dalaLinkedList.grace"; // dala L list  not working
+        // String filename = "test/DataRaceEtc/dalaLinkedList2.grace"; // dala L list  not working
+        String filename = "basicBasic3.grace"; // dala L list  not working
 
 
         boolean printAST = false;

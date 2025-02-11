@@ -1,9 +1,9 @@
 // Node factory for creating a linked list node
 var makeNode := object {
-    method new(value) -> Object {
+    method new(newValue) -> Object {
         object {
-            var value := value
-            var nextNode := nill  // The reference to the next node (initially null)
+            var value := newValue
+            var nextNode := -1  // Use 'nothing' to represent a null reference
 
             // Method to set the next node
             method setNext(node) {
@@ -20,19 +20,19 @@ var makeNode := object {
 
 // Linked List factory for creating a linked list
 var makeLinkedList := object {
-    var head := nill  // The head (first) node of the list
+    var head := -1  // Use 'nothing' instead of -1 to represent an empty list
 
     // Method to add a node to the list
-    method add(value) {
-        var newNode := makeNode.new(value)  // Create a new node
+    method add(newValue) {
+        var newNode := makeNode.new(newValue)  // Create a new node
 
         // If the list is empty, set the new node as the head
-        if (head == nill) then {
+        if (head == -1) then {
             head := newNode
         } else {
             // Otherwise, traverse to the end of the list and add the new node there
             var currentNode := head
-            while (currentNode.getNext() != nill) do {
+            while (currentNode.getNext() != -1) do {
                 currentNode := currentNode.getNext()
             }
             currentNode.setNext(newNode)
@@ -42,7 +42,7 @@ var makeLinkedList := object {
     // Method to print the list's contents
     method printList() {
         var currentNode := head
-        while (currentNode != nill) do {
+        while (currentNode != -1) do {
             print "{currentNode.value} "
             currentNode := currentNode.getNext()  // Move to the next node
         }
@@ -51,7 +51,7 @@ var makeLinkedList := object {
 }
 
 // Create a linked list instance
-var myList := makeLinkedList.new
+var myList := makeLinkedList
 
 // Add some nodes to the linked list
 myList.add(10)

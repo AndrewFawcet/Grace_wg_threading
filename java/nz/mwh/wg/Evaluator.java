@@ -438,7 +438,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             }).start();
             return chan2;
         });
-
         lexicalParent.addMethod("print(1)", request -> {
             System.out.println(request.getParts().get(0).getArgs().get(0).toString());
             return done;
