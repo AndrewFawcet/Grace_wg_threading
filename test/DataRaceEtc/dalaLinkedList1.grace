@@ -69,4 +69,17 @@ myList.add(700)
 myList.add(2)
 myList.printList()
 
+print "--"
+
+print ("-new linked list-")
+var myOtherList := makeLinkedList
+myOtherList.add("jam")
+myOtherList.add("bean")
+myOtherList.add("toast")
+myOtherList.add("blackPudding")
+myOtherList.printList()
+
+print "--"
+myList.printList()
+
 print ("-end-")

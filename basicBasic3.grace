@@ -43,13 +43,16 @@ x.checkValue(4)
 method checkMeth(newValue : Number) {
     if (newValue < 5) then {
         print " checkMeth newValue = {newValue} and is less than 5" 
+        return 1
     } else {
-        print " checkMeth newValue = {newValue} and is greater than 5" 
+        print " checkMeth newValue = {newValue} and is greater than 5"
+        return 2 
     }
 }
 
-
 checkMeth(9)
+print " putting some stuff here {checkMeth(9)}  "
 checkMeth(1)
+print " putting some stuff here {checkMeth(1)}  "
 
 print "Goodbye cruel world"
