@@ -22,25 +22,26 @@ public class Start {
         //     "parser.grace"
         // };
 
+        // String filename = "test/workingTests/dalaDestructive.grace"; // dala destructive read working
+        // String filename = "test/workingTests/dalaLimitationsTest1.grace"; // dala limitation test working
+        // String filename = "test/workingTests/dalaLimitationsTest2.grace"; // dala limitation test working
+        // String filename = "test/workingTests/dalaLinkedList1.grace"; // dala L list  working
+        // String filename = "test/workingTests/dalaLinkedList2.grace"; // dala L list  working
+        // String filename = "test/workingTests/dalaAliasingObject1.grace"; // dala Aliasing example working will fail if spouse set in iso object
+        // String filename = "test/workingTests/dalaAliasingObject2.grace"; // dala Aliasing example working will pass if spouse set in object
+
         // String filename = "bankDistantObjects4.grace"; // bank not working
         // String filename = "test/DataRaceEtc/iso.grace"; // bank not working
         // String filename = "test/DataRaceEtc/localLociTest.grace"; // bank not working
-        // String filename = "test/DataRaceEtc/dalaLimitationsTest1.grace"; // dala limitation test working
-        // String filename = "test/DataRaceEtc/dalaLimitationsTest2.grace"; // dala limitation test working
         // String filename = "test/DataRaceEtc/dalaHashmap1.grace"; // dala hashmap test working
         // String filename = "test/DataRaceEtc/dalaHashmap2.grace"; // dala hashmap test working
         // String filename = "test/DataRaceEtc/dalaHashmap3.grace"; // dala hashmap test working
         // String filename = "test/DataRaceEtc/dalaActiveObjects1.grace"; // dala NOT working
         // String filename = "test/DataRaceEtc/dalaActiveObjects2.grace"; // dala NOT working
-        // String filename = "test/DataRaceEtc/dalaDestructive.grace"; // dala destructive read working
-        // String filename = "test/DataRaceEtc/dalaAliasingObject1.grace"; // dala Aliasing example working will fail if spouse set in iso object
-        // String filename = "test/DataRaceEtc/dalaAliasingObject2.grace"; // dala Aliasing example working will pass if spouse set in object
         // String filename = "test/bank/bank27.grace"; // dala bank working
         // String filename = "test/bank/bankDistantObjects2.grace"; // dala dist bank working
-        // String filename = "test/DataRaceEtc/dalaLinkedList1.grace"; // dala L list  working
-        // String filename = "test/DataRaceEtc/dalaLinkedList2.grace"; // dala L list  working
         // String filename = "basicBasic3.grace"; // dala basics working
-        String filename = "test/DataRaceEtc/dalaHashmap4.grace"; // dala hashmap test working
+        // String filename = "test/DataRaceEtc/dalaHashmap4.grace"; // dala hashmap test working
         
 
 

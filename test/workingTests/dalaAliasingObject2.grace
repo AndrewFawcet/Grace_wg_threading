@@ -1,3 +1,7 @@
+// file:///C:/PhD/Research%20Papers/Other/978-3-642-36946-9.pdf
+// inspired by "Aliasing in Object Oriented Programming" page 289 "Object Ownership in Program Verification" 
+// the paper demonstratd in Fig 2 ownership topology and encapsulation in Universe Types and Dynamic Ownership
+// this is the Dala version showing ownership topology and encapsulation
 // --- Helper Factories ---
 
 // Factory for creating nested objects in immutable or isolated mode.
@@ -27,12 +31,12 @@ var makeTransaction := object {
 }
 
 // --- Account Factory ---
-// Each account is created as an iso (isolated) object.
+// Each account is created as a standard object, enables the holding of spouse variable
 // It holds an immutable account name, an isolated balance,
 // and a reference field for spouse.
 var makeAccount := object {
   method new(accountNameValue, initialBalance) -> Object {
-    object is iso {
+    object {
       // The account's name is an immutable nested object.
       var accountName := makeNestedObject.newImm(accountNameValue)
       // The balance is stored in an isolated nested object.
@@ -75,9 +79,10 @@ var accountBob := makeAccount.new("Bob's Savings Account", 800)
 
 
 // Link them by setting each as the other's spouse.
-print ("setting spouse")
-// accountAlice.setSpouse(accountBob)
-// accountBob.setSpouse(accountAlice)
+print ("setting spouse in accountAlice")
+accountAlice.setSpouse(accountBob)
+print ("setting spouse in accountBob")
+accountBob.setSpouse(accountAlice)
 
 // --- Displaying Account Information ---
 
