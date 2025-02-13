@@ -1,30 +1,6 @@
-// a linked iso list
-// the head is an aliasable object, and holds no values
-// all additional nodes with values are iso 
-
-var makeHeadNode := object {
-    method new -> Object {
-        object {
-            var value := "headNode"
-            var nextNode := -1  // The reference to the next node (initially -1 for null)
-
-            method printValues() {
-                if (nextNode != -1) then {
-                    nextNode.printValues() 
-                }
-            }
-
-            method addNewValue(value) {
-                if (nextNode != -1) then {
-                    nextNode.addNewValue(value) 
-                } else {
-                    nextNode := makeNode.new(value)
-                }
-            }
-        }
-    }
-}
-
+// a iso linked list
+// the head is an iso object, and holds a value
+// all additional nodes with values are iso (same as the head)
 
 var makeNode := object {
     method new(newValue) -> Object {
@@ -33,7 +9,7 @@ var makeNode := object {
             var nextNode := -1  // The reference to the next node (initially -1 for null)
 
             method printValues() {
-                print "{value} "
+                print " {value} "
                 if (nextNode != -1) then {
                     nextNode.printValues() 
                 }
@@ -52,17 +28,16 @@ var makeNode := object {
 
 // Linked List factory for creating separate linked list instances
 var makeLinkedList := object {
-    method new() -> Object {
+    method new(value) -> Object {
         object {
-            // var head := -1  // The head (first) node of the list
-            var head := makeHeadNode.new()
+            var head := makeNode.new(value)
         }
     }
 }
 
 // Create separate linked list instances
-var myList := makeLinkedList.new()
-var myOtherList := makeLinkedList.new()
+var myList := makeLinkedList.new(10)
+var myOtherList := makeLinkedList.new("donut")
 
 // Add nodes to the first list
 print "myList contents:"
@@ -88,3 +63,5 @@ print "--"
 
 print "myList remains unchanged:"
 myList.head.printValues()  // Output: 10 20 30 40
+
+// var blue := myList.head // aliasing of head is a capability violation
