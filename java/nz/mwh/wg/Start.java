@@ -51,8 +51,9 @@ public class Start {
         // String filename = "test/DataRaceEtc/dalaLinkedList4WithIso.grace"; // dala hashmap test working
         // String filename = "test/DataRaceEtc/dalaLinkedList5WithIso.grace"; // dala hashmap test working
         
-        // String filename = "hash1.grace"; // dala hashmap test working
-        String filename = "hash2.grace"; // dala hashmap test working
+        // String filename = "hash1.grace"; // basic printhash working
+        // String filename = "hash2.grace"; // basic hash working
+        String filename = "hash3.grace"; // basic hash and % modulus working
         
 
 
