@@ -422,6 +422,19 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         BaseObject lexicalParent = new BaseObject(null);
 
+        lexicalParent.addMethod("hash(1)", request -> {
+            Object arg = request.getParts().get(0).getArgs().get(0);
+            String str = arg.toString();
+            int hash = str.hashCode();
+            return new GraceNumber(hash); // Return the hash as a GraceNumber
+        });
+        lexicalParent.addMethod("hashprint(1)", request -> {
+            Object arg = request.getParts().get(0).getArgs().get(0);
+            String str = arg.toString(); // Convert to string
+            int hash = str.hashCode();   // Compute hash code
+            System.out.println("Hash of \"" + str + "\": " + hash);
+            return new GraceNumber(hash); // Return the hash as a GraceNumber
+        });
         lexicalParent.addMethod("spawn(1)", request -> {
             GraceBlock block = (GraceBlock) request.getParts().get(0).getArgs().get(0);
             DuplexChannel dchan1 = new DuplexChannel(1);

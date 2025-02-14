@@ -34,7 +34,7 @@ public class Start {
         // String filename = "test/workingTests/bankDistantObjects.grace"; // dala dist bank working
         // String filename = "test/workingTests/bank.grace"; // dala bank working
         // String filename = "test/workingTests/bankAmbientTalk.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
-        String filename = "test/workingTests/linkedListWithIso1.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
+        // String filename = "test/workingTests/linkedListWithIso1.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/linkedListWithIso2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
 
         // String filename = "test/DataRaceEtc/bankAmbientTalk2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
@@ -50,6 +50,9 @@ public class Start {
         // String filename = "test/DataRaceEtc/dalaLinkedList3WithIso.grace"; // dala hashmap test working
         // String filename = "test/DataRaceEtc/dalaLinkedList4WithIso.grace"; // dala hashmap test working
         // String filename = "test/DataRaceEtc/dalaLinkedList5WithIso.grace"; // dala hashmap test working
+        
+        // String filename = "hash1.grace"; // dala hashmap test working
+        String filename = "hash2.grace"; // dala hashmap test working
         
 
 
