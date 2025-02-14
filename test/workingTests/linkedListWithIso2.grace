@@ -1,6 +1,8 @@
 // a iso linked list
 // the head is an iso object, and holds a value
 // all additional nodes with values are iso (same as the head)
+// compare to linked lists using atomic elements to be thread safe "A Type System for Data-Centric Synchronization" Fig 6
+// file:///C:/PhD/Research%20Papers/Other/978-3-642-14107-2_15.pdf
 
 var makeNode := object {
     method new(newValue) -> Object {
