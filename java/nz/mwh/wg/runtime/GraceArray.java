@@ -65,8 +65,8 @@ public class GraceArray implements GraceObject {
         throw new RuntimeException("No such method in scope: " + name);
     }
 
-    // Method to integrate with Evaluator
-    public static void addToEvaluator(BaseObject lexicalParent) {
-        lexicalParent.addMethod("array(0)", request -> new GraceArray());
-    }
+    // // Method to integrate with Evaluator
+    // public static void addToEvaluator(BaseObject lexicalParent) {
+    //     lexicalParent.addMethod("array(0)", request -> new GraceArray());
+    // }
 }
