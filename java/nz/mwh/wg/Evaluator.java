@@ -83,7 +83,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                             "Capability Violation: An 'immutable' object cannot reference a (base) object without the 'immutable' capability.");
                 }
             }
-
         }
 
         BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
