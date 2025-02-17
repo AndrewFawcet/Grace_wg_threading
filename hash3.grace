@@ -14,7 +14,7 @@ print("  c is {hash("c")}  ")
 
 print("Testing modulus operator...")
 
-var m := 10 + 3
+var m := 10 % 3
 print "here"
 print("10 % 3 = {m}  Expected 1") 
 // print("15 % 4 = {15 % 4}  Expected: 3")
