@@ -425,8 +425,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         lexicalParent.addMethod("hash(1)", request -> {
             Object arg = request.getParts().get(0).getArgs().get(0);
             String str = arg.toString();
-            int hash = str.hashCode();
-            return new GraceNumber(hash); // Return the hash as a GraceNumber
+            int hash = Math.abs(str.hashCode());
+            return new GraceNumber(hash); // Return the hash as a positive GraceNumber
         });
         lexicalParent.addMethod("hashprint(1)", request -> {
             Object arg = request.getParts().get(0).getArgs().get(0);
