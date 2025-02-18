@@ -54,7 +54,9 @@ public class Start {
         // String filename = "hash2.grace"; // basic hash working
         // String filename = "hash3.grace"; // basic hash and % modulus working
         // String filename = "array.grace"; // basic hash and % modulus working
-        String filename = "array2.grace"; // basic hash and % modulus working
+        // String filename = "array2.grace"; // basic hash and % modulus working
+        // String filename = "array3.grace"; // basic hash and % modulus working
+        String filename = "array4.grace"; // basic hash and % modulus working
 
 
 

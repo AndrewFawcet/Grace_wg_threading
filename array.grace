@@ -1,3 +1,5 @@
+// testing strings
+
 def myArray = array()
 myArray.add("apple")
 myArray.add("banana")
