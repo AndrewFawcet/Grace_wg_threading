@@ -41,7 +41,7 @@ var makeNode := object {
 
 // Linked List factory
 method makeLinkedList() -> Object {
-    object {
+    object is iso{
         var head := -1
 
         method add(value) {
@@ -71,7 +71,7 @@ method makeLinkedList() -> Object {
 // HashMap factory
 var makeHashMap := object {
     method new(size) -> Object {
-        object {
+        object is iso {
             var buckets := array()
             var i := 0
             while { i < size} do {
@@ -119,7 +119,7 @@ var makeHashMap := object {
 }
 
 // Example usage
-var myMap := makeHashMap.new(10)
+var myMap := makeHashMap.new(3)
 myMap.put("hello", 123)
 myMap.put("world", 456)
 
@@ -152,3 +152,10 @@ otherMap.put("pear", 456)
 otherMap.printAll()
 print ""
 myMap.printAll()
+
+// var aliasMap := myMap // wil create a reference error 
+
+var aliasMap := myMap.put("rottenBanana", 789)
+// aliasMap("rottenBanana", 789)  // doesn't do anything non usefull alias essentially null
+myMap.printAll()
+
