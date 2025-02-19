@@ -2,7 +2,7 @@
 // has an isolated linked list in the buckets.
 
 // Node factory for creating a linked list node
-var makeNode := object {
+var makeNode := object is iso { // factories do not need to be iso, but are for consistency in all objects in and associated with making the hashmap
     method new(newValue) -> Object {
         object is iso {
             var value := newValue
@@ -69,7 +69,7 @@ method makeLinkedList() -> Object {
 }
 
 // HashMap factory
-var makeHashMap := object {
+var makeHashMap := object is iso{   // factories do not need to be iso, but are for consistency in all objects in and associated with making the hashmap
     method new(size) -> Object {
         object is iso {
             var buckets := array()
