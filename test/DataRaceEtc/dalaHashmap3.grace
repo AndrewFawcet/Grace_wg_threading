@@ -177,9 +177,10 @@ var value1 := object {
 // var value3 := object { var 3 := "I am object 3" }
 
 var objectMap := makeHashMap.new(3)
-
+var num := key1.hash()
+print ("hash num is {num} >> ")
 // objectMap.put(key1, value1);
-objectMap.put("pop", value1);
-// objectMap.printAll()
-
+objectMap.put(key1, value1);
+var keyReturned := objectMap.get(key1)
+print (keyReturned.one)
 print "-end-"

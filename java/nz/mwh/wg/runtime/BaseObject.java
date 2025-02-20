@@ -20,6 +20,7 @@ public class BaseObject implements GraceObject {
     private boolean isImmutable = false;
     private boolean isLocal = false;
     private Thread objectThread = null;
+    private int hashNumber = 0;
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
@@ -120,8 +121,11 @@ public class BaseObject implements GraceObject {
     // TODO 
     @Override
     public GraceObject request(Request request) {
-        // System.out.println("getting a request for a field or method from a
-        // baseObject------------");
+
+        if (request.getParts().get(0).getName().equals("hash")) { // Added hash method
+            return new GraceNumber(hashNumber);
+        }
+        
         Function<Request, GraceObject> method = methods.get(request.getName());
         if (isLocal()) {
             validateThreadAccess();

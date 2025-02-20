@@ -38,7 +38,6 @@ public class GraceNumber implements GraceObject {
                 return new GraceNumber(value * ((GraceNumber) parts.get(0).getArgs().get(0)).value);
             } else if (name.equals("/")) {
                 return new GraceNumber(value / ((GraceNumber) parts.get(0).getArgs().get(0)).value);
-
             } else if (name.equals("%")) { // Handle modulus %
                 return new GraceNumber(value % ((GraceNumber) parts.get(0).getArgs().get(0)).value);
             }else if (name.equals("prefix-")) {
