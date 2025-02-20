@@ -38,6 +38,7 @@ public class GraceNumber implements GraceObject {
                 return new GraceNumber(value * ((GraceNumber) parts.get(0).getArgs().get(0)).value);
             } else if (name.equals("/")) {
                 return new GraceNumber(value / ((GraceNumber) parts.get(0).getArgs().get(0)).value);
+
             } else if (name.equals("%")) { // Handle modulus %
                 return new GraceNumber(value % ((GraceNumber) parts.get(0).getArgs().get(0)).value);
             }else if (name.equals("prefix-")) {
@@ -56,6 +57,9 @@ public class GraceNumber implements GraceObject {
                 return new GraceBoolean(value != ((GraceNumber) parts.get(0).getArgs().get(0)).value);
             } else if (name.equals("asString")) {
                 return new GraceString(toString());
+            } else if (name.equals("hash")) { // Added hash method
+                int hash = Math.abs(Double.toString(value).hashCode());
+                return new GraceNumber(hash);
             }
         }
         throw new RuntimeException("No such method in Number: " + request.getName());

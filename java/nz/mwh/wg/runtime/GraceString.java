@@ -41,6 +41,9 @@ public class GraceString implements GraceObject {
                 return new GraceString("" + value.charAt(index - 1));
             } else if (name.equals("firstCodepoint") || name.equals("firstCP")) {
                 return new GraceNumber(value.codePointAt(0));
+            } else if (name.equals("hash")) { // Added hash method
+                int hash = Math.abs(value.hashCode());
+                return new GraceNumber(hash);
             }
         } else if (parts.size() == 2) {
             String name = request.getName();
