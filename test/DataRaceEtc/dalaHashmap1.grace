@@ -1,113 +1,161 @@
-// adapted from Dala paper
+// Grace HashTable Implementation
+// has an isolated linked list in the buckets.
 
-// Define the 'bucket' object, which stores the key-value pair and a link to the next bucket (in case of collisions)
-bucket: object {
-    var key;
-    var value;
-    var next;
+// Node factory for creating a linked list node
+var makeNode := object is iso { // factories do not need to be iso, but are for consistency in all objects in and associated with making the hashmap
+    method new(newValue) -> Object {
+        object is iso {
+            var value := newValue
+            var nextNode := -1  // Initially -1 for null
 
-    // Method to initialize a new bucket with key-value and next as null
-    method new(key, value) {
-        key := key;
-        value := value;
-        next := null;
+            method printValues() {
+                print " key {value.k} "
+                print " value {value.v} "
+                if (nextNode != -1) then {
+                    nextNode.printValues() 
+                }
+            }
+
+            method addNewValue(newValue) {
+                if (nextNode != -1) then {
+                    nextNode.addNewValue(newValue) 
+                } else {
+                    nextNode := makeNode.new(newValue)  // Correctly assigning nextNode
+                }
+            }
+
+            method getKeyValue(keyValue) {
+                if (value.k == keyValue) then {
+                    return value.v
+                } else {
+                    if (nextNode != -1) then {
+                        return nextNode.getKeyValue(keyValue)  // Ensure we return the result from recursion
+                    } else {
+                        return "Value not found for Key {keyValue} .."
+                    }
+                }
+            }
+        }
     }
 }
 
-// Define the 'map' object, which will hold the hashmap-like structure
-map: object {
-    // 'buckets' is a collection of 26 objects (one for each letter of the alphabet)
-    var buckets := (0..25).collect { 
-        object {
-            var next := null;
-        }
-    };
+// Linked List factory
+method makeLinkedList() -> Object {
+    object is iso{
+        var head := -1
 
-    // Method to calculate a hash for the key (using its character value and simple modulus operation)
-    method hash(key) {
-        return key.hash % 26;
-    }
-
-    // Method to get the value corresponding to a key
-    method get(key) {
-        var index := self.hash(key);  // Find the appropriate bucket
-        var current := buckets[index]; // Get the first bucket in the index
-        
-        // Traverse the linked list to find the key
-        while current != null {
-            if current.key == key {
-                return current.value; // Return the value if key is found
+        method add(value) {
+            if (head == -1) then {
+                head := makeNode.new(value)  // Correctly updating head
+            } else {
+                head.addNewValue(value)
             }
-            current := current.next; // Move to the next bucket in the list
         }
-        return "Failure: No such key"; // Key not found
-    }
 
-    // Method to put a key-value pair into the map
-    method put(key, value) {
-        var index := self.hash(key);  // Find the appropriate bucket
-        var current := buckets[index]; // Get the first bucket in the index
-        
-        // Traverse the linked list to check if the key already exists
-        while current != null {
-            if current.key == key {
-                current.value := value; // Update the value if the key already exists
-                return "Updated"; // Return "Updated" to indicate the key-value pair was updated
+        method get(keyValue) {
+            if (head == -1) then {
+                return "empty bucket"
+            } else {
+                return head.getKeyValue(keyValue)  // Ensure we return the result
             }
-            current := current.next; // Move to the next bucket in the list
         }
 
-        // If the key does not exist, create a new bucket and insert it at the beginning of the linked list
-        var newBucket := bucket.new(key, value);
-        newBucket.next := buckets[index];
-        buckets[index] := newBucket; // Insert the new bucket at the beginning of the list
-        return "Success"; // Return "Success" to indicate the new key-value pair was added
-    }
-
-    // Method to update a key-value pair (same as 'put' in this case)
-    method update(key, value) {
-        return self.put(key, value);
-    }
-
-    // Method to run and process a message (simulating the original 'run' method from your example)
-    method run(msgs) {
-        var msg := msgs;
-        var k := msg.key.freeze();
-        var c := msg.reply;
-
-        if (msg.op == "done") return "done";
-        if (msg.op == "get") c := self.get(k);
-        if (msg.op == "put") c := self.put(k, msg.val);
-        if (msg.op == "update") {
-            self.get(k); 
-            c := self.put(k, msg.val);
+        method printList() {
+            if (head != -1) then {
+                head.printValues()  // Print recursively
+            }
         }
-        self.run(msgs);
     }
 }
 
-// Create a new map object
-var myMap := map.new();
+// HashMap factory
+var makeHashMap := object is iso{   // factories do not need to be iso, but are for consistency in all objects in and associated with making the hashmap
+    method new(size) -> Object {
+        object is iso {
+            var buckets := array()
+            var i := 0
+            while { i < size} do {
+                buckets.add(makeLinkedList())  // Creates a linked list in each bucket
+                i := i + 1
+            }
 
-// Insert some key-value pairs into the map
-myMap.put('a', 100);
-myMap.put('b', 200);
+            method hashKey(key) -> Number {
+                var hashValue := hash(key)
+                hashValue := hashValue % size
+                return hashValue
+            }
 
-// Retrieve a value by key
-print(myMap.get('a')) // Output: 100
-print(myMap.get('b')) // Output: 200
-print(myMap.get('c')) // Output: "Failure: No such key"
+            method put(key, value) {
+                var index := hashKey(key)
+                // Add the key-value object to the appropriate bucket
+                buckets.get(index).add(object {
+                    var k := key
+                    var v := value
+                })
+            }
 
-// Update a value for an existing key
-myMap.update('a', 300);
-print(myMap.get('a')) // Output: 300
+            method get(key) -> Object {
+                var index := hashKey(key)
+                print("here getting index {index}  .")
+                if (buckets.get(index).head != -1) then {
+                    print("in here")
+                    return buckets.get(index).get(key)  // Returning the result from the linked list
+                }
+                return "Key not found"
+            }
 
-// Simulating the run method (sending messages to the map)
-var msg := object {
-    var op := "put";
-    var key := 'd';
-    var val := 400;
-    var reply := null;
-};
-myMap.run([msg]);
-print(myMap.get('d')) // Output: 400
+            method printAll() {
+                var i := 0
+                while { i < size } do {
+                    print("Bucket {i}:")
+                    if (buckets.get(i).head != -1) then {
+                        buckets.get(i).printList()  // Print the list in each bucket
+                    }
+                    i := i + 1
+                }
+            }
+        }
+    }
+}
+
+// Example usage
+var myMap := makeHashMap.new(3)
+myMap.put("hello", 123)
+myMap.put("world", 456)
+
+print("Value for 'hello': {myMap.get("hello")} ..")  // Should print 123
+print("Value for 'world': {myMap.get("world")} ..")  // Should print 456
+print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key not found'
+
+myMap.printAll()
+
+var otherMap := makeHashMap.new(4)
+otherMap.put("hello", 123)
+otherMap.put("world", 456)
+otherMap.put("bacon", 123)
+otherMap.put("garlic", 456)
+otherMap.put("chips", 123)
+otherMap.put("cheese", 456)
+otherMap.put("tofu", 123)
+otherMap.put("lamb", 456)
+otherMap.put("sausage", "sausage")
+otherMap.put("steak", 456)
+otherMap.put("potato", 123)
+otherMap.put("onion", 456)
+otherMap.put("chicken", 123)
+otherMap.put("oil", 456)
+otherMap.put("water", 123)
+otherMap.put("chocolate", 456)
+otherMap.put("orange", 123)
+otherMap.put("pear", 456)
+
+otherMap.printAll()
+print ""
+myMap.printAll()
+
+// var aliasMap := myMap // wil create a reference error 
+
+var aliasMap := myMap.put("rottenBanana", 789)
+// aliasMap("rottenBanana", 789)  // doesn't do anything non usefull alias essentially null
+myMap.printAll()
+
