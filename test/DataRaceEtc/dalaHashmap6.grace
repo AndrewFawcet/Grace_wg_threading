@@ -100,7 +100,7 @@ var makeHashMap := object is iso{   // factories do not need to be iso, but are 
 
             method at(key) {
                 var index := hashKey(key)
-                // Add the key-value object to the appropriate bucket
+                // return the appropriate bucket
                 return buckets.get(index)
             }
 

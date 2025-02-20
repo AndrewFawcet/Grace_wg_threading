@@ -1,0 +1,136 @@
+// Grace HashTable Implementation
+// Has an isolated linked list in the buckets.
+
+// Node factory for creating a linked list node
+var makeNode := object is iso {
+    method new(newValue) -> Object {
+        object is iso {
+            var value := newValue
+            var nextNode := -1  // Initially -1 for null
+
+            method printValues() {
+                print " key {value.k} "
+                print " value {value.v} "
+                if (nextNode != -1) then {
+                    nextNode.printValues() 
+                }
+            }
+
+            method addNewValue(newValue) {
+                if (nextNode != -1) then {
+                    nextNode.addNewValue(newValue) 
+                } else {
+                    nextNode := makeNode.new(newValue)  // Correctly assigning nextNode
+                }
+            }
+
+            method getKeyValue(keyValue) {
+                if (value.k == keyValue) then {
+                    return value.v
+                } else {
+                    if (nextNode != -1) then {
+                        return nextNode.getKeyValue(keyValue)  // Ensure we return the result from recursion
+                    } else {
+                        return null  // Return null instead of a string to be consistent
+                    }
+                }
+            }
+        }
+    }
+}
+
+// LinkedList object with a 'new' method
+var linkedList := object is iso {
+    method new() -> Object {
+        object is iso {
+            var head := -1  // Initially empty list
+
+            method add(value) {
+                if (head == -1) then {
+                    head := makeNode.new(value)  // Correctly updating head
+                } else {
+                    head.addNewValue(value)
+                }
+            }
+
+            method put(key, value) {
+                add(object {
+                    var k := key
+                    var v := value
+                })
+            }
+
+            method get(key) {
+                if (head == -1) then {
+                    return "empty bucket"
+                } else {
+                    return head.getKeyValue(key)  // Ensure we return the result
+                }
+            }
+
+            method printList() {
+                if (head != -1) then {
+                    head.printValues()  // Print recursively
+                }
+            }
+        }
+    }
+}
+
+// HashMap factory
+var makeHashMap := object is iso {
+    method new(size) -> Object {
+        object is iso {
+            var buckets := array(size)
+            var i := 0
+            while { i < size} do {
+                buckets.add(linkedList.new())  // Creates a new linked list in each bucket
+                i := i + 1
+            }
+
+            method hashKey(key) -> Number {
+                var hashValue := key.hash()
+                hashValue := hashValue % size
+                return hashValue
+            }
+
+            method at(key) {
+                var index := hashKey(key)
+                // Return the appropriate linked list for the bucket
+                return buckets.get(index)
+            }
+
+            method get(key) -> Object {
+                var index := hashKey(key)
+                if (buckets.get(index).head != -1) then {
+                    return buckets.get(index).get(key)  // Returning the result from the linked list
+                }
+                return "Key not found"
+            }
+
+            method printAll() {
+                var i := 0
+                while { i < size } do {
+                    print("Bucket {i}:")
+                    if (buckets.get(i).head != -1) then {
+                        buckets.get(i).printList()  // Print the list in each bucket
+                    }
+                    i := i + 1
+                }
+            }
+        }
+    }
+}
+
+// Example usage
+var myMap := makeHashMap.new(3)
+myMap.at("hello").put("hello", 123)
+myMap.at("hello").put("hello", 123)
+myMap.at("world").put("world", 456)
+
+print("Value for 'hello': {myMap.get("hello")} ..")  // Should print 123
+print("Value for 'world': {myMap.get("world")} ..")  // Should print 456
+print ("Value for 'hello':{myMap.at("hello").get("hello")} .. " )
+print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key not found'
+
+print "-end-"
