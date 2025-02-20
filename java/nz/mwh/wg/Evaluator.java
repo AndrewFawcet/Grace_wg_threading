@@ -421,7 +421,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         BaseObject lexicalParent = new BaseObject(null);
 
-        lexicalParent.addMethod("array(0)", request -> new GraceArray());
+        lexicalParent.addMethod("array(1)", request -> new GraceArray(1));
         lexicalParent.addMethod("hashprint(1)", request -> {
             Object arg = request.getParts().get(0).getArgs().get(0);
             String str = arg.toString(); // Convert to string

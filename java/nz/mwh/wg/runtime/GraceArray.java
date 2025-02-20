@@ -6,8 +6,8 @@ import java.util.List;
 public class GraceArray implements GraceObject {
     private List<GraceObject> elements;
 
-    public GraceArray() {
-        elements = new ArrayList<>();
+    public GraceArray(int size) {
+        elements = new ArrayList<>(size);
     }
 
     public void add(GraceObject obj) {

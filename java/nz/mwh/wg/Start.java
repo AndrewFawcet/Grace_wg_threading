@@ -64,7 +64,10 @@ public class Start {
         // String filename = "hash8.grace"; // encapsulated basic hash not working
         // String filename = "hash9.grace"; // encapsulated basic hash working using iso linked lists.
         // String filename = "hash10.grace"; // encapsulated basic hash working using iso linked lists.
-        String filename = "test/DataRaceEtc/dalaHashmap3.grace"; // encapsulated basic hash working using iso linked lists.
+        // String filename = "test/DataRaceEtc/dalaHashmap3.grace"; // encapsulated basic hash working using iso linked lists.
+        String filename = "test/DataRaceEtc/dalaHashmap4.grace"; // encapsulated basic hash working using iso linked lists.
+        // String filename = "test/DataRaceEtc/dalaHashmap5.grace"; // encapsulated basic hash working using iso linked lists.not
+        // String filename = "test/DataRaceEtc/dalaHashmap6.grace"; // encapsulated basic hash working using iso linked lists.not
 
 
 

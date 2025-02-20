@@ -72,10 +72,11 @@ method makeLinkedList() -> Object {
 var makeHashMap := object is iso{   // factories do not need to be iso, but are for consistency in all objects in and associated with making the hashmap
     method new(size) -> Object {
         object is iso {
-            var buckets := array()
+            var buckets := array(size)
             var i := 0
             while { i < size} do {
                 buckets.add(makeLinkedList())  // Creates a linked list in each bucket
+                // buckets.at(i).put(object is iso { var head := -1 })
                 i := i + 1
             }
 
