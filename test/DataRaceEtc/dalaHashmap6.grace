@@ -52,19 +52,18 @@ method makeLinkedList() -> Object {
             }
         }
 
-        method put(value) {
-            .add(object {
+        method put(key, value) {
+            add(object {
                 var k := key
                 var v := value
-                })
-            }
-
+            })
             if (head == -1) then {
                 head := makeNode.new(value)  // Correctly updating head
             } else {
                 head.addNewValue(value)
             }
         }
+
         method get(keyValue) {
             if (head == -1) then {
                 return "empty bucket"
@@ -99,14 +98,6 @@ var makeHashMap := object is iso{   // factories do not need to be iso, but are 
                 return hashValue
             }
 
-            method put(key, value) {
-                var index := hashKey(key)
-                // Add the key-value object to the appropriate bucket
-                buckets.get(index).add(object {
-                    var k := key
-                    var v := value
-                })
-            }
             method at(key) {
                 var index := hashKey(key)
                 // Add the key-value object to the appropriate bucket
@@ -115,9 +106,7 @@ var makeHashMap := object is iso{   // factories do not need to be iso, but are 
 
             method get(key) -> Object {
                 var index := hashKey(key)
-                print("here getting index {index}  .")
                 if (buckets.get(index).head != -1) then {
-                    print("in here")
                     return buckets.get(index).get(key)  // Returning the result from the linked list
                 }
                 return "Key not found"
@@ -139,12 +128,14 @@ var makeHashMap := object is iso{   // factories do not need to be iso, but are 
 
 // Example usage
 var myMap := makeHashMap.new(3)
-myMap.at("hello").put(123)
-// myMap.put("hello", 123)
-// myMap.put("world", 456)
+myMap.at("hello").put("hello", 123)
+myMap.at("hello").put("hello", 123)
+myMap.at("world").put("world", 456)
 
-// print("Value for 'hello': {myMap.get("hello")} ..")  // Should print 123
-// print("Value for 'world': {myMap.get("world")} ..")  // Should print 456
+
+print("Value for 'hello': {myMap.get("hello")} ..")  // Should print 123
+print("Value for 'world': {myMap.get("world")} ..")  // Should print 456
+print ("Value for 'hello':{myMap.at("hello").get("hello")} .. " )
 // print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key not found'
 
 // myMap.printAll()
