@@ -24,14 +24,14 @@ var makeNode := object is iso {
                 }
             }
 
-            method getKeyValue(keyValue) {
-                if (value.k == keyValue) then {
+            method getValue(key) {
+                if (value.k == key) then {
                     return value.v
                 } else {
                     if (nextNode != -1) then {
-                        return nextNode.getKeyValue(keyValue)  // Ensure we return the result from recursion
+                        return nextNode.getValue(key)  // Ensure we return the result from recursion
                     } else {
-                        return null  // Return null instead of a string to be consistent
+                        return "nothing here"  // return -1 to indicate no such value
                     }
                 }
             }
@@ -64,7 +64,7 @@ var linkedList := object is iso {
                 if (head == -1) then {
                     return "empty bucket"
                 } else {
-                    return head.getKeyValue(key)  // Ensure we return the result
+                    return head.getValue(key)  // Ensure we return the result
                 }
             }
 
@@ -106,6 +106,12 @@ var makeHashMap := object is iso {
                     return buckets.get(index).get(key)  // Returning the result from the linked list
                 }
                 return "Key not found"
+
+                // var result := buckets.get(index).get(key)  // Call the linked list's get method
+                // if (result == nill) then {
+                //     return "Key not found"  // Return a consistent message for missing keys
+                // }
+                // return result
             }
 
             method printAll() {
@@ -131,6 +137,6 @@ myMap.at("world").put("world", 456)
 print("Value for 'hello': {myMap.get("hello")} ..")  // Should print 123
 print("Value for 'world': {myMap.get("world")} ..")  // Should print 456
 print ("Value for 'hello':{myMap.at("hello").get("hello")} .. " )
-// print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key not found'
+print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key not found'
 
 print "-end-"

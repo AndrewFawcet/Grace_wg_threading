@@ -24,14 +24,14 @@ var makeNode := object is iso {
                 }
             }
 
-            method getKeyValue(keyValue) {
-                if (value.k == keyValue) then {
+            method getValue(key) {
+                if (value.k == key) then {
                     return value.v
                 } else {
                     if (nextNode != -1) then {
-                        return nextNode.getKeyValue(keyValue)  // Ensure we return the result from recursion
+                        return nextNode.getValue(key)  // Ensure we return the result from recursion
                     } else {
-                        return null  // Return null instead of a string to be consistent
+                        return "nothing here"  // return -1 to indicate no such value
                     }
                 }
             }
@@ -64,7 +64,7 @@ var linkedList := object is iso {
                 if (head == -1) then {
                     return "empty bucket"
                 } else {
-                    return head.getKeyValue(key)  // Ensure we return the result
+                    return head.getValue(key)  // Ensure we return the result
                 }
             }
 
@@ -106,6 +106,12 @@ var makeHashMap := object is iso {
                     return buckets.get(index).get(key)  // Returning the result from the linked list
                 }
                 return "Key not found"
+
+                // var result := buckets.get(index).get(key)  // Call the linked list's get method
+                // if (result == nill) then {
+                //     return "Key not found"  // Return a consistent message for missing keys
+                // }
+                // return result
             }
 
             method printAll() {
@@ -130,7 +136,44 @@ myMap.at("world").put("world", 456)
 
 print("Value for 'hello': {myMap.get("hello")} ..")  // Should print 123
 print("Value for 'world': {myMap.get("world")} ..")  // Should print 456
-print ("Value for 'hello':{myMap.at("hello").get("hello")} .. " )
-// print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key not found'
+print ("Value for 'hello': {myMap.at("hello").get("hello")} .. " )
+print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key not found'
+print ""
+
+var key1 := object { var one := "I am key 1"  }
+var key2 := object { var one := "I am key 2"  }
+var key3 := object { var one := "I am key 3"  }
+
+var object1 := object { var one := "I am object 1" }
+var object2 := object { var one := "I am object 2" }
+var object3 := object { var one := "I am object 3" }
+var objectLoc := object is loc { var one := "I am object loc" }
+var objectIso := object is iso { var one := "I am object iso" }
+var objectImm := object is imm { var one := "I am object imm" }
+
+var objectMap := makeHashMap.new(3)
+objectMap.at(1).put(1, object1)
+objectMap.at(2).put(2, object2)
+var objectRecieved1 := objectMap.get(1)
+var objectRecieved2 := objectMap.get(2)
+print(objectRecieved1.one)
+print(objectRecieved2.one)
+
+print ""
+
+objectMap.at(3).put(3, objectLoc)
+objectMap.at(4).put(4, (objectIso := -1))   // destructive read for iso going into hashmap
+objectMap.at(5).put(5, objectImm)
+
+var objectRecievedLoc := objectMap.get(3)
+var objectRecievedIso := objectMap.get(4)   //unable to read iso, is there a way to destructively get an object from a hashmap?
+var objectRecievedImm := objectMap.get(5)
+
+
+print(objectRecieved1.one)
+print(objectRecieved2.one)
+
+
+
 
 print "-end-"
