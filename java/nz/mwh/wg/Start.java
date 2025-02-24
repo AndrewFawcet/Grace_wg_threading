@@ -36,7 +36,7 @@ public class Start {
         // String filename = "test/workingTests/bankAmbientTalk.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/linkedListWithIso1.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/linkedListWithIso2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
-        String filename = "test/workingTests/square.grace"; // encapsulated basic hash working using iso linked lists.not
+        // String filename = "test/workingTests/square.grace"; // encapsulated basic hash working using iso linked lists.not
         
         // String filename = "test/DataRaceEtc/bankAmbientTalk2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/DataRaceEtc/dalaHashmap1.grace"; // dala hashmap test working
@@ -72,6 +72,7 @@ public class Start {
         // String filename = "test/DataRaceEtc/dalaHashmap7.grace"; // encapsulated basic hash working using iso linked lists.not
         // String filename = "test/DataRaceEtc/dalaHashmap8.grace"; // encapsulated basic hash working using iso linked lists.not
         // String filename = "test/DataRaceEtc/dalaHashmap9.grace"; // encapsulated basic hash working using iso linked lists.not
+        String filename = "test/DataRaceEtc/twoEventLoops.grace"; // two event loops.not
 
 
 
