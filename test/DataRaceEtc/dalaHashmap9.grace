@@ -169,11 +169,7 @@ var objectRecievedLoc := objectMap.get(3)
 var objectRecievedIso := objectMap.get(4)   //unable to read iso, is there a way to destructively get an object from a hashmap?
 var objectRecievedImm := objectMap.get(5)
 
-
 print(objectRecieved1.one)
 print(objectRecieved2.one)
-
-
-
 
 print "-end-"
