@@ -74,7 +74,10 @@ public class Start {
         // String filename = "test/DataRaceEtc/dalaHashmap9.grace"; // encapsulated basic hash working using iso linked lists.not
         // String filename = "test/DataRaceEtc/twoEventLoops.grace"; // two event loops.not
         // String filename = "test/DataRaceEtc/counter.grace"; // two event loops.not
-        String filename = "test/DataRaceEtc/counter2.grace"; // two event loops.not
+        // String filename = "test/DataRaceEtc/counter2.grace"; // two event loops.not
+        // String filename = "test/DataRaceEtc/BST1.grace"; // BST.not
+        // String filename = "test/DataRaceEtc/BST2.grace"; // BST.not
+        String filename = "test/DataRaceEtc/BST3.grace"; // BST ok
 
 
 
