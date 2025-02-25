@@ -1,5 +1,6 @@
 // Grace HashTable Implementation
 // has an isolated linked list in the buckets.
+// inputting local objects as keys
 
 // Node factory for creating a linked list node
 var makeNode := object is iso { // factories do not need to be iso, but are for consistency in all objects in and associated with making the hashmap
@@ -97,9 +98,7 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
 
             method get(key) -> Object {
                 var index := hashKey(key)
-                print("here getting index {index}  .")
                 if (buckets.get(index).head != -1) then {
-                    print("in here")
                     return buckets.get(index).get(key)  // Returning the result from the linked list
                 }
                 return "Key not found"
@@ -121,68 +120,64 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
 
 // Example usage
 var myMap := makeHashMap.new(3)
-myMap.put("hello", 123)
-myMap.put("world", 456)
 
-print("Value for 'hello': {myMap.get("hello")} ..")  // Should print 123
-print("Value for 'world': {myMap.get("world")} ..")  // Should print 456
-print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key not found'
-
-myMap.printAll()
-
-var otherMap := makeHashMap.new(4)
-otherMap.put("hello", 123)
-otherMap.put("world", 456)
-otherMap.put("bacon", 123)
-otherMap.put("garlic", 456)
-otherMap.put("chips", 123)
-otherMap.put("cheese", 456)
-otherMap.put("tofu", 123)
-otherMap.put("lamb", 456)
-otherMap.put("sausage", "sausage")
-otherMap.put("steak", 456)
-otherMap.put("potato", 123)
-otherMap.put("onion", 456)
-otherMap.put("chicken", 123)
-otherMap.put("oil", 456)
-otherMap.put("water", 123)
-otherMap.put("chocolate", 456)
-otherMap.put("orange", 123)
-otherMap.put("pear", 456)
-otherMap.put(123456, 456789123456)
-otherMap.put(123457, 456789123456)
-otherMap.put(123458, 456789123456)
-otherMap.put(2, 456789123456)
-
-otherMap.printAll()
-print ""
-myMap.printAll()
-
-// var aliasMap := myMap // wil create a reference error 
-
-var aliasMap := myMap.put("rottenBanana", 789)
-// aliasMap("rottenBanana", 789)  // doesn't do anything non usefull alias essentially null
-myMap.printAll()
-
-var key1 := object { var o := "I am key 1"  }
-var key2 := object { var o := "I am key 2"  }
-var key3 := object { var o := "I am key 3"  }
+var key1 := object is loc { var o := "I am loc key 1"  }
+var key2 := object is loc { var o := "I am loc key 2"  }
+var key3 := object is loc { var o := "I am loc key 3"  }
+var key4 := object { var o := "I am key 4"  }
+var key5 := object { var o := "I am key 5"  }
+var key6 := object { var o := "I am key 6"  }
 
 var object1 := object { var o := "I am object 1" }
 var object2 := object { var o := "I am object 2" }
 var object3 := object { var o := "I am object 3" }
+var object4 := object { var o := "I am object 4" }
+var object5 := object { var o := "I am object 5" }
+var object6 := object { var o := "I am object 6" }
 
-var objectMap := makeHashMap.new(3)
-var num := key1.hash()
-print ("hash num is {num} .. ")
-// objectMap.put(key1, value1);
-objectMap.put(key1, object1);
-objectMap.put(key2, object2);
-objectMap.put(key3, object3);
-var objectReturned1 := objectMap.get(key1)
-var objectReturned2 := objectMap.get(key2)
-var objectReturned3 := objectMap.get(key3)
-print (objectReturned1.o)
+myMap.put(key1, object1)
+myMap.put(key2, object2)
+myMap.put(key3, object3)
+myMap.put(key4, object4)
+myMap.put(key5, object5)
+myMap.put(key6, object6)
+
+// second hashmap myOtherMap will put in local keys last
+var myOtherMap := makeHashMap.new(3)
+
+myOtherMap.put(key4, object4)
+myOtherMap.put(key5, object5)
+myOtherMap.put(key6, object6)
+myOtherMap.put(key1, object1)  // local key
+myOtherMap.put(key2, object2)  // local key
+myOtherMap.put(key3, object3)  // local key
+
+
+// demonstrating access on current thread (thread of local objects creation)
+var objectReturned2 := myMap.get(key2)
+var objectReturned5 := myMap.get(key5)
+var otherObjectReturned2 := myOtherMap.get(key2)
+var otherObjectReturned5 := myOtherMap.get(key5)
 print (objectReturned2.o)
-print (objectReturned3.o)
+print (objectReturned5.o)
+print (otherObjectReturned2.o)
+print (otherObjectReturned5.o)
+
+// demonstrating access on different thread (thread different to local objects creation)
+def c1 = spawn { c2 ->
+    var myMapThread := c2.receive
+    var myOtherMapThread := c2.receive
+    // var objectReturnedThread2 := myMapThread.get(key2)  // local key unusable
+    // var objectReturnedThread5 := myMapThread.get(key5)  // normal object key unaccessible as behined local keys
+    // var otherObjectReturnedThread2 := myOtherMapThread.get(key2)
+    var otherObjectReturnedThread5 := myOtherMapThread.get(key5)
+    // print (objectReturnedThread2.o)
+    // print (objectReturnedThread5.o)
+    // print (otherObjectReturnedThread2.o)
+    print (otherObjectReturnedThread5.o)    // this only is accessible, due to coincidentally being retrived before a local key is touched
+}
+
+c1.send(myMap := -1)
+c1.send(myOtherMap := -1)
+
 print "-end-"

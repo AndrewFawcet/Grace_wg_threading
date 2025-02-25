@@ -140,24 +140,24 @@ print ("Value for 'hello': {myMap.at("hello").get("hello")} .. " )
 print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key not found'
 print ""
 
-var key1 := object { var one := "I am key 1"  }
-var key2 := object { var one := "I am key 2"  }
-var key3 := object { var one := "I am key 3"  }
+var key1 := object { var k := "I am key 1"  }
+var key2 := object { var k := "I am key 2"  }
+var key3 := object { var k := "I am key 3"  }
 
-var object1 := object { var one := "I am object 1" }
-var object2 := object { var one := "I am object 2" }
-var object3 := object { var one := "I am object 3" }
-var objectLoc := object is loc { var one := "I am object loc" }
-var objectIso := object is iso { var one := "I am object iso" }
-var objectImm := object is imm { var one := "I am object imm" }
+var object1 := object { var o := "I am object 1" }
+var object2 := object { var o := "I am object 2" }
+var object3 := object { var o := "I am object 3" }
+var objectLoc := object is loc { var o := "I am object loc" }
+var objectIso := object is iso { var o := "I am object iso" }
+var objectImm := object is imm { var o := "I am object imm" }
 
 var objectMap := makeHashMap.new(3)
 objectMap.at(1).put(1, object1)
 objectMap.at(2).put(2, object2)
 var objectRecieved1 := objectMap.get(1)
 var objectRecieved2 := objectMap.get(2)
-print(objectRecieved1.one)
-print(objectRecieved2.one)
+print(objectRecieved1.o)
+print(objectRecieved2.o)
 
 print ""
 
