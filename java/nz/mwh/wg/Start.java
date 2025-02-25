@@ -77,8 +77,9 @@ public class Start {
         // String filename = "test/DataRaceEtc/counter2.grace"; // two event loops.not
         // String filename = "test/DataRaceEtc/BST1.grace"; // BST.not
         // String filename = "test/DataRaceEtc/BST2.grace"; // BST.not
-        String filename = "test/DataRaceEtc/BST3.grace"; // BST ok
+        // String filename = "test/DataRaceEtc/BST3.grace"; // BST ok
 
+        String filename = "test/hashtables/hashtable1.grace"; // BST ok
 
 
         boolean printAST = false;
