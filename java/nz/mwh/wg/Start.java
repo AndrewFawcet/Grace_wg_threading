@@ -37,8 +37,8 @@ public class Start {
         // String filename = "test/workingTests/linkedListWithIso1.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/linkedListWithIso2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/square.grace"; // encapsulated basic hash working using iso linked lists.not
+        String filename = "test/workingTests/aliasingDisallowed.grace"; // encapsulated basic hash working using iso linked lists.not
         
-        // String filename = "test/DataRaceEtc/bankAmbientTalk2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/DataRaceEtc/dalaHashmap1.grace"; // dala hashmap test working
         // String filename = "test/DataRaceEtc/dalaHashmap2.grace"; // dala hashmap test working
         // String filename = "test/DataRaceEtc/dalaHashmap3.grace"; // dala hashmap test working
@@ -78,13 +78,15 @@ public class Start {
         // String filename = "test/DataRaceEtc/BST1.grace"; // BST.not
         // String filename = "test/DataRaceEtc/BST2.grace"; // BST.not
         // String filename = "test/DataRaceEtc/BST3.grace"; // BST ok
-
-        // String filename = "test/hashtables/hashtable1.grace"; // hashtable ok
-        // String filename = "test/hashtables/hashtable2.grace"; // hashtable ok
-        // String filename = "test/hashtables/hashtable3.grace"; // hashtable not 
-        String filename = "test/hashtables/hashtable4.grace"; // hashtable not 
-
-
+        
+        // String filename = "test/hashtables/hashtable1.grace"; // hashtable ok -vanilla
+        // String filename = "test/hashtables/hashtable2.grace"; // hashtable ok -local
+        // String filename = "test/hashtables/hashtable3.grace"; // hashtable not -need to remove linked list nodes
+        // String filename = "test/hashtables/hashtable3a.grace"; // hashtable ok - removes linked list nodes
+        // String filename = "test/hashtables/hashtable4.grace"; // hashtable ok -destructive reads for iso
+        
+        
+        // String filename = "test/DataRaceEtc/bankAmbientTalk2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         boolean printAST = false;
         String updateFile = null;
         boolean inlineImports = false;

@@ -36,25 +36,17 @@ var makeNode := object is iso { // factories do not need to be iso, but are for 
                     }
                 }
             }
-            
             method removeNode(keyValue, prevNode) -> Object {
                 if (value.k == keyValue) then {
-                    if (prevNode == -1) then {
-                        // If removing the head node, return nextNode as new head
-                        return nextNode
-                    } else {
                         // If removing a middle or last node, link prevNode to nextNode
                         prevNode.nextNode := nextNode
-                        return prevNode
-                    }
+                        return nextNode
+                    
                 } else {
                     if (nextNode != -1) then {
-                        var newNext := nextNode.removeNode(keyValue, self)
-                        if (newNext != nextNode) then {
-                            nextNode := newNext
-                        }
+                        return nextNode.removeNode(keyValue, prevNode.nextNode)
                     }
-                    return self
+                    return -1
                 }
             }
         }
@@ -85,8 +77,13 @@ method makeLinkedList() -> Object {
         method remove(keyValue) {
             if (head == -1) then {
                 return "empty bucket"
+            } 
+            if (head.value.k == keyValue) then {
+                head := head.nextNode
             } else {
-                head := head.removeNode(keyValue, -1)
+                if (head.nextNode != -1) then {
+                    head.nextNode := head.nextNode.removeNode(keyValue, head)
+                }
             }
         }
 
