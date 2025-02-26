@@ -155,12 +155,12 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
 var myMap := makeHashMap.new(3)
 var myOtherMap := makeHashMap.new(3)
 
-// var key1 := object is loc { var o := "I am loc key 1"  }
-// var key2 := object is loc { var o := "I am loc key 2"  }
-// var key3 := object is loc { var o := "I am loc key 3"  }
-// var key4 := object { var o := "I am key 4"  }
-// var key5 := object { var o := "I am key 5"  }
-// var key6 := object { var o := "I am key 6"  }
+var key1 := object is loc { var o := "I am loc key 1"  }
+var key2 := object is loc { var o := "I am loc key 2"  }
+var key3 := object is loc { var o := "I am loc key 3"  }
+var key4 := object { var o := "I am key 4"  }
+var key5 := object { var o := "I am key 5"  }
+var key6 := object { var o := "I am key 6"  }
 // 
 // var object1 := object { var o := "I am object 1" }
 // var object2 := object { var o := "I am object 2" }
@@ -183,12 +183,12 @@ var myOtherMap := makeHashMap.new(3)
 // 
 // myMap.remove(key1)
 
-var key1 := 1
-var key2 := 2
-var key3 := 3
-var key4 := 4
-var key5 := 5
-var key6 := 6
+// var key1 := 1
+// var key2 := 2
+// var key3 := 3
+// var key4 := 4
+// var key5 := 5
+// var key6 := 6
 
 var object1 := 123
 var object2 := 234

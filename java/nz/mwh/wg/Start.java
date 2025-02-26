@@ -37,41 +37,8 @@ public class Start {
         // String filename = "test/workingTests/linkedListWithIso1.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/linkedListWithIso2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/square.grace"; // encapsulated basic hash working using iso linked lists.not
-        String filename = "test/workingTests/aliasingDisallowed.grace"; // encapsulated basic hash working using iso linked lists.not
-        
-        // String filename = "test/DataRaceEtc/dalaHashmap1.grace"; // dala hashmap test working
-        // String filename = "test/DataRaceEtc/dalaHashmap2.grace"; // dala hashmap test working
-        // String filename = "test/DataRaceEtc/dalaHashmap3.grace"; // dala hashmap test working
-        // String filename = "test/DataRaceEtc/dalaActiveObjects1.grace"; // dala NOT working
-        // String filename = "test/DataRaceEtc/dalaActiveObjects2.grace"; // dala NOT working
-        // String filename = "basicBasic3.grace"; // dala basics working
-        // String filename = "test/DataRaceEtc/dalaHashmap4.grace"; // dala hashmap test working
-        // String filename = "test/DataRaceEtc/bankAmbientTalk.grace"; // dala hashmap test working
-        // String filename = "test/DataRaceEtc/dalaLinkedList2WithIso.grace"; // dala hashmap test working
-        // String filename = "test/DataRaceEtc/dalaLinkedList3WithIso.grace"; // dala hashmap test working
-        // String filename = "test/DataRaceEtc/dalaLinkedList4WithIso.grace"; // dala hashmap test working
-        // String filename = "test/DataRaceEtc/dalaLinkedList5WithIso.grace"; // dala hashmap test working
-        // String filename = "hash1.grace"; // basic printhash working
-        // String filename = "hash2.grace"; // basic hash working
-        // String filename = "hash3.grace"; // basic hash and % modulus working
-        // String filename = "array.grace"; // basic hash and % modulus working
-        // String filename = "array2.grace"; // basic hash and % modulus working
-        // String filename = "array3.grace"; // basic hash and % modulus working
-        // String filename = "array4.grace"; // basic hash and % modulus working
-        // String filename = "hash4.grace"; // basic hash not working
-        // String filename = "hash5.grace"; // basic hash working
-        // String filename = "hash6.grace"; // basic hash working
-        // String filename = "hash7.grace"; // basic hash working
-        // String filename = "hash8.grace"; // encapsulated basic hash not working
-        // String filename = "hash9.grace"; // encapsulated basic hash working using iso linked lists.
-        // String filename = "hash10.grace"; // encapsulated basic hash working using iso linked lists.
-        // String filename = "test/DataRaceEtc/dalaHashmap3.grace"; // encapsulated basic hash working using iso linked lists.
-        // String filename = "test/DataRaceEtc/dalaHashmap4.grace"; // encapsulated basic hash working using iso linked lists.
-        // String filename = "test/DataRaceEtc/dalaHashmap5.grace"; // encapsulated basic hash working using iso linked lists.not
-        // String filename = "test/DataRaceEtc/dalaHashmap6.grace"; // encapsulated basic hash working using iso linked lists.not
-        // String filename = "test/DataRaceEtc/dalaHashmap7.grace"; // encapsulated basic hash working using iso linked lists.not
-        // String filename = "test/DataRaceEtc/dalaHashmap8.grace"; // encapsulated basic hash working using iso linked lists.not
-        // String filename = "test/DataRaceEtc/dalaHashmap9.grace"; // encapsulated basic hash working using iso linked lists.not
+        // String filename = "test/workingTests/aliasingDisallowed.grace"; // encapsulated basic hash working using iso linked lists.not
+
         // String filename = "test/DataRaceEtc/twoEventLoops.grace"; // two event loops.not
         // String filename = "test/DataRaceEtc/counter.grace"; // two event loops.not
         // String filename = "test/DataRaceEtc/counter2.grace"; // two event loops.not
@@ -80,6 +47,7 @@ public class Start {
         // String filename = "test/DataRaceEtc/BST3.grace"; // BST ok
         
         // String filename = "test/hashtables/hashtable1.grace"; // hashtable ok -vanilla
+        String filename = "test/hashtables/hashtable1a.grace"; // hashtable ok -vanilla with at_put_ syntax
         // String filename = "test/hashtables/hashtable2.grace"; // hashtable ok -local
         // String filename = "test/hashtables/hashtable3.grace"; // hashtable not -need to remove linked list nodes
         // String filename = "test/hashtables/hashtable3a.grace"; // hashtable ok - removes linked list nodes
