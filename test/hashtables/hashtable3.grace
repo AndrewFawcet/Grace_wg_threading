@@ -1,12 +1,11 @@
 // Grace HashTable Implementation
 // has an isolated linked list in the buckets.
-// inputting local objects as keys
-// demonstrates capability violation using local keys can depend on ordering of inputs
+// Developing the ability to remove values from the hashtable
 
 // Node factory for creating a linked list node
 var makeNode := object is iso { // factories do not need to be iso, but are for consistency in all objects in and associated with making the hashmap
     method new(newValue) -> Object {
-        object is iso {
+        object {
             var value := newValue
             var nextNode := -1  // Initially -1 for null
 
@@ -37,6 +36,26 @@ var makeNode := object is iso { // factories do not need to be iso, but are for 
                     }
                 }
             }
+            method removeNode(keyValue, prevNode) -> Object {
+                if (value.k == keyValue) then {
+                    if (prevNode == -1) then {
+                        // If removing the head node, return nextNode as new head
+                        return nextNode
+                    } else {
+                        // If removing a middle or last node, link prevNode to nextNode
+                        prevNode.nextNode := nextNode
+                        return prevNode
+                    }
+                } else {
+                    if (nextNode != -1) then {
+                        var newNext := nextNode.removeNode(keyValue, self)
+                        if (newNext != nextNode) then {
+                            nextNode := newNext
+                        }
+                    }
+                    return self
+                }
+            }
         }
     }
 }
@@ -59,6 +78,14 @@ method makeLinkedList() -> Object {
                 return "empty bucket"
             } else {
                 return head.getKeyValue(keyValue)  // Ensure we return the result
+            }
+        }
+
+        method remove(keyValue) {
+            if (head == -1) then {
+                return "empty bucket"
+            } else {
+                head := head.removeNode(keyValue, -1)
             }
         }
 
@@ -105,6 +132,13 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
                 return "Key not found"
             }
 
+            method remove(key) {
+                var index := hashKey(key)
+                if (buckets.get(index).head != -1) then {
+                    buckets.get(index).remove(key)
+                }
+            }
+
             method printAll() {
                 var i := 0
                 while { i < size } do {
@@ -121,64 +155,65 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
 
 // Example usage
 var myMap := makeHashMap.new(3)
-// second hashmap myOtherMap will put in local keys last
 var myOtherMap := makeHashMap.new(3)
 
-var key1 := object is loc { var o := "I am loc key 1"  }
-var key2 := object is loc { var o := "I am loc key 2"  }
-var key3 := object is loc { var o := "I am loc key 3"  }
-var key4 := object { var o := "I am key 4"  }
-var key5 := object { var o := "I am key 5"  }
-var key6 := object { var o := "I am key 6"  }
+// var key1 := object is loc { var o := "I am loc key 1"  }
+// var key2 := object is loc { var o := "I am loc key 2"  }
+// var key3 := object is loc { var o := "I am loc key 3"  }
+// var key4 := object { var o := "I am key 4"  }
+// var key5 := object { var o := "I am key 5"  }
+// var key6 := object { var o := "I am key 6"  }
+// 
+// var object1 := object { var o := "I am object 1" }
+// var object2 := object { var o := "I am object 2" }
+// var object3 := object { var o := "I am object 3" }
+// var object4 := object { var o := "I am object 4" }
+// var object5 := object { var o := "I am object 5" }
+// var object6 := object { var o := "I am object 6" }
+// 
+// myMap.put(key1, object1)    // local key
+// myMap.put(key2, object2)    // local key
+// myMap.put(key3, object3)    // local key
+// myMap.put(key4, object4)
+// myMap.put(key5, object5)
+// myMap.put(key6, object6)
+// 
+// var objectReturned2 := myMap.get(key2)
+// print(objectReturned2.o)
+// 
+// myMap.printAll()
+// 
+// myMap.remove(key1)
 
-var object1 := object { var o := "I am object 1" }
-var object2 := object { var o := "I am object 2" }
-var object3 := object { var o := "I am object 3" }
-var object4 := object { var o := "I am object 4" }
-var object5 := object { var o := "I am object 5" }
-var object6 := object { var o := "I am object 6" }
+var key1 := 1
+var key2 := 2
+var key3 := 3
+var key4 := 4
+var key5 := 5
+var key6 := 6
 
-myMap.put(key1, object1)    // local key
-myMap.put(key2, object2)    // local key
-myMap.put(key3, object3)    // local key
-myMap.put(key4, object4)
-myMap.put(key5, object5)
-myMap.put(key6, object6)
+var object1 := 123
+var object2 := 234
+var object3 := 345
+var object4 := 456
+var object5 := 567
+var object6 := 678
 
+myOtherMap.put(key1, object1)
+myOtherMap.put(key2, object2)
+myOtherMap.put(key3, object3)
 myOtherMap.put(key4, object4)
 myOtherMap.put(key5, object5)
 myOtherMap.put(key6, object6)
-myOtherMap.put(key1, object1)  // local key
-myOtherMap.put(key2, object2)  // local key
-myOtherMap.put(key3, object3)  // local key
 
+myOtherMap.printAll()
 
-// demonstrating access on current thread (thread of local objects creation)
-var objectReturned2 := myMap.get(key2)
-var objectReturned5 := myMap.get(key5)
-var otherObjectReturned2 := myOtherMap.get(key2)
-var otherObjectReturned5 := myOtherMap.get(key5)
-print (objectReturned2.o)
-print (objectReturned5.o)
-print (otherObjectReturned2.o)
-print (otherObjectReturned5.o)
+myOtherMap.remove(key1)
+myOtherMap.remove(key3)
+myOtherMap.remove(key5)
 
-// demonstrating access on different thread (thread different to local objects creation)
-def c1 = spawn { c2 ->
-    print "on new thread"
-    var myMapThread := c2.receive
-    var myOtherMapThread := c2.receive
-    // var objectReturnedThread2 := myMapThread.get(key2)  // local key unusable
-    // var objectReturnedThread5 := myMapThread.get(key5)  // normal object key unaccessible as behined local keys
-    // var otherObjectReturnedThread2 := myOtherMapThread.get(key2)
-    var otherObjectReturnedThread5 := myOtherMapThread.get(key5)
-    // print (objectReturnedThread2.o)
-    // print (objectReturnedThread5.o)
-    // print (otherObjectReturnedThread2.o)
-    print (otherObjectReturnedThread5.o)    // this only is accessible, due to coincidentally being retrived before a local key is touched
-}
-
-c1.send(myMap := -1)
-c1.send(myOtherMap := -1)
-
-print "-end-"
+print "---------------"
+myOtherMap.printAll()
+myOtherMap.remove(key5)
+print "---------------"
+myOtherMap.printAll()
