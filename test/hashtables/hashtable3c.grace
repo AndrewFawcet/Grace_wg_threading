@@ -25,26 +25,41 @@ var makeNode := object is iso { // factories do not need to be iso, but are for 
                 }
             }
 
-            method getKeyValue(keyValue) {
-                if (value.k == keyValue) then {
+            method getValue(key) {
+                if (value.k == key) then {
                     return value.v
                 } else {
                     if (nextNode != -1) then {
-                        return nextNode.getKeyValue(keyValue)  // Ensure we return the result from recursion
+                        return nextNode.getValue(key)  // Ensure we return the result from recursion
                     } else {
-                        return "Value not found for Key {keyValue} .."
+                        return "Value not found for Key {key} .."
                     }
                 }
             }
 
-            method removeNode(keyValue, prevNode) -> Object {
-                if (value.k == keyValue) then {
+            method removeNode(key, prevNode) -> Object {
+                if (value.k == key) then {
                         // If removing a middle or last node, link prevNode to nextNode
                         prevNode.nextNode := nextNode
                         return nextNode
                 } else {
                     if (nextNode != -1) then {
+                        return nextNode.removeNode(key, prevNode.nextNode)
+                    }
+                    print "key does not exist in hashtable"
+                    return -1
+                }
+            }
+
+            method removeGetNode(keyValue, prevNode) -> Object {
+                if (value.k == keyValue) then {
+                        // If removing a middle or last node, link prevNode to nextNode
+                        prevNode.nextNode := nextNode
+                        return (value := -1)    // destructive read of removed node value for iso
+                } else {
+                    if (nextNode != -1) then {
                         return nextNode.removeNode(keyValue, prevNode.nextNode)
+                        // return removeGetNode(keyValue, prevNode.nextNode)
                     }
                     print "key does not exist in hashtable"
                     return -1
@@ -59,7 +74,7 @@ var linkedList := object is iso {
     method new() -> Object {
         object is iso {
             var head := -1  // Initially empty list
-        
+
             method add(value) {
                 if (head == -1) then {
                     head := makeNode.new(value)  // Correctly updating head
@@ -75,11 +90,11 @@ var linkedList := object is iso {
                 })
             }
 
-            method get(keyValue) {
+            method get(key) {
                 if (head == -1) then {
                     return "empty bucket"
                 } else {
-                    return head.getKeyValue(keyValue)  // Ensure we return the result
+                    return head.getValue(key)  // Ensure we return the result
                 }
             }
 
@@ -101,10 +116,12 @@ var linkedList := object is iso {
                     return "empty bucket"
                 } 
                 if (head.value.k == keyValue) then {
-                    head := head.nextNode
+                    var oldHead := (head := head.nextNode)  // remove old head
+                    return (oldHead.value.v := -1)  // return the value
                 } else {
                     if (head.nextNode != -1) then {
-                        head.nextNode := head.nextNode.removeNode(keyValue, head)
+                        var oldNode := (head.nextNode := head.nextNode.removeNode(keyValue, head))  // remove the old node
+                        return (oldNode.value.v := -1)  // return the value
                     }
                 }
             }
@@ -168,7 +185,7 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
             method removeGet(key) -> Object {
                 var index := hashKey(key)
                 if (buckets.get(index).head != -1) then {
-                    buckets.get(index).removeGet(key)
+                    return buckets.get(index).removeGet(key)
                 }
                 return "Key not found"
             }
@@ -212,7 +229,10 @@ myMap.at(key5).put(key5, (object5 := -1))
 myMap.at(key6).put(key6, (object6 := -1))
 
 
-myMap.remove(key1)
+var object11 := myMap.removeGet(key1)
+print( "this is the thing {object11.o} ..." )
+var object33 := myMap.removeGet(key3)
+print( "this is the thing {object33.o} ..." )
 myMap.remove(key3)
 myMap.remove(key5)
 myMap.remove(key5)
