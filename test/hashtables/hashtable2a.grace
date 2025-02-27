@@ -1,7 +1,10 @@
 // Grace HashTable Implementation
 // has an isolated linked list in the buckets.
 // with 'at_' and 'at_put_' syntax
+// inputting local objects as keys
+// demonstrates capability violation using local keys can depend on ordering of inputs
 
+// Node factory for creating a linked list node
 // Node factory for creating a linked list node
 var makeNode := object is iso { // factories do not need to be iso, but are for consistency in all objects in and associated with making the hashmap
     method new(newValue) -> Object {
@@ -107,12 +110,6 @@ var makeHashMap := object is iso {
                     return buckets.get(index).get(key)  // Returning the result from the linked list
                 }
                 return "Key not found"
-
-                // var result := buckets.get(index).get(key)  // Call the linked list's get method
-                // if (result == nill) then {
-                //     return "Key not found"  // Return a consistent message for missing keys
-                // }
-                // return result
             }
 
             method printAll() {
@@ -131,46 +128,64 @@ var makeHashMap := object is iso {
 
 // Example usage
 var myMap := makeHashMap.new(3)
-myMap.at("hello").put("hello", 123)
-myMap.at("hello").put("hello", 123)
-myMap.at("world").put("world", 456)
+// second hashmap myOtherMap will put in local keys last
+var myOtherMap := makeHashMap.new(3)
 
-print("Value for 'hello': {myMap.get("hello")} ..")  // Should print 123
-print("Value for 'world': {myMap.get("world")} ..")  // Should print 456
-print ("Value for 'hello': {myMap.at("hello").get("hello")} .. " )
-print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key not found'
-print ""
+var key1 := object is loc { var o := "I am loc key 1"  }
+var key2 := object is loc { var o := "I am loc key 2"  }
+var key3 := object is loc { var o := "I am loc key 3"  }
+var key4 := object { var o := "I am key 4"  }
+var key5 := object { var o := "I am key 5"  }
+var key6 := object { var o := "I am key 6"  }
 
-var key1 := object { var one := "I am key 1"  }
-var key2 := object { var one := "I am key 2"  }
-var key3 := object { var one := "I am key 3"  }
+var object1 := object { var o := "I am object 1" }
+var object2 := object { var o := "I am object 2" }
+var object3 := object { var o := "I am object 3" }
+var object4 := object { var o := "I am object 4" }
+var object5 := object { var o := "I am object 5" }
+var object6 := object { var o := "I am object 6" }
 
-var object1 := object { var one := "I am object 1" }
-var object2 := object { var one := "I am object 2" }
-var object3 := object { var one := "I am object 3" }
-var objectLoc := object is loc { var one := "I am object loc" }
-// var objectIso := object is iso { var one := "I am object iso" }
-var objectImm := object is imm { var one := "I am object imm" }
+myMap.at(key1).put(key1, object1)    // local key
+myMap.at(key2).put(key2, object2)    // local key
+myMap.at(key3).put(key3, object3)    // local key
+myMap.at(key4).put(key4, object4)
+myMap.at(key5).put(key5, object5)
+myMap.at(key6).put(key6, object6)
 
-var objectMap := makeHashMap.new(3)
-objectMap.at(1).put(1, object1)
-objectMap.at(2).put(2, object2)
-var objectRecieved1 := objectMap.get(1)
-var objectRecieved2 := objectMap.get(2)
-print(objectRecieved1.one)
-print(objectRecieved2.one)
+myOtherMap.at(key4).put(key4, object4)
+myOtherMap.at(key5).put(key5, object5)
+myOtherMap.at(key6).put(key6, object6)
+myOtherMap.at(key1).put(key1, object1)  // local key
+myOtherMap.at(key2).put(key2, object2)  // local key
+myOtherMap.at(key3).put(key3, object3)  // local key
 
-print ""
 
-objectMap.at(3).put(3, objectLoc)
-// objectMap.at(4).put(4, (objectIso := -1))   // destructive read for iso going into hashmap
-objectMap.at(5).put(5, objectImm)
+// demonstrating access on current thread (thread of local objects creation)
+var objectReturned2 := myMap.get(key2)
+var objectReturned5 := myMap.get(key5)
+var otherObjectReturned2 := myOtherMap.get(key2)
+var otherObjectReturned5 := myOtherMap.get(key5)
+print (objectReturned2.o)
+print (objectReturned5.o)
+print (otherObjectReturned2.o)
+print (otherObjectReturned5.o)
 
-var objectRecievedLoc := objectMap.at(3)
-// var objectRecievedIso := objectMap.at(4)   //unable to read iso, is there a way to destructively get an object from a hashmap?
-var objectRecievedImm := objectMap.at(5)
+// demonstrating access on different thread (thread different to local objects creation)
+def c1 = spawn { c2 ->
+    print "on new thread"
+    var myMapThread := c2.receive
+    var myOtherMapThread := c2.receive
+    // var objectReturnedThread2 := myMapThread.get(key2)  // local key unusable
+    // var objectReturnedThread5 := myMapThread.get(key5)  // normal object key unaccessible as behined local keys
+    // var otherObjectReturnedThread2 := myOtherMapThread.get(key2)
+    var otherObjectReturnedThread5 := myOtherMapThread.get(key5)
+    // print (objectReturnedThread2.o)
+    // print (objectReturnedThread5.o)
+    // print (otherObjectReturnedThread2.o)
+    print (otherObjectReturnedThread5.o)    // this only is accessible, due to coincidentally being retrived before a local key is touched
+}
 
-print(objectRecieved1.one)
-print(objectRecieved2.one)
+c1.send(myMap := -1)
+c1.send(myOtherMap := -1)
 
 print "-end-"

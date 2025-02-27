@@ -1,16 +1,16 @@
 // Grace HashTable Implementation
 // has an isolated linked list in the buckets.
-// with 'at_' and 'at_put_' syntax
+// Developing the ability to remove values from the hashtable
 
 // Node factory for creating a linked list node
 var makeNode := object is iso { // factories do not need to be iso, but are for consistency in all objects in and associated with making the hashmap
     method new(newValue) -> Object {
-        object is iso {
+        object {
             var value := newValue
             var nextNode := -1  // Initially -1 for null
 
             method printValues() {
-                print " key {value.k} "
+                // print " key {value.k} "
                 print " value {value.v} "
                 if (nextNode != -1) then {
                     nextNode.printValues() 
@@ -25,15 +25,29 @@ var makeNode := object is iso { // factories do not need to be iso, but are for 
                 }
             }
 
-            method getValue(keyValue) {
+            method getKeyValue(keyValue) {
                 if (value.k == keyValue) then {
                     return value.v
                 } else {
                     if (nextNode != -1) then {
-                        return nextNode.getValue(keyValue)  // Ensure we return the result from recursion
+                        return nextNode.getKeyValue(keyValue)  // Ensure we return the result from recursion
                     } else {
                         return "Value not found for Key {keyValue} .."
                     }
+                }
+            }
+
+            method removeNode(keyValue, prevNode) -> Object {
+                if (value.k == keyValue) then {
+                        // If removing a middle or last node, link prevNode to nextNode
+                        prevNode.nextNode := nextNode
+                        return nextNode
+                    
+                } else {
+                    if (nextNode != -1) then {
+                        return nextNode.removeNode(keyValue, prevNode.nextNode)
+                    }
+                    return -1
                 }
             }
         }
@@ -45,7 +59,7 @@ var linkedList := object is iso {
     method new() -> Object {
         object is iso {
             var head := -1  // Initially empty list
-
+        
             method add(value) {
                 if (head == -1) then {
                     head := makeNode.new(value)  // Correctly updating head
@@ -61,11 +75,24 @@ var linkedList := object is iso {
                 })
             }
 
-            method get(key) {
+            method get(keyValue) {
                 if (head == -1) then {
                     return "empty bucket"
                 } else {
-                    return head.getValue(key)  // Ensure we return the result
+                    return head.getKeyValue(keyValue)  // Ensure we return the result
+                }
+            }
+
+            method remove(keyValue) {
+                if (head == -1) then {
+                    return "empty bucket"
+                } 
+                if (head.value.k == keyValue) then {
+                    head := head.nextNode
+                } else {
+                    if (head.nextNode != -1) then {
+                        head.nextNode := head.nextNode.removeNode(keyValue, head)
+                    }
                 }
             }
 
@@ -79,13 +106,13 @@ var linkedList := object is iso {
 }
 
 // HashMap factory
-var makeHashMap := object is iso {
+var makeHashMap := object is iso {   // factories do not need to be iso, but are for consistency in all objects in and associated with making the hashmap
     method new(size) -> Object {
         object is iso {
             var buckets := array(size)
             var i := 0
             while { i < size} do {
-                buckets.add(linkedList.new())  // Creates a new linked list in each bucket
+                buckets.add(linkedList.new())  // Creates a linked list in each bucket
                 i := i + 1
             }
 
@@ -101,18 +128,28 @@ var makeHashMap := object is iso {
                 return buckets.get(index)
             }
 
+            method put(key, value) {
+                var index := hashKey(key)
+                // Add the key-value object to the appropriate bucket
+                buckets.get(index).add(object {
+                    var k := key
+                    var v := value
+                })
+            }
+
             method get(key) -> Object {
                 var index := hashKey(key)
                 if (buckets.get(index).head != -1) then {
                     return buckets.get(index).get(key)  // Returning the result from the linked list
                 }
                 return "Key not found"
+            }
 
-                // var result := buckets.get(index).get(key)  // Call the linked list's get method
-                // if (result == nill) then {
-                //     return "Key not found"  // Return a consistent message for missing keys
-                // }
-                // return result
+            method remove(key) {
+                var index := hashKey(key)
+                if (buckets.get(index).head != -1) then {
+                    buckets.get(index).remove(key)
+                }
             }
 
             method printAll() {
@@ -131,46 +168,37 @@ var makeHashMap := object is iso {
 
 // Example usage
 var myMap := makeHashMap.new(3)
-myMap.at("hello").put("hello", 123)
-myMap.at("hello").put("hello", 123)
-myMap.at("world").put("world", 456)
+var myOtherMap := makeHashMap.new(3)
 
-print("Value for 'hello': {myMap.get("hello")} ..")  // Should print 123
-print("Value for 'world': {myMap.get("world")} ..")  // Should print 456
-print ("Value for 'hello': {myMap.at("hello").get("hello")} .. " )
-print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key not found'
-print ""
+var key1 := object is loc { var o := "I am loc key 1"  }
+var key2 := object is loc { var o := "I am loc key 2"  }
+var key3 := object is loc { var o := "I am loc key 3"  }
+var key4 := object { var o := "I am key 4"  }
+var key5 := object { var o := "I am key 5"  }
+var key6 := object { var o := "I am key 6"  }
 
-var key1 := object { var one := "I am key 1"  }
-var key2 := object { var one := "I am key 2"  }
-var key3 := object { var one := "I am key 3"  }
+var object1 := 123
+var object2 := 234
+var object3 := 345
+var object4 := 456
+var object5 := 567
+var object6 := 678
 
-var object1 := object { var one := "I am object 1" }
-var object2 := object { var one := "I am object 2" }
-var object3 := object { var one := "I am object 3" }
-var objectLoc := object is loc { var one := "I am object loc" }
-// var objectIso := object is iso { var one := "I am object iso" }
-var objectImm := object is imm { var one := "I am object imm" }
+myOtherMap.at(key1).put(key1, object1)
+myOtherMap.at(key2).put(key2, object2)
+myOtherMap.at(key3).put(key3, object3)
+myOtherMap.at(key4).put(key4, object4)
+myOtherMap.at(key5).put(key5, object5)
+myOtherMap.at(key6).put(key6, object6)
 
-var objectMap := makeHashMap.new(3)
-objectMap.at(1).put(1, object1)
-objectMap.at(2).put(2, object2)
-var objectRecieved1 := objectMap.get(1)
-var objectRecieved2 := objectMap.get(2)
-print(objectRecieved1.one)
-print(objectRecieved2.one)
+myOtherMap.printAll()
 
-print ""
+myOtherMap.remove(key1)
+myOtherMap.remove(key3)
+myOtherMap.remove(key5)
 
-objectMap.at(3).put(3, objectLoc)
-// objectMap.at(4).put(4, (objectIso := -1))   // destructive read for iso going into hashmap
-objectMap.at(5).put(5, objectImm)
-
-var objectRecievedLoc := objectMap.at(3)
-// var objectRecievedIso := objectMap.at(4)   //unable to read iso, is there a way to destructively get an object from a hashmap?
-var objectRecievedImm := objectMap.at(5)
-
-print(objectRecieved1.one)
-print(objectRecieved2.one)
-
-print "-end-"
+print "---------------"
+myOtherMap.printAll()
+myOtherMap.remove(key5)
+print "---------------"
+myOtherMap.printAll()

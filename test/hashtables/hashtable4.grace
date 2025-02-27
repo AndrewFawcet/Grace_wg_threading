@@ -53,6 +53,13 @@ method makeLinkedList() -> Object {
             }
         }
 
+        method put(key, value) {
+            add(object {
+                var k := key
+                var v := value
+            })
+        }
+
         method get(keyValue) {
             if (head == -1) then {
                 return "empty bucket"
@@ -94,6 +101,12 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
                     var k := key
                     var v := value
                 })
+            }
+
+            method at(key) {
+                var index := hashKey(key)
+                // Return the appropriate linked list for the bucket
+                return buckets.get(index)
             }
 
             method get(key) -> Object {
@@ -142,12 +155,12 @@ var key4 := 4
 var key5 := 5
 var key6 := 6
 
-myMap.put(key1, (object1 := -1))
-myMap.put(key2, (object2 := -1))
-myMap.put(key3, (object3 := -1))
-myMap.put(key4, (object4 := -1))
-myMap.put(key5, (object5 := -1))
-myMap.put(key6, (object6 := -1))
+myMap.at(key1).put(key1, (object1 := -1))
+myMap.at(key2).put(key2, (object2 := -1))
+myMap.at(key3).put(key3, (object3 := -1))
+myMap.at(key4).put(key4, (object4 := -1))
+myMap.at(key5).put(key5, (object5 := -1))
+myMap.at(key6).put(key6, (object6 := -1))
 
 
 var objectReturned1 := myMap.get(1)
@@ -164,3 +177,16 @@ print(objectReturned4.o)
 print(objectReturned5.o)
 print(objectReturned6.o)
 
+var otherObjectReturned1 := myMap.get(1)
+var otherObjectReturned2 := myMap.get(2)
+var otherObjectReturned3 := myMap.get(3)
+var otherObjectReturned4 := myMap.get(4)
+var otherObjectReturned5 := myMap.get(5)
+var otherObjectReturned6 := myMap.get(6)
+
+print(" what is left in the hashmap after reading object1 is {otherObjectReturned1} ...")
+print(" what is left in the hashmap after reading object2 is {otherObjectReturned2} ...")
+print(" what is left in the hashmap after reading object3 is {otherObjectReturned3} ...")
+print(" what is left in the hashmap after reading object4 is {otherObjectReturned4} ...")
+print(" what is left in the hashmap after reading object5 is {otherObjectReturned5} ...")
+print(" what is left in the hashmap after reading object6 is {otherObjectReturned6} ...")
