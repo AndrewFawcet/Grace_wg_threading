@@ -36,25 +36,17 @@ var makeNode := object is iso { // factories do not need to be iso, but are for 
                     }
                 }
             }
-            
             method removeNode(keyValue, prevNode) -> Object {
                 if (value.k == keyValue) then {
-                    if (prevNode == -1) then {
-                        // If removing the head node, return nextNode as new head
-                        return nextNode
-                    } else {
                         // If removing a middle or last node, link prevNode to nextNode
                         prevNode.nextNode := nextNode
-                        return prevNode
-                    }
+                        return nextNode
+                    
                 } else {
                     if (nextNode != -1) then {
-                        var newNext := nextNode.removeNode(keyValue, self)
-                        if (newNext != nextNode) then {
-                            nextNode := newNext
-                        }
+                        return nextNode.removeNode(keyValue, prevNode.nextNode)
                     }
-                    return self
+                    return -1
                 }
             }
         }
@@ -85,8 +77,13 @@ method makeLinkedList() -> Object {
         method remove(keyValue) {
             if (head == -1) then {
                 return "empty bucket"
+            } 
+            if (head.value.k == keyValue) then {
+                head := head.nextNode
             } else {
-                head := head.removeNode(keyValue, -1)
+                if (head.nextNode != -1) then {
+                    head.nextNode := head.nextNode.removeNode(keyValue, head)
+                }
             }
         }
 
@@ -116,7 +113,7 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
                 return hashValue
             }
 
-            method put(key, value) {
+            method at(key)put(value) {
                 var index := hashKey(key)
                 // Add the key-value object to the appropriate bucket
                 buckets.get(index).add(object {
@@ -200,12 +197,12 @@ var object4 := 456
 var object5 := 567
 var object6 := 678
 
-myOtherMap.put(key1, object1)
-myOtherMap.put(key2, object2)
-myOtherMap.put(key3, object3)
-myOtherMap.put(key4, object4)
-myOtherMap.put(key5, object5)
-myOtherMap.put(key6, object6)
+myOtherMap.at(key1)put(object1)
+myOtherMap.at(key2)put(object2)
+myOtherMap.at(key3)put(object3)
+myOtherMap.at(key4)put(object4)
+myOtherMap.at(key5)put(object5)
+myOtherMap.at(key6)put(object6)
 
 myOtherMap.printAll()
 

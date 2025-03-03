@@ -86,7 +86,13 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
                 return hashValue
             }
 
-            method put(key, value) {
+            method at(key) {
+                var index := hashKey(key)
+                // Return the appropriate linked list for the bucket
+                return buckets.get(index)
+            }
+
+            method at(key)put(value) {
                 var index := hashKey(key)
                 // Add the key-value object to the appropriate bucket
                 buckets.get(index).add(object {
@@ -121,8 +127,8 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
 
 // Example usage
 var myMap := makeHashMap.new(3)
-myMap.put("hello", 123)
-myMap.put("world", 456)
+myMap.at("hello")put(123)
+myMap.at("world")put(456)
 
 print("Value for 'hello': {myMap.get("hello")} ..")  // Should print 123
 print("Value for 'world': {myMap.get("world")} ..")  // Should print 456
@@ -131,28 +137,29 @@ print("Value for 'missing': {myMap.get("missing")} ..")  // Should print 'Key no
 myMap.printAll()
 
 var otherMap := makeHashMap.new(4)
-otherMap.put("hello", 123)
-otherMap.put("world", 456)
-otherMap.put("bacon", 123)
-otherMap.put("garlic", 456)
-otherMap.put("chips", 123)
-otherMap.put("cheese", 456)
-otherMap.put("tofu", 123)
-otherMap.put("lamb", 456)
-otherMap.put("sausage", "sausage")
-otherMap.put("steak", 456)
-otherMap.put("potato", 123)
-otherMap.put("onion", 456)
-otherMap.put("chicken", 123)
-otherMap.put("oil", 456)
-otherMap.put("water", 123)
-otherMap.put("chocolate", 456)
-otherMap.put("orange", 123)
-otherMap.put("pear", 456)
-otherMap.put(123456, 456789123456)
-otherMap.put(123457, 456789123456)
-otherMap.put(123458, 456789123456)
-otherMap.put(2, 456789123456)
+otherMap.at("hello")put(123);
+otherMap.at("world")put(456);
+otherMap.at("bacon")put(123);
+otherMap.at("garlic")put(456);
+otherMap.at("chips")put(123);
+otherMap.at("cheese")put(456);
+otherMap.at("tofu")put(123);
+otherMap.at("lamb")put(456);
+otherMap.at("sausage")put("sausage");
+otherMap.at("steak")put(456);
+otherMap.at("potato")put(123);
+otherMap.at("onion")put(456);
+otherMap.at("chicken")put(123);
+otherMap.at("oil")put(456);
+otherMap.at("water")put(123);
+otherMap.at("chocolate")put(456);
+otherMap.at("orange")put(123);
+otherMap.at("pear")put(456);
+otherMap.at(123456)put(456789123456);
+otherMap.at(123457)put(456789123456);
+otherMap.at(123458)put(456789123456);
+otherMap.at(2)put(456789123456);
+
 
 otherMap.printAll()
 print ""
@@ -160,7 +167,7 @@ myMap.printAll()
 
 // var aliasMap := myMap // wil create a reference error 
 
-var aliasMap := myMap.put("rottenBanana", 789)
+var aliasMap := myMap.at("rottenBanana")put(789)
 // aliasMap("rottenBanana", 789)  // doesn't do anything non usefull alias essentially null
 myMap.printAll()
 
@@ -175,10 +182,9 @@ var object3 := object { var o := "I am object 3" }
 var objectMap := makeHashMap.new(3)
 var num := key1.hash()
 print ("hash num is {num} .. ")
-// objectMap.put(key1, value1);
-objectMap.put(key1, object1);
-objectMap.put(key2, object2);
-objectMap.put(key3, object3);
+objectMap.at(key1)put(object1);
+objectMap.at(key2)put(object2);
+objectMap.at(key3)put(object3);
 var objectReturned1 := objectMap.get(key1)
 var objectReturned2 := objectMap.get(key2)
 var objectReturned3 := objectMap.get(key3)

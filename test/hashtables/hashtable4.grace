@@ -53,13 +53,6 @@ method makeLinkedList() -> Object {
             }
         }
 
-        method put(key, value) {
-            add(object {
-                var k := key
-                var v := value
-            })
-        }
-
         method get(keyValue) {
             if (head == -1) then {
                 return "empty bucket"
@@ -94,7 +87,7 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
                 return hashValue
             }
 
-            method put(key, value) {
+            method at(key)put(value) {
                 var index := hashKey(key)
                 // Add the key-value object to the appropriate bucket
                 buckets.get(index).add(object {
@@ -155,12 +148,12 @@ var key4 := 4
 var key5 := 5
 var key6 := 6
 
-myMap.at(key1).put(key1, (object1 := -1))
-myMap.at(key2).put(key2, (object2 := -1))
-myMap.at(key3).put(key3, (object3 := -1))
-myMap.at(key4).put(key4, (object4 := -1))
-myMap.at(key5).put(key5, (object5 := -1))
-myMap.at(key6).put(key6, (object6 := -1))
+myMap.at(key1)put(object1 := -1)
+myMap.at(key2)put(object2 := -1)
+myMap.at(key3)put(object3 := -1)
+myMap.at(key4)put(object4 := -1)
+myMap.at(key5)put(object5 := -1)
+myMap.at(key6)put(object6 := -1)
 
 
 var objectReturned1 := myMap.get(1)

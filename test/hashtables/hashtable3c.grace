@@ -83,13 +83,6 @@ var linkedList := object is iso {
                 }
             }
 
-            method put(key, value) {
-                add(object {
-                    var k := key
-                    var v := value
-                })
-            }
-
             method get(key) {
                 if (head == -1) then {
                     return "empty bucket"
@@ -158,7 +151,7 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
                 return buckets.get(index)
             }
 
-            method put(key, value) {
+            method at(key)put(value) {
                 var index := hashKey(key)
                 // Add the key-value object to the appropriate bucket
                 buckets.get(index).add(object {
@@ -221,12 +214,12 @@ var object4 := object is iso { var o := "I am object 4" }
 var object5 := object is iso { var o := "I am object 5" }
 var object6 := object is iso { var o := "I am object 6" }
 
-myMap.at(key1).put(key1, (object1 := -1))
-myMap.at(key2).put(key2, (object2 := -1))
-myMap.at(key3).put(key3, (object3 := -1))
-myMap.at(key4).put(key4, (object4 := -1))
-myMap.at(key5).put(key5, (object5 := -1))
-myMap.at(key6).put(key6, (object6 := -1))
+myMap.at(key1)put(object1 := -1)
+myMap.at(key2)put(object2 := -1)
+myMap.at(key3)put(object3 := -1)
+myMap.at(key4)put(object4 := -1)
+myMap.at(key5)put(object5 := -1)
+myMap.at(key6)put(object6 := -1)
 
 
 var object11 := myMap.removeGet(key1)

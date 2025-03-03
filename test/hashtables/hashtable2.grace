@@ -88,7 +88,7 @@ var makeHashMap := object is iso {   // factories do not need to be iso, but are
                 return hashValue
             }
 
-            method put(key, value) {
+            method at(key)put(value) {
                 var index := hashKey(key)
                 // Add the key-value object to the appropriate bucket
                 buckets.get(index).add(object {
@@ -138,19 +138,19 @@ var object4 := object { var o := "I am object 4" }
 var object5 := object { var o := "I am object 5" }
 var object6 := object { var o := "I am object 6" }
 
-myMap.put(key1, object1)    // local key
-myMap.put(key2, object2)    // local key
-myMap.put(key3, object3)    // local key
-myMap.put(key4, object4)
-myMap.put(key5, object5)
-myMap.put(key6, object6)
+myMap.at(key1)put(object1)    // local key
+myMap.at(key2)put(object2)    // local key
+myMap.at(key3)put(object3)    // local key
+myMap.at(key4)put(object4)
+myMap.at(key5)put(object5)
+myMap.at(key6)put(object6)
 
-myOtherMap.put(key4, object4)
-myOtherMap.put(key5, object5)
-myOtherMap.put(key6, object6)
-myOtherMap.put(key1, object1)  // local key
-myOtherMap.put(key2, object2)  // local key
-myOtherMap.put(key3, object3)  // local key
+myOtherMap.at(key4)put(object4)
+myOtherMap.at(key5)put(object5)
+myOtherMap.at(key6)put(object6)
+myOtherMap.at(key1)put(object1)  // local key
+myOtherMap.at(key2)put(object2)  // local key
+myOtherMap.at(key3)put(object3)  // local key
 
 
 // demonstrating access on current thread (thread of local objects creation)

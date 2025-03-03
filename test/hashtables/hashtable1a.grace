@@ -54,13 +54,6 @@ var linkedList := object is iso {
                 }
             }
 
-            method put(key, value) {
-                add(object {
-                    var k := key
-                    var v := value
-                })
-            }
-
             method get(key) {
                 if (head == -1) then {
                     return "empty bucket"
@@ -101,6 +94,15 @@ var makeHashMap := object is iso {
                 return buckets.get(index)
             }
 
+            method at(key)put(value) {
+                var index := hashKey(key)
+                // Add the key-value object to the appropriate bucket
+                buckets.get(index).add(object {
+                    var k := key
+                    var v := value
+                })
+            }
+
             method get(key) -> Object {
                 var index := hashKey(key)
                 if (buckets.get(index).head != -1) then {
@@ -131,9 +133,9 @@ var makeHashMap := object is iso {
 
 // Example usage
 var myMap := makeHashMap.new(3)
-myMap.at("hello").put("hello", 123)
-myMap.at("hello").put("hello", 123)
-myMap.at("world").put("world", 456)
+myMap.at("hello")put(123)
+myMap.at("hello")put(123)
+myMap.at("world")put(456)
 
 print("Value for 'hello': {myMap.get("hello")} ..")  // Should print 123
 print("Value for 'world': {myMap.get("world")} ..")  // Should print 456
@@ -153,8 +155,8 @@ var objectLoc := object is loc { var one := "I am object loc" }
 var objectImm := object is imm { var one := "I am object imm" }
 
 var objectMap := makeHashMap.new(3)
-objectMap.at(1).put(1, object1)
-objectMap.at(2).put(2, object2)
+objectMap.at(1)put(object1)
+objectMap.at(2)put(object2)
 var objectRecieved1 := objectMap.get(1)
 var objectRecieved2 := objectMap.get(2)
 print(objectRecieved1.one)

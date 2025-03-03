@@ -46,14 +46,14 @@ public class Start {
         // String filename = "test/DataRaceEtc/BST2.grace"; // BST.not
         // String filename = "test/DataRaceEtc/BST3.grace"; // BST ok
         
-        // String filename = "test/hashtables/hashtable1.grace"; // hashtable ok -vanilla
+        String filename = "test/hashtables/hashtable1.grace"; // hashtable ok -vanilla
         // String filename = "test/hashtables/hashtable1a.grace"; // hashtable ok -vanilla with at_put_ syntax
         // String filename = "test/hashtables/hashtable2.grace"; // hashtable ok -local
         // String filename = "test/hashtables/hashtable2a.grace"; // hashtable ok -local with at_put_ syntax
         // String filename = "test/hashtables/hashtable3.grace"; // hashtable not -need to remove linked list nodes
         // String filename = "test/hashtables/hashtable3a.grace"; // hashtable ok - removes linked list nodes
         // String filename = "test/hashtables/hashtable3b.grace"; // hashtable ok - removes linked list nodes
-        String filename = "test/hashtables/hashtable3c.grace"; // hashtable ok - removes linked list nodes including iso objects as values
+        // String filename = "test/hashtables/hashtable3c.grace"; // hashtable ok - removes linked list nodes including iso objects as values
         // String filename = "test/hashtables/hashtable4.grace"; // hashtable ok -simple destructive reads of values in hashtable
         
         
