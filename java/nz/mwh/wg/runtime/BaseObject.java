@@ -118,17 +118,23 @@ public class BaseObject implements GraceObject {
         methods.put(name, method);
     }
 
-    // TODO 
+    // TODO
     @Override
     public GraceObject request(Request request) {
 
         if (request.getParts().get(0).getName().equals("hash")) { // Added hash method
             return new GraceNumber(hashNumber);
         }
-        
+
         Function<Request, GraceObject> method = methods.get(request.getName());
+
+        // dereferencing check for local
         if (isLocal()) {
             validateThreadAccess();
+        }
+        // dereferencing check for iso
+        if (isIsolated()) {
+            validateIsoAccess();
         }
 
         if (method != null) {
@@ -204,14 +210,15 @@ public class BaseObject implements GraceObject {
 
                 baseObjectBeingAssigned.incrementReferenceCount();
 
+                // changing multiple isolated to a dereferencing error
                 // checking if isolated, and runtime exception if too many references
-                if (baseObjectBeingAssigned.isIsolated()) {
-                    if (baseObjectBeingAssigned.getReferenceCount() > 1) {
-                        throw new RuntimeException(
-                                "Capability Violation: Isolated object '" + name
-                                        + "' cannot have more than one reference.");
-                    }
-                }
+                // if (baseObjectBeingAssigned.isIsolated()) {
+                // if (baseObjectBeingAssigned.getReferenceCount() > 1) {
+                // throw new RuntimeException(
+                // "Capability Violation: Isolated object '" + name
+                // + "' cannot have more than one reference.");
+                // }
+                // }
                 // checking if isolated and imutable, and runtime exception if multiple
                 // capabilities
                 if (baseObjectBeingAssigned.isIsolated() && baseObjectBeingAssigned.isImmutable()) {
@@ -267,6 +274,19 @@ public class BaseObject implements GraceObject {
                 throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
             } else {
                 // System.out.println("all ok with the access on this local object +++++");
+            }
+        }
+    }
+
+    private void validateIsoAccess() {
+        // checking if it is looking at a local object;
+        if (isIsolated) {
+            if (referenceCount > 1) {
+                // TODO include name 
+                throw new RuntimeException(
+                        "Capability Violation: Isolated object cannot be accessed while having more than one reference.");
+            } else {
+                System.out.println("all ok with the access on this local object +++++");
             }
         }
     }
