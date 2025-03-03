@@ -22,6 +22,7 @@ public class BaseObject implements GraceObject {
     private Thread objectThread = null;
     private int hashNumber = 0;
 
+    // boolean toggles for iso checking
     private boolean dereferencingIsoCheck = false;
 
     protected static GraceDone done = GraceDone.done;
@@ -272,26 +273,22 @@ public class BaseObject implements GraceObject {
     }
 
     private void validateThreadAccess() {
-        // checking if it is looking at a local object;
-        if (isLocal) {
-            if (objectThread != Thread.currentThread()) {
-                throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
-            } else {
-                // System.out.println("all ok with the access on this local object +++++");
-            }
+        // only called for local objects
+        if (objectThread != Thread.currentThread()) {
+            throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
+        } else {
+            // System.out.println("all ok with the access on this local object +++++");
         }
     }
 
     private void validateIsoAccess() {
-        // checking if it is looking at a local object;
+        // only called for iso objects
         if (dereferencingIsoCheck) {
-            // if (isIsolated) {
-                if (referenceCount > 1) {
-                    // TODO include name
-                    throw new RuntimeException(
-                            "Capability Violation: Isolated object cannot be accessed while having more than one reference.");
-                }
-            // }
+            if (referenceCount > 1) {
+                // TODO include name
+                throw new RuntimeException(
+                        "Capability Violation: Isolated object cannot be accessed while having more than one reference.");
+            }
         }
     }
 }
