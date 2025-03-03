@@ -22,6 +22,8 @@ public class BaseObject implements GraceObject {
     private Thread objectThread = null;
     private int hashNumber = 0;
 
+    private boolean dereferencingIsoCheck = false;
+
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
 
@@ -210,15 +212,17 @@ public class BaseObject implements GraceObject {
 
                 baseObjectBeingAssigned.incrementReferenceCount();
 
-                // changing multiple isolated to a dereferencing error
+                // initial check if isolated (not dereferencing)
                 // checking if isolated, and runtime exception if too many references
-                // if (baseObjectBeingAssigned.isIsolated()) {
-                // if (baseObjectBeingAssigned.getReferenceCount() > 1) {
-                // throw new RuntimeException(
-                // "Capability Violation: Isolated object '" + name
-                // + "' cannot have more than one reference.");
-                // }
-                // }
+                if (!dereferencingIsoCheck) {
+                    if (baseObjectBeingAssigned.isIsolated()) {
+                        if (baseObjectBeingAssigned.getReferenceCount() > 1) {
+                            throw new RuntimeException(
+                                    "Capability Violation: Isolated object '" + name
+                                            + "' cannot have more than one reference.");
+                        }
+                    }
+                }
                 // checking if isolated and imutable, and runtime exception if multiple
                 // capabilities
                 if (baseObjectBeingAssigned.isIsolated() && baseObjectBeingAssigned.isImmutable()) {
@@ -280,12 +284,14 @@ public class BaseObject implements GraceObject {
 
     private void validateIsoAccess() {
         // checking if it is looking at a local object;
-        if (isIsolated) {
-            if (referenceCount > 1) {
-                // TODO include name 
-                throw new RuntimeException(
-                        "Capability Violation: Isolated object cannot be accessed while having more than one reference.");
-            }
+        if (dereferencingIsoCheck) {
+            // if (isIsolated) {
+                if (referenceCount > 1) {
+                    // TODO include name
+                    throw new RuntimeException(
+                            "Capability Violation: Isolated object cannot be accessed while having more than one reference.");
+                }
+            // }
         }
     }
 }
