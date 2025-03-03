@@ -285,8 +285,6 @@ public class BaseObject implements GraceObject {
                 // TODO include name 
                 throw new RuntimeException(
                         "Capability Violation: Isolated object cannot be accessed while having more than one reference.");
-            } else {
-                System.out.println("all ok with the access on this local object +++++");
             }
         }
     }

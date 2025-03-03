@@ -56,8 +56,8 @@ public class Start {
         // String filename = "test/hashtables/hashtable3c.grace"; // hashtable ok - removes linked list nodes including iso objects as values
         // String filename = "test/hashtables/hashtable4.grace"; // hashtable ok -simple destructive reads of values in hashtable
 
-        String filename = "dereferencingIsoChecks.grace"; // basic dereferencing iso checks, all ok
-        // String filename = "b2.grace"; // basic dereferencing iso checks, all ok
+        // String filename = "dereferencingIsoChecks1.grace"; // basic dereferencing iso checks, all ok
+        String filename = "dereferencingIsoChecks2.grace"; // basic dereferencing iso checks, all ok
 
         // String filename = "test/DataRaceEtc/bankAmbientTalk2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         boolean printAST = false;
