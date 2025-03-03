@@ -246,9 +246,7 @@ public class BaseObject implements GraceObject {
                     throw new RuntimeException(
                             "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name
                                     + "'.");
-                } else {
-                    // System.out.println("all ok, in construction as no references ");
-                }
+                } 
             }
 
             // should be value that has been removed, with a decremented reference count.
@@ -276,8 +274,6 @@ public class BaseObject implements GraceObject {
         // only called for local objects
         if (objectThread != Thread.currentThread()) {
             throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
-        } else {
-            // System.out.println("all ok with the access on this local object +++++");
         }
     }
 

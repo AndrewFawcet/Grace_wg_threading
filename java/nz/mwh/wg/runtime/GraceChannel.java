@@ -19,12 +19,26 @@ public class GraceChannel implements GraceObject {
         return receivePort;
     }
 
-    public void send(GraceObject message) throws InterruptedException {
-        sendPort.send(message);
+    // putting in a check that local are checked just prior to changing threads.
+    public void send(GraceObject objectSending) throws InterruptedException {
+        sendPort.send(objectSending);
     }
 
+    // putting in a check that local objects are checked immediately after changing threads.
     public GraceObject receive() throws InterruptedException {
-        return receivePort.receive();
+        GraceObject objectReceived = receivePort.receive();
+
+        // Perform the local object check after receiving
+        if (objectReceived instanceof BaseObject) {
+            BaseObject baseObject = (BaseObject) objectReceived;
+            if (baseObject.isLocal()) {
+                if (baseObject.getObjectThread() != Thread.currentThread()) {
+                    throw new RuntimeException("Capability Violation: Local object received on a different thread");
+                }
+            }
+        }
+
+        return objectReceived;
     }
 
     @Override

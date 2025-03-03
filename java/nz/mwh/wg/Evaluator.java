@@ -123,19 +123,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         for (Part part : node.getParts()) {
             // System.out.println("getting an arg");
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
-
-            // System.out.println(" Request in here------------------------ " +
-            // part.getName());
-
-            // if (args.get(0) instanceof BaseObject && args.size() > 0 ){
-            // BaseObject a = (BaseObject) args.get(0);
-            // if (a.isLocal()){
-            // System.out.println( "is local object as args ");
-            // } else {
-            // System.out.println("asdfasdf");
-            // }
-            // }
-
             parts.add(new RequestPartR(part.getName(), args));
         }
 
@@ -146,12 +133,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             BaseObject receiverBaseObject = (BaseObject) receiver;
             if (receiverBaseObject.isLocal()) {
                 System.out.println("is local object as reciever ");
-            } else {
-                // System.out.println("asdfasdf");
-            }
-            // reciever is not important...
-            // the lexicalRequestNode is what is important, and will hold the way to get the
-            // isThread annotation
+            } 
         }
         return receiver.request(request);
     }
