@@ -22,9 +22,11 @@ public class BaseObject implements GraceObject {
     private Thread objectThread = null;
     private int hashNumber = 0;
 
-    // boolean toggles for iso checking
+    // boolean toggles for how capability checking operates
     private boolean dereferencingIsoCheck = false;
-
+    private boolean threadBoundaryLocalChecking = true;
+    private boolean dereferencingLocalCheck = false;
+    
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
 
@@ -97,18 +99,20 @@ public class BaseObject implements GraceObject {
         return objectThread;
     }
 
-    // New method to increment reference count
+    public int getReferenceCount() {
+        return referenceCount;
+    }
+
     public void incrementReferenceCount() {
         referenceCount++;
     }
 
-    // New method to decrement reference count
     public void decrementReferenceCount() {
         referenceCount--;
     }
 
-    public int getReferenceCount() {
-        return referenceCount;
+    public boolean isThreadBoundaryLocalChecking() {
+        return threadBoundaryLocalChecking;
     }
 
     public String toString() {
@@ -246,7 +250,7 @@ public class BaseObject implements GraceObject {
                     throw new RuntimeException(
                             "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name
                                     + "'.");
-                } 
+                }
             }
 
             // should be value that has been removed, with a decremented reference count.
@@ -272,8 +276,10 @@ public class BaseObject implements GraceObject {
 
     private void validateThreadAccess() {
         // only called for local objects
-        if (objectThread != Thread.currentThread()) {
-            throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
+        if (dereferencingLocalCheck) {
+            if (objectThread != Thread.currentThread()) {
+                throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
+            }
         }
     }
 

@@ -21,8 +21,8 @@ print(objectY.fieldX)
 objectY.foo
 
 
-// Now, objectX has been consumed by the transfer, so this next call should fail.
-// It attempts to access a null reference because the isolated object has moved.
-print("Calling foo via objectX (should fail):")
+// Now objectX has been consumed by the transfer, so this next call should fail.
+// It attempts to access a null reference because the isolated object has moved via destructive read.
+print("Calling foo via objectX (should fail as a destructive read has removed the reference):")
 // print(objectX.fieldX)
 // objectX.foo

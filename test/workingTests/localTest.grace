@@ -1,10 +1,10 @@
 // Define a local (thread-bound) object using "loc".
 var objectX := object is loc {
-    var fieldX : Number := 10
+    var fieldX := 10
 
     // Method to return the field value
-    method getField -> Number {
-        fieldX
+    method getField() -> Number {
+        return fieldX
     }
 }
 
@@ -13,7 +13,7 @@ def c1 = spawn { c2 ->
     var objectY := c2.receive
 
     // This will fail because `objectY` is a `loc` object and cannot be safely dereferenced in this thread.
-    print "Thread received object with field value: {objectY.getField}"
+    print "Thread received object with field value: {objectY.getField()} ..."
 }
 
 // Send the local object to another thread.
