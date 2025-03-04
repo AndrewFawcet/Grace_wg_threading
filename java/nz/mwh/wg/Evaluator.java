@@ -52,7 +52,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             BaseObject contextBaseObject = (BaseObject) context;
             if (contextBaseObject.isLocal()) {
                 System.out.println("in the visit -----------");
-
             }
             if (contextBaseObject.isIsolated()) {
                 if (isNewObjectLocal) {
@@ -93,7 +92,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             if (part instanceof DefDecl) {
                 DefDecl def = (DefDecl) part;
                 object.addField(def.getName());
-            } else if (part instanceof VarDecl) {           // TODO could make a variable Consume and Declare
+            } else if (part instanceof VarDecl) { // TODO could make a variable Consume and Declare
                 VarDecl var = (VarDecl) part;
                 object.addField(var.getName());
                 // for new object field
@@ -133,7 +132,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             BaseObject receiverBaseObject = (BaseObject) receiver;
             if (receiverBaseObject.isLocal()) {
                 System.out.println("is local object as reciever ");
-            } 
+            }
         }
         return receiver.request(request);
     }
@@ -186,7 +185,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // Purpose: Defines a field in the current object context.
     // Details: Evaluates the value and assigns it to the field in the BaseObject.
     //
-    // TODO update the setField with capability checking ??
+    // TODO throw in a check here is the object is iso.
     @Override
     public GraceObject visit(GraceObject context, DefDecl node) {
 
@@ -253,8 +252,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         methodContext.addField(var.getName());
                         // parameter handling, each method part will contain parts of this.
                         // how to manage the reference counting in this case?
-                        methodContext.addFieldWriter(var.getName());        // TODO do for iso methods???
-                        // GraceObject oldObject = methodContext.addFieldWriter(var.getName());        // TODO do for iso methods???
+                        methodContext.addFieldWriter(var.getName()); // TODO do for iso methods???
+                        // GraceObject oldObject = methodContext.addFieldWriter(var.getName()); // TODO
+                        // do for iso methods???
                     }
                 }
                 try {
@@ -311,7 +311,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
             // receiver.request(request);
             GraceObject previous = receiver.request(request);
-            // changed to send the previous object through for destructive reads of variables and objects
+            // changed to send the previous object through for destructive reads of
+            // variables and objects
             return previous;
             // return done;
         } else if (node.getTarget() instanceof ExplicitRequest) {
@@ -407,7 +408,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         lexicalParent.addMethod("hashprint(1)", request -> {
             Object arg = request.getParts().get(0).getArgs().get(0);
             String str = arg.toString(); // Convert to string
-            int hash = str.hashCode();   // Compute hash code
+            int hash = str.hashCode(); // Compute hash code
             System.out.println("Hash of \"" + str + "\": " + hash);
             return new GraceNumber(hash); // Return the hash as a GraceNumber
         });

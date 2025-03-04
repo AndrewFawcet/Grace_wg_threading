@@ -30,7 +30,7 @@ public class Start {
         // String filename = "test/workingTests/dalaAliasingObject1.grace"; // dala Aliasing example working will fail if spouse set in iso object
         // String filename = "test/workingTests/dalaAliasingObject2.grace"; // dala Aliasing example working will pass if spouse set in object
         // String filename = "test/workingTests/isoTest.grace"; // iso Test working
-        String filename = "test/workingTests/localTest.grace"; // loc Test working
+        // String filename = "test/workingTests/localTest.grace"; // loc Test working
         // String filename = "test/workingTests/bankDistantObjects.grace"; // dala dist bank working
         // String filename = "test/workingTests/bank.grace"; // dala bank working
         // String filename = "test/workingTests/bankAmbientTalk.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
@@ -59,7 +59,9 @@ public class Start {
         // String filename = "test/DataRaceEtc/dereferencingIsoChecks1.grace"; // basic dereferencing iso checks, all ok
         // String filename = "test/DataRaceEtc/dereferencingIsoChecks2.grace"; // basic dereferencing iso checks, all ok
 
-        // String filename = "test/DataRaceEtc/bankAmbientTalk2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
+        String filename = "autoIsoMoves.grace"; // auto Iso moves
+
+
         boolean printAST = false;
         String updateFile = null;
         boolean inlineImports = false;
