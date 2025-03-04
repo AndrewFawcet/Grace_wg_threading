@@ -2,23 +2,25 @@
 print "Testing auto iso moves"
 
 var objectX := object is iso {
-    var variableX := " variable in iso "
+    var objectY := object is iso {
+        var objectZ := object is iso {
+            var v := " variable in iso "
+        }
+    }
 }
 
 
 print ""
-print " after 1 - assignment"
+print " after assignment with {objectX.objectY.objectZ.v} ..."
 
-var objectY := objectX
+var objectNew1 := object is iso {
+    var objectNew2 := -1
+}
 
-print " second alias made to iso "
+objectNew1.objectNew2 := objectX.objectY.objectZ
+print " alias made to iso "
 
-var objectZ := objectY
-
-print " third alias made to iso"
-
-// print (" this should be an error {objectX.variableX} ...")
-// print (" this should be an error {objectY.variableX} ...")
-print (" this should be ok {objectZ.variableX} ...")
+// print (" this should be an error {objectX.objectY.objectZ.v} ...")
+print (" this should be ok {objectNew1.objectNew2.v} ...")
 
 print " -doneskies- "
