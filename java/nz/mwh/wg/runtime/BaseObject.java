@@ -22,12 +22,9 @@ public class BaseObject implements GraceObject {
     private Thread objectThread = null;
     private int hashNumber = 0;
 
-    // storage for locations of iso to enable auto unlinking of previous location
-    // when assigned with new alias
-    private Map<String, GraceObject> storageLocations = new HashMap<>();
-    // could just be a string and a object to remove the string from
+    // storage for locations of this object as iso to enable auto unlinking of previous location
     private String aliasName;
-    private GraceObject aiasObject;
+    private GraceObject aliasObject;
 
     // boolean toggles for how capability checking operates
     private boolean autoUnlinkingIsoMoves = true;
@@ -126,6 +123,14 @@ public class BaseObject implements GraceObject {
 
     public String getAliasName() {
         return aliasName;
+    }
+
+    public void setAliasObject(GraceObject object) {
+        aliasObject = object;
+    }
+
+    public GraceObject getAliasObject() {
+        return aliasObject;
     }
 
     public boolean isAutoUnlinkingIsoMoves() {
@@ -236,24 +241,32 @@ public class BaseObject implements GraceObject {
                 BaseObject baseObjectBeingAssigned = (BaseObject) objectBeingAssigned;
 
                 baseObjectBeingAssigned.incrementReferenceCount();
-                // TODO if the object is iso store the field name
-                // TODO and then is a field name already exists in the iso, delete the old one
-                // TODO the deletion of previous alias will be a secondary action performed by
-                // the iso
-                System.out.println("before name is "+ baseObjectBeingAssigned.getAliasName());
-
+                // the is a system to allow the auto unlinking of previous aliases for iso objects
+                // it makes use of the aliasObject (graceObject) which is a link to the baseObject
+                // that holds the previous reference (aliasName) to the iso
                 if (baseObjectBeingAssigned.isIsolated()) {
                     if (baseObjectBeingAssigned.isAutoUnlinkingIsoMoves()) {
+                        System.out.println("before name is "+ baseObjectBeingAssigned.getAliasName());
+
                         if (baseObjectBeingAssigned.getReferenceCount() > 1) {
-                            //TODO trigger the removal of the previous alias here 
+                            // TODO trigger the removal of the previous alias here 
                             System.out.println("Do some blah in here");
+                            GraceObject oldObjectReferencingIso = baseObjectBeingAssigned.getAliasObject();
+                            if (oldObjectReferencingIso instanceof BaseObject) {
+                                System.out.println("-------------------");
+                                BaseObject oldBaseObjectReferencingIso = (BaseObject) oldObjectReferencingIso;
+                                String oldRef = baseObjectBeingAssigned.getAliasName();
+                                oldBaseObjectReferencingIso.fields.remove(oldRef);
+                                baseObjectBeingAssigned.decrementReferenceCount();
+                            }
                         }
+                        // base object now holds the name it is under inside itself.
+                        baseObjectBeingAssigned.setAliasName(name);
+                        baseObjectBeingAssigned.setAliasObject(this);
+                        System.out.println("after name is " + baseObjectBeingAssigned.getAliasName());
                     }
                 }
-                // base object now holds the name it is under inside itself.
-                baseObjectBeingAssigned.setAliasName(name);
-                System.out.println("after name is " + baseObjectBeingAssigned.getAliasName());
-                
+
                 // initial check if isolated (not dereferencing)
                 // checking if isolated, and runtime exception if too many references
                 if (assignmentIsoCheck) {
