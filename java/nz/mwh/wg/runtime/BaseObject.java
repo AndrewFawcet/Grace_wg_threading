@@ -246,24 +246,17 @@ public class BaseObject implements GraceObject {
                 // that holds the previous reference (aliasName) to the iso
                 if (baseObjectBeingAssigned.isIsolated()) {
                     if (baseObjectBeingAssigned.isAutoUnlinkingIsoMoves()) {
-                        System.out.println("before name is "+ baseObjectBeingAssigned.getAliasName());
-
                         if (baseObjectBeingAssigned.getReferenceCount() > 1) {
-                            // TODO trigger the removal of the previous alias here 
-                            System.out.println("Do some blah in here");
                             GraceObject oldObjectReferencingIso = baseObjectBeingAssigned.getAliasObject();
                             if (oldObjectReferencingIso instanceof BaseObject) {
-                                System.out.println("-------------------");
                                 BaseObject oldBaseObjectReferencingIso = (BaseObject) oldObjectReferencingIso;
                                 String oldRef = baseObjectBeingAssigned.getAliasName();
                                 oldBaseObjectReferencingIso.fields.remove(oldRef);
                                 baseObjectBeingAssigned.decrementReferenceCount();
                             }
                         }
-                        // base object now holds the name it is under inside itself.
-                        baseObjectBeingAssigned.setAliasName(name);
-                        baseObjectBeingAssigned.setAliasObject(this);
-                        System.out.println("after name is " + baseObjectBeingAssigned.getAliasName());
+                        baseObjectBeingAssigned.setAliasName(name); // base object now holds the name it is under inside itself.
+                        baseObjectBeingAssigned.setAliasObject(this);   // base object now holds the object it is under inside itself.
                     }
                 }
 

@@ -1,5 +1,5 @@
 
-print "Hello beautiful world-----------------------------------------------------------------"
+print "Testing auto iso moves"
 
 var objectX := object is iso {
     var variableX := " variable in iso "
