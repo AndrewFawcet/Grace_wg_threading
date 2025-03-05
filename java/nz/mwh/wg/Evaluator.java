@@ -89,29 +89,28 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 isNewObjectImmutable);
 
         // If isoWrapper should be applied, wrap the object
-        BaseObject finalObject = object; // This will be returned at the end (isoObject same as object if no isoWrapper)
+        GraceObject finalObject = object; // This will be returned at the end (isoObject same as object if no
+                                          // isoWrapper)
         if (object.isUsingIsoWrapper()) {
-            finalObject = (BaseObject) (new IsoWrapper(object)); // Wrap the object
+            finalObject = new IsoWrapper(object); // Wrap the object
         }
 
         List<ASTNode> body = node.getBody();
         for (ASTNode part : body) {
             if (part instanceof DefDecl) {
                 DefDecl def = (DefDecl) part;
-                object.addField(def.getName());     // Always add to the base object (no difference for isoWrapper)
+                object.addField(def.getName()); // Always add to the base object (no difference for isoWrapper)
             } else if (part instanceof VarDecl) { // TODO could make a variable Consume and Declare
                 VarDecl var = (VarDecl) part;
                 if (object.isUsingIsoWrapper()) {
-                    finalObject.addField(var.getName());
-                    // for new object field
-                    finalObject.addFieldWriter(var.getName());
-
+                    IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
+                    finalObjectWrapper.addField(var.getName()); 
+                    finalObjectWrapper.addFieldWriter(var.getName());   // for new object field
                 } else {
-                    object.addField(var.getName());
-                    // for new object field
-                    object.addFieldWriter(var.getName());
+                    BaseObject finalObjectBase = (BaseObject) finalObject;
+                    finalObjectBase.addField(var.getName());
+                    finalObjectBase.addFieldWriter(var.getName());  // for new object field
                 }
-
             } else if (part instanceof ImportStmt) {
                 ImportStmt imp = (ImportStmt) part;
                 object.addField(imp.getName());
