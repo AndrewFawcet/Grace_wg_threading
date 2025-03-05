@@ -22,17 +22,18 @@ public class BaseObject implements GraceObject {
     private Thread objectThread = null;
     private int hashNumber = 0;
 
-    // storage for locations of this object as iso to enable auto unlinking of previous location
+    // storage for locations of this object as iso to enable auto unlinking of
+    // previous location
     private String aliasName;
     private GraceObject aliasObject;
 
     // boolean toggles for how capability checking operates
-    private boolean isoChaperone = true;
+    private boolean isoWrapper = true;
     private boolean autoUnlinkingIsoMoves = true;
     private boolean assignmentIsoCheck = false; // vanilla Dala
     private boolean dereferencingIsoCheck = false;
     private boolean threadBoundaryLocalChecking = true;
-    private boolean dereferencingLocalCheck = false;    // vanilla Dala
+    private boolean dereferencingLocalCheck = false; // vanilla Dala
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
@@ -132,6 +133,10 @@ public class BaseObject implements GraceObject {
 
     public GraceObject getAliasObject() {
         return aliasObject;
+    }
+
+    public boolean isUsingIsoWrapper() {
+        return isoWrapper;
     }
 
     public boolean isAutoUnlinkingIsoMoves() {
@@ -242,8 +247,10 @@ public class BaseObject implements GraceObject {
                 BaseObject baseObjectBeingAssigned = (BaseObject) objectBeingAssigned;
 
                 baseObjectBeingAssigned.incrementReferenceCount();
-                // the is a system to allow the auto unlinking of previous aliases for iso objects
-                // it makes use of the aliasObject (graceObject) which is a link to the baseObject
+                // the is a system to allow the auto unlinking of previous aliases for iso
+                // objects
+                // it makes use of the aliasObject (graceObject) which is a link to the
+                // baseObject
                 // that holds the previous reference (aliasName) to the iso
                 if (baseObjectBeingAssigned.isIsolated()) {
                     if (baseObjectBeingAssigned.isAutoUnlinkingIsoMoves()) {
@@ -256,8 +263,10 @@ public class BaseObject implements GraceObject {
                                 baseObjectBeingAssigned.decrementReferenceCount();
                             }
                         }
-                        baseObjectBeingAssigned.setAliasName(name); // base object now holds the name it is under inside itself.
-                        baseObjectBeingAssigned.setAliasObject(this);   // base object now holds the object it is under inside itself.
+                        baseObjectBeingAssigned.setAliasName(name); // base object now holds the name it is under inside
+                                                                    // itself.
+                        baseObjectBeingAssigned.setAliasObject(this); // base object now holds the object it is under
+                                                                      // inside itself.
                     }
                 }
 
@@ -334,6 +343,18 @@ public class BaseObject implements GraceObject {
                 // TODO include name
                 throw new RuntimeException(
                         "Capability Violation: Isolated object cannot be accessed while having more than one reference.");
+            }
+        }
+    }
+
+    private void validateIfUsingIsoWrapper() {
+        if (isoWrapper) {
+            if (isIsolated) {
+                // TODO develop a checker that all outer calls are dynamically checked they are coming in via isoWrapper
+                //if (!(this instanceof IsoWrapper)) {
+                    throw new RuntimeException(
+                            "Capability Violation: Wrapped Isolated object cannot be accessed directly, must be accessed via wrapper.");
+                //}
             }
         }
     }

@@ -84,21 +84,33 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             }
         }
         // This creates the new BaseObject, the context is the lexical parent
-        // TODO this will have to have a wrapper seperating it as a iso with a chaperone
+        // TODO this will have to have a chaperone seperating it as a iso with a wrapper
         BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
                 isNewObjectImmutable);
+
+        // If isoWrapper should be applied, wrap the object
+        BaseObject finalObject = object; // This will be returned at the end (isoObject same as object if no isoWrapper)
+        if (object.isUsingIsoWrapper()) {
+            finalObject = (BaseObject) (new IsoWrapper(object)); // Wrap the object
+        }
 
         List<ASTNode> body = node.getBody();
         for (ASTNode part : body) {
             if (part instanceof DefDecl) {
                 DefDecl def = (DefDecl) part;
-                object.addField(def.getName());
+                object.addField(def.getName());     // Always add to the base object (no difference for isoWrapper)
             } else if (part instanceof VarDecl) { // TODO could make a variable Consume and Declare
                 VarDecl var = (VarDecl) part;
-                object.addField(var.getName());
-                // for new object field
+                if (object.isUsingIsoWrapper()) {
+                    finalObject.addField(var.getName());
+                    // for new object field
+                    finalObject.addFieldWriter(var.getName());
 
-                object.addFieldWriter(var.getName());
+                } else {
+                    object.addField(var.getName());
+                    // for new object field
+                    object.addFieldWriter(var.getName());
+                }
 
             } else if (part instanceof ImportStmt) {
                 ImportStmt imp = (ImportStmt) part;
@@ -111,7 +123,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         for (ASTNode part : body) {
             visit(object, part);
         }
-        return object;
+        return finalObject;
     }
 
     // Purpose: Processes a lexical request, which is a method call or message send
@@ -144,6 +156,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // Details: Simply wraps the numeric value in a GraceNumber
     @Override
     public GraceObject visit(GraceObject context, NumberNode node) {
+
         return new GraceNumber(node.getValue());
     }
 
