@@ -89,10 +89,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 isNewObjectImmutable);
 
         // If isoWrapper should be applied, wrap the object
-        GraceObject finalObject = object; // This will be returned at the end (isoObject same as object if no
-                                          // isoWrapper)
-        if (object.isUsingIsoWrapper()) {
-            finalObject = new IsoWrapper(object); // Wrap the object
+        GraceObject finalObject = object;
+
+        if (object.isUsingIsoWrapper() && object.isIsolated()) {
+            finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper toggle is on
         }
 
         List<ASTNode> body = node.getBody();
@@ -102,7 +102,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 object.addField(def.getName()); // Always add to the base object (no difference for isoWrapper)
             } else if (part instanceof VarDecl) { // TODO could make a variable Consume and Declare
                 VarDecl var = (VarDecl) part;
-                if (object.isUsingIsoWrapper()) {
+                if (object.isUsingIsoWrapper() && object.isIsolated()) {
                     IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
                     finalObjectWrapper.addField(var.getName()); 
                     finalObjectWrapper.addFieldWriter(var.getName());   // for new object field

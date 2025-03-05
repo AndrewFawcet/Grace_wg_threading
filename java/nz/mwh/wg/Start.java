@@ -29,7 +29,7 @@ public class Start {
         // String filename = "test/workingTests/dalaLinkedList2.grace"; // dala L list  working
         // String filename = "test/workingTests/dalaAliasingObject1.grace"; // dala Aliasing example working will fail if spouse set in iso object
         // String filename = "test/workingTests/dalaAliasingObject2.grace"; // dala Aliasing example working will pass if spouse set in object
-        // String filename = "test/workingTests/isoTest.grace"; // iso Test working
+        String filename = "test/workingTests/isoTest.grace"; // iso Test working
         // String filename = "test/workingTests/localTest.grace"; // loc Test working
         // String filename = "test/workingTests/bankDistantObjects.grace"; // dala dist bank working
         // String filename = "test/workingTests/bank.grace"; // dala bank working
@@ -59,7 +59,7 @@ public class Start {
         // String filename = "test/DataRaceEtc/dereferencingIsoChecks1.grace"; // basic dereferencing iso checks, all ok
         // String filename = "test/DataRaceEtc/dereferencingIsoChecks2.grace"; // basic dereferencing iso checks, all ok
 
-        String filename = "test/DataRaceEtc/autoIsoMoves1.grace"; // auto Iso moves
+        //String filename = "test/DataRaceEtc/autoIsoMoves1.grace"; // auto Iso moves
         // String filename = "test/DataRaceEtc/autoIsoMoves2.grace"; // auto Iso moves
 
 

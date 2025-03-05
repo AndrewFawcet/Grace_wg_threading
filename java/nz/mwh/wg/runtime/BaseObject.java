@@ -29,11 +29,11 @@ public class BaseObject implements GraceObject {
 
     // boolean toggles for how capability checking operates
     private boolean isoWrapper = true;
-    private boolean autoUnlinkingIsoMoves = true;
-    private boolean assignmentIsoCheck = false; // vanilla Dala
+    private boolean autoUnlinkingIsoMoves = false;
+    private boolean assignmentIsoCheck = true; // vanilla Dala
     private boolean dereferencingIsoCheck = false;
     private boolean threadBoundaryLocalChecking = true;
-    private boolean dereferencingLocalCheck = false; // vanilla Dala
+    private boolean dereferencingLocalCheck = true; // vanilla Dala
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
