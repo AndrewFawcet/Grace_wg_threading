@@ -83,7 +83,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 }
             }
         }
-
+        // This creates the new BaseObject, the context is the lexical parent
+        // TODO this will have to have a wrapper seperating it as a iso with a chaperone
         BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
                 isNewObjectImmutable);
 
@@ -96,7 +97,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 VarDecl var = (VarDecl) part;
                 object.addField(var.getName());
                 // for new object field
+
                 object.addFieldWriter(var.getName());
+
             } else if (part instanceof ImportStmt) {
                 ImportStmt imp = (ImportStmt) part;
                 object.addField(imp.getName());

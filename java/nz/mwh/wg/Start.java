@@ -59,8 +59,8 @@ public class Start {
         // String filename = "test/DataRaceEtc/dereferencingIsoChecks1.grace"; // basic dereferencing iso checks, all ok
         // String filename = "test/DataRaceEtc/dereferencingIsoChecks2.grace"; // basic dereferencing iso checks, all ok
 
-        // String filename = "test/DataRaceEtc/autoIsoMoves1.grace"; // auto Iso moves
-        String filename = "test/DataRaceEtc/autoIsoMoves2.grace"; // auto Iso moves
+        String filename = "test/DataRaceEtc/autoIsoMoves1.grace"; // auto Iso moves
+        // String filename = "test/DataRaceEtc/autoIsoMoves2.grace"; // auto Iso moves
 
 
         boolean printAST = false;

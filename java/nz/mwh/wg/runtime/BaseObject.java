@@ -27,6 +27,7 @@ public class BaseObject implements GraceObject {
     private GraceObject aliasObject;
 
     // boolean toggles for how capability checking operates
+    private boolean isoChaperone = true;
     private boolean autoUnlinkingIsoMoves = true;
     private boolean assignmentIsoCheck = false; // vanilla Dala
     private boolean dereferencingIsoCheck = false;
