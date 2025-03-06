@@ -27,7 +27,8 @@ public class BaseObject implements GraceObject {
     private String aliasName;
     private GraceObject holdingObject;
 
-    private IsoWrapper wrapper; // Reference to the wrapper
+    // private IsoWrapper wrapper; // Reference to the wrapper
+    private boolean isAccessAllowed = false;  // Default: no direct access
 
     // boolean toggles for how capability checking operates
     private boolean isoWrapper = true;
@@ -63,7 +64,9 @@ public class BaseObject implements GraceObject {
         this.isLocal = isLocal;
         this.isIsolated = isIsolated;
         this.isImmutable = isImmutable;
-
+        if (isLocal){
+            System.out.println("-------------");
+        }
         // If the object is marked as local, set objectThread to the current thread
         this.objectThread = Thread.currentThread();
 
@@ -82,93 +85,117 @@ public class BaseObject implements GraceObject {
     }
 
     public boolean isLocal() {
+        // validateIfUsingIsoWrapper();
         return isLocal;
     }
 
     public boolean isIsolated() {
+        // validateIfUsingIsoWrapper();
         return isIsolated;
     }
 
     public boolean isImmutable() {
+        // validateIfUsingIsoWrapper();
         return this.isImmutable;
     }
 
     public void setLocal(boolean isLocal) {
+        // validateIfUsingIsoWrapper();
         this.isLocal = isLocal;
     }
 
     public void setIsolated(boolean isIsolated) {
+        // validateIfUsingIsoWrapper();
         this.isIsolated = isIsolated;
     }
 
     public void setImmutable(boolean isImmutable) {
+        // validateIfUsingIsoWrapper();
         this.isImmutable = isImmutable;
     }
 
     public Thread getObjectThread() {
+        // validateIfUsingIsoWrapper();
         return objectThread;
     }
 
     public int getReferenceCount() {
+        // validateIfUsingIsoWrapper();
         return referenceCount;
     }
 
     public void incrementReferenceCount() {
+        // validateIfUsingIsoWrapper();
         referenceCount++;
     }
 
     public void decrementReferenceCount() {
+        // validateIfUsingIsoWrapper();
         referenceCount--;
     }
 
     public void setAliasName(String name) {
+        // validateIfUsingIsoWrapper();
         aliasName = name;
     }
 
     public String getAliasName() {
+        // validateIfUsingIsoWrapper();
         return aliasName;
     }
 
     public void setHoldingObject(GraceObject object) {
+        // validateIfUsingIsoWrapper();
         holdingObject = object;
     }
 
     public GraceObject getHoldingObject() {
+        // validateIfUsingIsoWrapper();
         return holdingObject;
     }
 
-    // Called when the IsoWrapper is created
-    public void setWrapper(IsoWrapper wrapper) {
-        if (this.wrapper != null) {
-            throw new RuntimeException("IsoWrapper is already set and cannot be changed.");
-        }
-        this.wrapper = wrapper;
+    // // Called when the IsoWrapper is created
+    // public void setWrapper(IsoWrapper wrapper) {
+    //     // validateIfUsingIsoWrapper(); //TODO how sohould this be checked?
+    //     if (this.wrapper != null) {
+    //         throw new RuntimeException("IsoWrapper is already set and cannot be changed.");
+    //     }
+    //     this.wrapper = wrapper;
+    // }
+    public void setIsAccessAllowed(boolean access) {
+        isAccessAllowed = access;
     }
 
     public boolean isUsingIsoWrapper() {
+        // validateIfUsingIsoWrapper();
         return isoWrapper;
     }
 
     public boolean isAutoUnlinkingIsoMoves() {
+        // validateIfUsingIsoWrapper();
         return autoUnlinkingIsoMoves;
     }
 
     public boolean isThreadBoundaryLocalChecking() {
+        // validateIfUsingIsoWrapper();
         return threadBoundaryLocalChecking;
     }
 
     public String toString() {
+        // validateIfUsingIsoWrapper();
         Request request = new Request(new Evaluator(),
                 Collections.singletonList(new RequestPartR("asString", Collections.emptyList())));
         return request(request).toString();
     }
 
     public void addMethod(String name, Function<Request, GraceObject> method) {
+        // validateIfUsingIsoWrapper();
         methods.put(name, method);
     }
 
     @Override
     public GraceObject request(Request request) {
+        // validateIfUsingIsoWrapper();
 
         if (request.getParts().get(0).getName().equals("hash")) { // Added hash method
             return new GraceNumber(hashNumber);
@@ -200,6 +227,7 @@ public class BaseObject implements GraceObject {
     }
 
     public GraceObject findReceiver(String name) {
+        // validateIfUsingIsoWrapper();
 
         if (methods.containsKey(name) || fields.containsKey(name)) {
             return this;
@@ -212,6 +240,7 @@ public class BaseObject implements GraceObject {
 
     // adding methods or fields to an object
     public void addField(String name) {
+        // validateIfUsingIsoWrapper();
         fields.put(name, uninitialised);
         methods.put(name + "(0)", request -> {
             GraceObject val = fields.get(name);
@@ -227,6 +256,7 @@ public class BaseObject implements GraceObject {
     // return the old value/object instead of 'done'
     // decrement or unassign the returned value/object
     public void addFieldWriter(String name) {
+        // validateIfUsingIsoWrapper();
         methods.put(name + ":=(1)", request -> {
 
             GraceObject objectBeingAssigned = request.getParts().get(0).getArgs().get(0);
@@ -324,10 +354,12 @@ public class BaseObject implements GraceObject {
     }
 
     public void setField(String name, GraceObject value) {
+        // validateIfUsingIsoWrapper();
         fields.put(name, value);
     }
 
     public GraceObject findReturnContext() {
+        // validateIfUsingIsoWrapper();
         if (returns) {
             return this;
         }
@@ -347,6 +379,7 @@ public class BaseObject implements GraceObject {
     }
 
     private void validateIsoAccess() {
+        // validateIfUsingIsoWrapper();
         // only called for iso objects
         if (dereferencingIsoCheck) {
             if (referenceCount > 1) {
@@ -360,14 +393,10 @@ public class BaseObject implements GraceObject {
     // Validate method access
     private void validateIfUsingIsoWrapper() {
         if (isoWrapper && isIsolated) {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            for (StackTraceElement element : stackTrace) { // stacktrace to validate access path
-                if (element.getClassName().equals(IsoWrapper.class.getName())) {
-                    return; // Valid access via wrapper, allow the call
-                }
-            }
-            throw new RuntimeException(
+            if (!isAccessAllowed) {  // If flag is false, access is denied
+                throw new RuntimeException(
                     "Capability Violation: Wrapped Isolated object cannot be accessed directly, must be accessed via wrapper.");
+            }
         }
     }
 }

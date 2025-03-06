@@ -53,12 +53,12 @@ public class IsoWrapper implements GraceObject {
 
     public boolean isLocal() {
         checkAlive();
-        return isoObject.isLocal();
+        boolean result = isoObject.isLocal();
+        return result;
     }
 
     public boolean isIsolated() {
-        checkAlive();
-        return isoObject.isIsolated();
+        return accessBaseObject(BaseObject::isIsolated);
     }
 
     public boolean isImmutable() {
@@ -159,11 +159,13 @@ public class IsoWrapper implements GraceObject {
     }
 
     public void addFieldWriter(String name) {
-        // when making an (iso) BaseObject as a field it needs to set the IsoWrapper field in the BaseObject as well
-        // the IsoWrapper field is used to authenticate outside references as coming only via this IsoWrapper.
+        // when making an (iso) BaseObject as a field it needs to set the IsoWrapper
+        // field in the BaseObject as well
+        // the IsoWrapper field is used to authenticate outside references as coming
+        // only via this IsoWrapper.
+        System.out.println("hi hi");
         checkAlive();
         isoObject.addFieldWriter(name);
-        isoObject.setWrapper(this);
         System.out.println("hi");
     }
 
@@ -175,5 +177,15 @@ public class IsoWrapper implements GraceObject {
     public GraceObject findReturnContext() {
         checkAlive();
         return isoObject.findReturnContext();
+    }
+
+    private <T> T accessBaseObject(Function<BaseObject, T> action) {
+        checkAlive();
+        isoObject.setIsAccessAllowed(true);  // Enable access
+        try {
+            return action.apply(isoObject);  // Call the method safely
+        } finally {
+            isoObject.setIsAccessAllowed(false); // Always disable access
+        }
     }
 }
