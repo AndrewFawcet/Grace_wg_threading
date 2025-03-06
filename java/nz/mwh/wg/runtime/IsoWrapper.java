@@ -150,8 +150,20 @@ public class IsoWrapper implements GraceObject {
         return accessBaseObjectWithReturn(BaseObject::findReturnContext);
     }
 
+    // TODO is this a security risk?
+    public BaseObject getWrappedObject() {
+        checkAlive();
+        if (isoObject == null) {
+            throw new RuntimeException("IsoWrapper has no valid isoObject to work with.");
+        }
+        return isoObject; // Return the entire BaseObject that is wrapped
+    }
+
     private <T> T accessBaseObjectWithReturn(Function<BaseObject, T> action) {
         checkAlive();
+        if (isoObject == null) {
+            throw new RuntimeException("IsoWrapper has no valid isoObject to work with.");
+        }
         isoObject.setIsAccessAllowed(true);
         try {
             return action.apply(isoObject);
@@ -162,6 +174,9 @@ public class IsoWrapper implements GraceObject {
     
     private void accessBaseObjectWithoutReturn(Consumer<BaseObject> action) {
         checkAlive();
+        if (isoObject == null) {
+            throw new RuntimeException("IsoWrapper has no valid isoObject to work with.");
+        }
         isoObject.setIsAccessAllowed(true);
         try {
             action.accept(isoObject);

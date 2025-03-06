@@ -103,14 +103,13 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             } else if (part instanceof VarDecl) { // TODO could make a variable Consume and Declare
                 VarDecl var = (VarDecl) part;
                 if (object.isUsingIsoWrapper() && object.isIsolated()) {
-                    System.out.println("___________++");
                     IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
-                    finalObjectWrapper.addField(var.getName()); 
-                    finalObjectWrapper.addFieldWriter(var.getName());   // for new object field
+                    finalObjectWrapper.addField(var.getName());
+                    finalObjectWrapper.addFieldWriter(var.getName()); // for new object field
                 } else {
                     BaseObject finalObjectBase = (BaseObject) finalObject;
                     finalObjectBase.addField(var.getName());
-                    finalObjectBase.addFieldWriter(var.getName());  // for new object field
+                    finalObjectBase.addFieldWriter(var.getName()); // for new object field
                 }
             } else if (part instanceof ImportStmt) {
                 ImportStmt imp = (ImportStmt) part;
@@ -121,8 +120,18 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         }
 
         for (ASTNode part : body) {
-            visit(object, part);
+            // System.out.println("++++");
+            if (object.isUsingIsoWrapper() && object.isIsolated()) {
+                IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
+                visit(finalObjectWrapper, part);
+            } else {
+                BaseObject finalObjectBase = (BaseObject) finalObject;
+                visit(finalObjectBase, part);
+            }
+            // visit(object, part);
+            // System.out.println("----");
         }
+
         return finalObject;
     }
 
@@ -243,6 +252,58 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         List<? extends Part> parts = node.getParts();
         String name = parts.stream().map(x -> x.getName() + "(" + x.getParameters().size() + ")")
                 .collect(Collectors.joining(""));
+
+        // added for IsoWrapper
+        if (context instanceof IsoWrapper) {
+            IsoWrapper wrapperContext = (IsoWrapper) context;
+            List<? extends ASTNode> body = node.getBody();
+
+            wrapperContext.addMethod(name, request -> {
+                // Create a method context that wraps the current IsoWrapper context
+                BaseObject methodContextBase = new BaseObject(wrapperContext.getWrappedObject(), true);
+
+                List<RequestPartR> requestParts = request.getParts();
+                for (int j = 0; j < requestParts.size(); j++) {
+                    Part part = parts.get(j);
+                    RequestPartR rpart = requestParts.get(j);
+                    List<? extends ASTNode> parameters = part.getParameters();
+
+                    for (int i = 0; i < parameters.size(); i++) {
+                        IdentifierDeclaration parameter = (IdentifierDeclaration) parameters.get(i);
+                        methodContextBase.addField(parameter.getName());
+                        methodContextBase.setField(parameter.getName(), rpart.getArgs().get(i));
+                    }
+                }
+
+                // Handle the body of the method by visiting each part
+                for (ASTNode part : body) {
+                    if (part instanceof DefDecl) {
+                        DefDecl def = (DefDecl) part;
+                        methodContextBase.addField(def.getName());
+                    } else if (part instanceof VarDecl) {
+                        VarDecl var = (VarDecl) part;
+                        methodContextBase.addField(var.getName());
+                        methodContextBase.addFieldWriter(var.getName()); // Handle writing to the field
+                    }
+                }
+
+                try {
+                    GraceObject last = null;
+                    for (ASTNode part : body) {
+                        last = visit(methodContextBase, part); // Visit the body parts using the method context
+                    }
+                    return last;
+                } catch (ReturnException re) {
+                    if (re.context == methodContextBase) {
+                        return re.getValue();
+                    } else {
+                        throw re;
+                    }
+                }
+            });
+
+            return done;
+        }
         if (context instanceof BaseObject) {
             BaseObject object = (BaseObject) context;
             List<? extends ASTNode> body = node.getBody();
@@ -289,7 +350,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             });
             return done;
         }
-        throw new UnsupportedOperationException("method can only be defined in object context");
+        throw new UnsupportedOperationException("method can only be defined in object context of either BaseObject or IsoWrapper");
     }
 
     // Purpose: Processes an explicit request (method call) with a specified

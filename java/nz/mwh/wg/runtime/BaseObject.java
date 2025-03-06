@@ -35,7 +35,7 @@ public class BaseObject implements GraceObject {
     private boolean autoUnlinkingIsoMoves = false;
     private boolean assignmentIsoCheck = true; // vanilla Dala
     private boolean dereferencingIsoCheck = false;
-    private boolean threadBoundaryLocalChecking = true;
+    private boolean threadBoundaryLocalChecking = false;
     private boolean dereferencingLocalCheck = true; // vanilla Dala
 
     protected static GraceDone done = GraceDone.done;
@@ -162,7 +162,7 @@ public class BaseObject implements GraceObject {
     //     }
     //     this.wrapper = wrapper;
     // }
-    
+
     public void setIsAccessAllowed(boolean access) {
         isAccessAllowed = access;
     }
