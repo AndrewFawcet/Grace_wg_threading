@@ -22,10 +22,12 @@ public class BaseObject implements GraceObject {
     private Thread objectThread = null;
     private int hashNumber = 0;
 
-    // storage for locations of this object as iso to enable auto unlinking of
-    // previous location
+    // storage for holding object and alias to this (iso) object 
+    // enables auto unlinking of previous location
     private String aliasName;
-    private GraceObject aliasObject;
+    private GraceObject holdingObject;
+
+    private IsoWrapper wrapper; // Reference to the wrapper
 
     // boolean toggles for how capability checking operates
     private boolean isoWrapper = true;
@@ -127,12 +129,20 @@ public class BaseObject implements GraceObject {
         return aliasName;
     }
 
-    public void setAliasObject(GraceObject object) {
-        aliasObject = object;
+    public void setHoldingObject(GraceObject object) {
+        holdingObject = object;
     }
 
-    public GraceObject getAliasObject() {
-        return aliasObject;
+    public GraceObject getHoldingObject() {
+        return holdingObject;
+    }
+
+    // Called when the IsoWrapper is created
+    public void setWrapper(IsoWrapper wrapper) {
+        if (this.wrapper != null) {
+            throw new RuntimeException("IsoWrapper is already set and cannot be changed.");
+        }
+        this.wrapper = wrapper;
     }
 
     public boolean isUsingIsoWrapper() {
@@ -255,7 +265,7 @@ public class BaseObject implements GraceObject {
                 if (baseObjectBeingAssigned.isIsolated()) {
                     if (baseObjectBeingAssigned.isAutoUnlinkingIsoMoves()) {
                         if (baseObjectBeingAssigned.getReferenceCount() > 1) {
-                            GraceObject oldObjectReferencingIso = baseObjectBeingAssigned.getAliasObject();
+                            GraceObject oldObjectReferencingIso = baseObjectBeingAssigned.getHoldingObject();
                             if (oldObjectReferencingIso instanceof BaseObject) {
                                 BaseObject oldBaseObjectReferencingIso = (BaseObject) oldObjectReferencingIso;
                                 String oldRef = baseObjectBeingAssigned.getAliasName();
@@ -265,7 +275,7 @@ public class BaseObject implements GraceObject {
                         }
                         baseObjectBeingAssigned.setAliasName(name); // base object now holds the name it is under inside
                                                                     // itself.
-                        baseObjectBeingAssigned.setAliasObject(this); // base object now holds the object it is under
+                        baseObjectBeingAssigned.setHoldingObject(this); // base object now holds the object it is under
                                                                       // inside itself.
                     }
                 }
@@ -347,15 +357,17 @@ public class BaseObject implements GraceObject {
         }
     }
 
+    // Validate method access
     private void validateIfUsingIsoWrapper() {
-        if (isoWrapper) {
-            if (isIsolated) {
-                // TODO develop a checker that all outer calls are dynamically checked they are coming in via isoWrapper
-                //if (!(this instanceof IsoWrapper)) {
-                    throw new RuntimeException(
-                            "Capability Violation: Wrapped Isolated object cannot be accessed directly, must be accessed via wrapper.");
-                //}
+        if (isoWrapper && isIsolated) {
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            for (StackTraceElement element : stackTrace) { // stacktrace to validate access path
+                if (element.getClassName().equals(IsoWrapper.class.getName())) {
+                    return; // Valid access via wrapper, allow the call
+                }
             }
+            throw new RuntimeException(
+                    "Capability Violation: Wrapped Isolated object cannot be accessed directly, must be accessed via wrapper.");
         }
     }
 }

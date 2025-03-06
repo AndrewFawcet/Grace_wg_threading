@@ -113,12 +113,12 @@ public class IsoWrapper implements GraceObject {
 
     public void setAliasObject(GraceObject object) {
         checkAlive();
-        isoObject.setAliasObject(object);
+        isoObject.setHoldingObject(object);
     }
 
     public GraceObject getAliasObject() {
         checkAlive();
-        return isoObject.getAliasObject();
+        return isoObject.getHoldingObject();
     }
 
     public boolean isAutoUnlinkingIsoMoves() {
@@ -159,8 +159,12 @@ public class IsoWrapper implements GraceObject {
     }
 
     public void addFieldWriter(String name) {
+        // when making an (iso) BaseObject as a field it needs to set the IsoWrapper field in the BaseObject as well
+        // the IsoWrapper field is used to authenticate outside references as coming only via this IsoWrapper.
         checkAlive();
         isoObject.addFieldWriter(name);
+        isoObject.setWrapper(this);
+        System.out.println("hi");
     }
 
     public void setField(String name, GraceObject value) {

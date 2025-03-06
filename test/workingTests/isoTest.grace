@@ -11,6 +11,8 @@ var objectX := object is iso {
 }
 
 print("")
+print(objectX.foo)
+print("")
 
 // Transfer the capability by assigning objectX to objectY.
 var objectY := (objectX := -1)
