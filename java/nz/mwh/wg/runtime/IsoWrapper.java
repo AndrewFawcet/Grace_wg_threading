@@ -3,6 +3,7 @@ package nz.mwh.wg.runtime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import nz.mwh.wg.Evaluator;
@@ -52,140 +53,120 @@ public class IsoWrapper implements GraceObject {
     // Forwarding methods to the wrapped isoObject
 
     public boolean isLocal() {
-        checkAlive();
-        boolean result = isoObject.isLocal();
-        return result;
+        return accessBaseObjectWithReturn(BaseObject::isLocal);
     }
 
     public boolean isIsolated() {
-        return accessBaseObject(BaseObject::isIsolated);
+        return accessBaseObjectWithReturn(BaseObject::isIsolated);
     }
 
     public boolean isImmutable() {
-        checkAlive();
-        return isoObject.isImmutable();
+        return accessBaseObjectWithReturn(BaseObject::isImmutable);
     }
 
     public void setLocal(boolean isLocal) {
-        checkAlive();
-        isoObject.setLocal(isLocal);
+        accessBaseObjectWithoutReturn(obj -> obj.setLocal(isLocal));
     }
 
     public void setIsolated(boolean isIsolated) {
-        checkAlive();
-        isoObject.setIsolated(isIsolated);
+        accessBaseObjectWithoutReturn(obj -> obj.setIsolated(isIsolated));
     }
 
     public void setImmutable(boolean isImmutable) {
-        checkAlive();
-        isoObject.setImmutable(isImmutable);
+        accessBaseObjectWithoutReturn(obj -> obj.setImmutable(isImmutable));
     }
 
     public Thread getObjectThread() {
-        checkAlive();
-        return isoObject.getObjectThread();
+        return accessBaseObjectWithReturn(BaseObject::getObjectThread);
     }
 
     public int getReferenceCount() {
-        checkAlive();
-        return isoObject.getReferenceCount();
+        return accessBaseObjectWithReturn(BaseObject::getReferenceCount);
     }
 
     public void incrementReferenceCount() {
-        checkAlive();
-        isoObject.incrementReferenceCount();
+        accessBaseObjectWithoutReturn(BaseObject::incrementReferenceCount);
     }
 
     public void decrementReferenceCount() {
-        checkAlive();
-        isoObject.decrementReferenceCount();
+        accessBaseObjectWithoutReturn(BaseObject::decrementReferenceCount);
     }
 
     public void setAliasName(String name) {
-        checkAlive();
-        isoObject.setAliasName(name);
+        accessBaseObjectWithoutReturn(obj -> obj.setAliasName(name));
     }
 
     public String getAliasName() {
-        checkAlive();
-        return isoObject.getAliasName();
+        return accessBaseObjectWithReturn(BaseObject::getAliasName);
     }
 
     public void setAliasObject(GraceObject object) {
-        checkAlive();
-        isoObject.setHoldingObject(object);
+        accessBaseObjectWithoutReturn(obj -> obj.setHoldingObject(object));
     }
 
     public GraceObject getAliasObject() {
-        checkAlive();
-        return isoObject.getHoldingObject();
+        return accessBaseObjectWithReturn(BaseObject::getHoldingObject);
     }
 
     public boolean isAutoUnlinkingIsoMoves() {
-        checkAlive();
-        return isoObject.isAutoUnlinkingIsoMoves();
+        return accessBaseObjectWithReturn(BaseObject::isAutoUnlinkingIsoMoves);
     }
 
     public boolean isThreadBoundaryLocalChecking() {
-        checkAlive();
-        return isoObject.isThreadBoundaryLocalChecking();
+        return accessBaseObjectWithReturn(BaseObject::isThreadBoundaryLocalChecking);
     }
 
     @Override
     public String toString() {
-        checkAlive();
-        return isoObject.toString();
+        return accessBaseObjectWithReturn(BaseObject::toString);
     }
 
     public void addMethod(String name, Function<Request, GraceObject> method) {
-        checkAlive();
-        isoObject.addMethod(name, method);
+        accessBaseObjectWithoutReturn(obj -> obj.addMethod(name, method));
     }
 
     @Override
     public GraceObject request(Request request) {
-        checkAlive();
-        return isoObject.request(request);
+        return accessBaseObjectWithReturn(obj -> obj.request(request));
     }
 
     public GraceObject findReceiver(String name) {
-        checkAlive();
-        return isoObject.findReceiver(name);
+        return accessBaseObjectWithReturn(obj -> obj.findReceiver(name));
     }
 
     public void addField(String name) {
-        checkAlive();
-        isoObject.addField(name);
+        accessBaseObjectWithoutReturn(obj -> obj.addField(name));
     }
 
     public void addFieldWriter(String name) {
-        // when making an (iso) BaseObject as a field it needs to set the IsoWrapper
-        // field in the BaseObject as well
-        // the IsoWrapper field is used to authenticate outside references as coming
-        // only via this IsoWrapper.
-        System.out.println("hi hi");
-        checkAlive();
-        isoObject.addFieldWriter(name);
-        System.out.println("hi");
+        accessBaseObjectWithoutReturn(obj -> obj.addFieldWriter(name));
     }
 
     public void setField(String name, GraceObject value) {
-        checkAlive();
-        isoObject.setField(name, value);
+        accessBaseObjectWithoutReturn(obj -> obj.setField(name, value));
     }
 
     public GraceObject findReturnContext() {
-        checkAlive();
-        return isoObject.findReturnContext();
+        return accessBaseObjectWithReturn(BaseObject::findReturnContext);
     }
 
-    private <T> T accessBaseObject(Function<BaseObject, T> action) {
+    private <T> T accessBaseObjectWithReturn(Function<BaseObject, T> action) {
         checkAlive();
-        isoObject.setIsAccessAllowed(true);  // Enable access
+        isoObject.setIsAccessAllowed(true);
         try {
-            return action.apply(isoObject);  // Call the method safely
+            return action.apply(isoObject);
         } finally {
-            isoObject.setIsAccessAllowed(false); // Always disable access
+            isoObject.setIsAccessAllowed(false);
+        }
+    }
+    
+    private void accessBaseObjectWithoutReturn(Consumer<BaseObject> action) {
+        checkAlive();
+        isoObject.setIsAccessAllowed(true);
+        try {
+            action.accept(isoObject);
+        } finally {
+            isoObject.setIsAccessAllowed(false);
         }
     }
 }

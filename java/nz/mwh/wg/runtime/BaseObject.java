@@ -156,12 +156,13 @@ public class BaseObject implements GraceObject {
 
     // // Called when the IsoWrapper is created
     // public void setWrapper(IsoWrapper wrapper) {
-    //     // validateIfUsingIsoWrapper(); //TODO how sohould this be checked?
+    //     // validateIfUsingIsoWrapper(); //TODO how should this be checked?
     //     if (this.wrapper != null) {
     //         throw new RuntimeException("IsoWrapper is already set and cannot be changed.");
     //     }
     //     this.wrapper = wrapper;
     // }
+    
     public void setIsAccessAllowed(boolean access) {
         isAccessAllowed = access;
     }
