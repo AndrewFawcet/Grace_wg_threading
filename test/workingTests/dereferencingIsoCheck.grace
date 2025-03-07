@@ -25,17 +25,18 @@ print " third alias made "
 c1.send(objectZ)
 print " third alias sent to other thread "
 
-// print (objectZ.variableX) // will cause capability RuntimeException
+// print (objectX.variableX)    // will cause capability RuntimeException
+// print (objectY.variableX)    // will cause capability RuntimeException
+// print (objectZ.variableX)    // will cause capability RuntimeException
 
 (objectY := -1)
 print " one alias removed"
 
-// print (objectZ.variableX)    // will cause capability RuntimeException
 
 (objectX := -1)
 print " another alias removed"
 
-print (" now acessing the object from a single alias :{objectZ.variableX} ... ")
+print (" now acessing the object from a single alias :{objectZ.variableX} ... ")    // may cause a capability Runtime Exception, has not been received on other thread
 print ""
 
 print " now removing alias from main thread"

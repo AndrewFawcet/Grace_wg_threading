@@ -29,7 +29,7 @@ public class Start {
         // String filename = "test/workingTests/dalaLinkedList2.grace"; // dala L list  working
         // String filename = "test/workingTests/dalaAliasingObject1.grace"; // dala Aliasing example working will fail if spouse set in iso object
         // String filename = "test/workingTests/dalaAliasingObject2.grace"; // dala Aliasing example working will pass if spouse set in object
-        String filename = "test/workingTests/isoTest.grace"; // iso Test working
+        // String filename = "test/workingTests/isoTest.grace"; // iso Test working
         // String filename = "test/workingTests/localTest.grace"; // loc Test working
         // String filename = "test/workingTests/bankDistantObjects.grace"; // dala dist bank working
         // String filename = "test/workingTests/bank.grace"; // dala bank working
@@ -38,6 +38,7 @@ public class Start {
         // String filename = "test/workingTests/linkedListWithIso2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/square.grace"; // encapsulated basic hash working using iso linked lists.not
         // String filename = "test/workingTests/aliasingDisallowed.grace"; // encapsulated basic hash working using iso linked lists.not
+        String filename = "test/workingTests/dereferencingIsoCheck.grace"; // iso Test working
 
         // String filename = "test/DataRaceEtc/twoEventLoops.grace"; // two event loops.not
         // String filename = "test/DataRaceEtc/counter.grace"; // two event loops.not

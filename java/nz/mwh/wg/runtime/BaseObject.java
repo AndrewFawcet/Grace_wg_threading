@@ -27,14 +27,13 @@ public class BaseObject implements GraceObject {
     private String aliasName;
     private GraceObject holdingObject;
 
-    // private IsoWrapper wrapper; // Reference to the wrapper
-    private boolean isAccessAllowed = false;  // Default: no direct access
+    private boolean isAccessAllowed = false;  // Default: no direct access from isoWrapper
 
     // boolean toggles for how capability checking operates
-    private boolean isoWrapper = true;
+    private boolean isoWrapper = false;
     private boolean autoUnlinkingIsoMoves = false;
-    private boolean assignmentIsoCheck = true; // vanilla Dala
-    private boolean dereferencingIsoCheck = false;
+    private boolean assignmentIsoCheck = false; // vanilla Dala
+    private boolean dereferencingIsoCheck = true;
     private boolean threadBoundaryLocalChecking = false;
     private boolean dereferencingLocalCheck = true; // vanilla Dala
 
