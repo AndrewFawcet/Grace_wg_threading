@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.function.Function;
 
 import nz.mwh.wg.Evaluator;
+import nz.mwh.wg.runtime.enums.IsoCheckMode;
+import nz.mwh.wg.runtime.enums.IsoMoveMode;
+import nz.mwh.wg.runtime.enums.LocalCheckMode;
 
 // represents an object in the runtime with properties like fields, methods, and scope (lexicalParent).
 public class BaseObject implements GraceObject {
@@ -22,20 +25,16 @@ public class BaseObject implements GraceObject {
     private Thread objectThread = null;
     private int hashNumber = 0;
 
-    // storage for holding object and alias to this (iso) object 
+    // storage for holding object and alias to this (iso) object
     // enables auto unlinking of previous location
     private String aliasName;
     private GraceObject holdingObject;
+    private boolean isAccessAllowed = false; // Default: no direct access from isoWrapper
 
-    private boolean isAccessAllowed = false;  // Default: no direct access from isoWrapper
-
-    // boolean toggles for how capability checking operates
-    private boolean isoWrapper = false;
-    private boolean autoUnlinkingIsoMoves = false;
-    private boolean assignmentIsoCheck = false; // vanilla Dala
-    private boolean dereferencingIsoCheck = true;
-    private boolean threadBoundaryLocalChecking = false;
-    private boolean dereferencingLocalCheck = true; // vanilla Dala
+    // enums governing runtime checking behaviour of capabilities
+    IsoCheckMode isoCheckMode = CapabilityToggles.getIsoCheckMode();
+    IsoMoveMode isoMoveMode = CapabilityToggles.getIsoMoveMode();
+    LocalCheckMode localCheckMode = CapabilityToggles.getLocalCheckMode();
 
     protected static GraceDone done = GraceDone.done;
     protected static GraceUninitialised uninitialised = GraceUninitialised.uninitialised;
@@ -63,7 +62,7 @@ public class BaseObject implements GraceObject {
         this.isLocal = isLocal;
         this.isIsolated = isIsolated;
         this.isImmutable = isImmutable;
-        if (isLocal){
+        if (isLocal) {
             System.out.println("-------------");
         }
         // If the object is marked as local, set objectThread to the current thread
@@ -155,30 +154,16 @@ public class BaseObject implements GraceObject {
 
     // // Called when the IsoWrapper is created
     // public void setWrapper(IsoWrapper wrapper) {
-    //     // validateIfUsingIsoWrapper(); //TODO how should this be checked?
-    //     if (this.wrapper != null) {
-    //         throw new RuntimeException("IsoWrapper is already set and cannot be changed.");
-    //     }
-    //     this.wrapper = wrapper;
+    // // validateIfUsingIsoWrapper(); //TODO how should this be checked?
+    // if (this.wrapper != null) {
+    // throw new RuntimeException("IsoWrapper is already set and cannot be
+    // changed.");
+    // }
+    // this.wrapper = wrapper;
     // }
 
     public void setIsAccessAllowed(boolean access) {
         isAccessAllowed = access;
-    }
-
-    public boolean isUsingIsoWrapper() {
-        // validateIfUsingIsoWrapper();
-        return isoWrapper;
-    }
-
-    public boolean isAutoUnlinkingIsoMoves() {
-        // validateIfUsingIsoWrapper();
-        return autoUnlinkingIsoMoves;
-    }
-
-    public boolean isThreadBoundaryLocalChecking() {
-        // validateIfUsingIsoWrapper();
-        return threadBoundaryLocalChecking;
     }
 
     public String toString() {
@@ -293,8 +278,8 @@ public class BaseObject implements GraceObject {
                 // baseObject
                 // that holds the previous reference (aliasName) to the iso
                 if (baseObjectBeingAssigned.isIsolated()) {
-                    if (baseObjectBeingAssigned.isAutoUnlinkingIsoMoves()) {
-                        if (baseObjectBeingAssigned.getReferenceCount() > 1) {
+                    if (CapabilityToggles.isAutoUnlinkingIsoMoves()) {
+                            if (baseObjectBeingAssigned.getReferenceCount() > 1) {
                             GraceObject oldObjectReferencingIso = baseObjectBeingAssigned.getHoldingObject();
                             if (oldObjectReferencingIso instanceof BaseObject) {
                                 BaseObject oldBaseObjectReferencingIso = (BaseObject) oldObjectReferencingIso;
@@ -306,13 +291,13 @@ public class BaseObject implements GraceObject {
                         baseObjectBeingAssigned.setAliasName(name); // base object now holds the name it is under inside
                                                                     // itself.
                         baseObjectBeingAssigned.setHoldingObject(this); // base object now holds the object it is under
-                                                                      // inside itself.
+                                                                        // inside itself.
                     }
                 }
 
                 // initial check if isolated (not dereferencing)
                 // checking if isolated, and runtime exception if too many references
-                if (assignmentIsoCheck) {
+                if (CapabilityToggles.isAssignmentIsoCheckEnabled()) {
                     if (baseObjectBeingAssigned.isIsolated()) {
                         if (baseObjectBeingAssigned.getReferenceCount() > 1) {
                             throw new RuntimeException(
@@ -371,7 +356,7 @@ public class BaseObject implements GraceObject {
 
     private void validateThreadAccess() {
         // only called for local objects
-        if (dereferencingLocalCheck) {
+        if (CapabilityToggles.isDereferencingLocalCheckEnabled()) {
             if (objectThread != Thread.currentThread()) {
                 throw new RuntimeException("Capability Violation: Local object accessed from a different thread.");
             }
@@ -381,7 +366,7 @@ public class BaseObject implements GraceObject {
     private void validateIsoAccess() {
         // validateIfUsingIsoWrapper();
         // only called for iso objects
-        if (dereferencingIsoCheck) {
+        if (CapabilityToggles.isDereferencingIsoCheckEnabled()) {
             if (referenceCount > 1) {
                 // TODO include name
                 throw new RuntimeException(
@@ -392,10 +377,10 @@ public class BaseObject implements GraceObject {
 
     // Validate method access
     private void validateIfUsingIsoWrapper() {
-        if (isoWrapper && isIsolated) {
-            if (!isAccessAllowed) {  // If flag is false, access is denied
+        if (CapabilityToggles.isUsingIsoWrapper() && isIsolated) {
+            if (!isAccessAllowed) { // If flag is false, access is denied
                 throw new RuntimeException(
-                    "Capability Violation: Wrapped Isolated object cannot be accessed directly, must be accessed via wrapper.");
+                        "Capability Violation: Wrapped Isolated object cannot be accessed directly, must be accessed via wrapper.");
             }
         }
     }

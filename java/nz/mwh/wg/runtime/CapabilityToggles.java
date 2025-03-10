@@ -5,7 +5,7 @@ import nz.mwh.wg.runtime.enums.IsoMoveMode;
 import nz.mwh.wg.runtime.enums.LocalCheckMode;
 
 public class CapabilityToggles {
-    private static IsoCheckMode isoCheckMode = IsoCheckMode.DEREFERENCING;
+    private static IsoCheckMode isoCheckMode = IsoCheckMode.ASSIGNMENT;
     private static IsoMoveMode isoMoveMode = IsoMoveMode.OFF;
     private static LocalCheckMode localCheckMode = LocalCheckMode.DEREFERENCING;
 
@@ -33,8 +33,38 @@ public class CapabilityToggles {
         return localCheckMode;
     }
 
+    // Iso Checks
+    public static boolean isAssignmentIsoCheckEnabled() {
+        return isoCheckMode == IsoCheckMode.ASSIGNMENT;
+    }
+
+    public static boolean isDereferencingIsoCheckEnabled() {
+        return isoCheckMode == IsoCheckMode.DEREFERENCING;
+    }
+
+    // Iso Move Checks
+    public static boolean isUsingIsoWrapper() {
+        return isoMoveMode == IsoMoveMode.WRAPPER;
+    }
+
+    public static boolean isAutoUnlinkingIsoMoves() {
+        return isoMoveMode == IsoMoveMode.AUTO_UNLINK;
+    }
+
+    // Local Checks
+    public static boolean isThreadBoundaryLocalChecking() {
+        return localCheckMode == LocalCheckMode.THREAD_BOUNDARY ||
+               localCheckMode == LocalCheckMode.THREAD_AND_DEREFERENCING;
+    }
+
+    public static boolean isDereferencingLocalCheckEnabled() {
+        return localCheckMode == LocalCheckMode.DEREFERENCING ||
+               localCheckMode == LocalCheckMode.THREAD_AND_DEREFERENCING;
+    }
+
+    // vanilla Dala
     public static void resetDefaults() {
-        isoCheckMode = IsoCheckMode.DEREFERENCING;
+        isoCheckMode = IsoCheckMode.ASSIGNMENT;
         isoMoveMode = IsoMoveMode.OFF;
         localCheckMode = LocalCheckMode.DEREFERENCING;
     }

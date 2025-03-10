@@ -91,8 +91,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         // If isoWrapper should be applied, wrap the object
         GraceObject finalObject = object;
 
-        if (object.isUsingIsoWrapper() && object.isIsolated()) {
-            finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper toggle is on
+        if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
+            // if (object.isUsingIsoWrapper() && object.isIsolated()) {
+                finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper toggle is on
         }
 
         List<ASTNode> body = node.getBody();
@@ -102,7 +103,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 object.addField(def.getName()); // Always add to the base object (no difference for isoWrapper)
             } else if (part instanceof VarDecl) { // TODO could make a variable Consume and Declare
                 VarDecl var = (VarDecl) part;
-                if (object.isUsingIsoWrapper() && object.isIsolated()) {
+                if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
                     IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
                     finalObjectWrapper.addField(var.getName());
                     finalObjectWrapper.addFieldWriter(var.getName()); // for new object field
@@ -121,7 +122,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         for (ASTNode part : body) {
             // System.out.println("++++");
-            if (object.isUsingIsoWrapper() && object.isIsolated()) {
+            if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
                 IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
                 visit(finalObjectWrapper, part);
             } else {

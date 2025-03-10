@@ -2,6 +2,8 @@ package nz.mwh.wg.runtime;
 
 import java.util.List;
 
+import nz.mwh.wg.runtime.enums.LocalCheckMode;
+
 public class GraceChannel implements GraceObject {
     private final GracePort sendPort;
     private final GracePort receivePort;
@@ -33,7 +35,7 @@ public class GraceChannel implements GraceObject {
         if (objectReceived instanceof BaseObject) {
             BaseObject baseObject = (BaseObject) objectReceived;
             if (baseObject.isLocal()) {
-                if (baseObject.isThreadBoundaryLocalChecking()) {
+                if (CapabilityToggles.isThreadBoundaryLocalChecking()) {
                     if (baseObject.getObjectThread() != Thread.currentThread()) {
                         throw new RuntimeException(
                                 "Capability Violation: Local object received on a different thread than the one it was created on");
