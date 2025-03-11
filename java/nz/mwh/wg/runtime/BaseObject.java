@@ -31,6 +31,8 @@ public class BaseObject implements GraceObject {
     private GraceObject holdingObject;
     private boolean isAccessAllowed = false; // Default: no direct access from isoWrapper
 
+    private boolean isLatestIsoReference = false;
+
     // enums governing runtime checking behaviour of capabilities
     IsoCheckMode isoCheckMode = CapabilityToggles.getIsoCheckMode();
     IsoMoveMode isoMoveMode = CapabilityToggles.getIsoMoveMode();
@@ -83,72 +85,58 @@ public class BaseObject implements GraceObject {
     }
 
     public boolean isLocal() {
-        // validateIfUsingIsoWrapper();
         return isLocal;
     }
 
     public boolean isIsolated() {
-        // validateIfUsingIsoWrapper();
         return isIsolated;
     }
 
     public boolean isImmutable() {
-        // validateIfUsingIsoWrapper();
         return this.isImmutable;
     }
 
     public void setLocal(boolean isLocal) {
-        // validateIfUsingIsoWrapper();
         this.isLocal = isLocal;
     }
 
     public void setIsolated(boolean isIsolated) {
-        // validateIfUsingIsoWrapper();
         this.isIsolated = isIsolated;
     }
 
     public void setImmutable(boolean isImmutable) {
-        // validateIfUsingIsoWrapper();
         this.isImmutable = isImmutable;
     }
 
     public Thread getObjectThread() {
-        // validateIfUsingIsoWrapper();
         return objectThread;
     }
 
     public int getReferenceCount() {
-        // validateIfUsingIsoWrapper();
         return referenceCount;
     }
 
     public void incrementReferenceCount() {
-        // validateIfUsingIsoWrapper();
         referenceCount++;
     }
 
     public void decrementReferenceCount() {
-        // validateIfUsingIsoWrapper();
         referenceCount--;
     }
 
     public void setAliasName(String name) {
-        // validateIfUsingIsoWrapper();
         aliasName = name;
     }
 
     public String getAliasName() {
-        // validateIfUsingIsoWrapper();
         return aliasName;
     }
 
     public void setHoldingObject(GraceObject object) {
-        // validateIfUsingIsoWrapper();
         holdingObject = object;
     }
 
     public GraceObject getHoldingObject() {
-        // validateIfUsingIsoWrapper();
         return holdingObject;
     }
 
@@ -167,20 +155,17 @@ public class BaseObject implements GraceObject {
     }
 
     public String toString() {
-        // validateIfUsingIsoWrapper();
         Request request = new Request(new Evaluator(),
                 Collections.singletonList(new RequestPartR("asString", Collections.emptyList())));
         return request(request).toString();
     }
 
     public void addMethod(String name, Function<Request, GraceObject> method) {
-        // validateIfUsingIsoWrapper();
         methods.put(name, method);
     }
 
     @Override
     public GraceObject request(Request request) {
-        // validateIfUsingIsoWrapper();
 
         if (request.getParts().get(0).getName().equals("hash")) { // Added hash method
             return new GraceNumber(hashNumber);
@@ -212,7 +197,6 @@ public class BaseObject implements GraceObject {
     }
 
     public GraceObject findReceiver(String name) {
-        // validateIfUsingIsoWrapper();
 
         if (methods.containsKey(name) || fields.containsKey(name)) {
             return this;
@@ -225,7 +209,7 @@ public class BaseObject implements GraceObject {
 
     // adding methods or fields to an object
     public void addField(String name) {
-        // validateIfUsingIsoWrapper();
+
         fields.put(name, uninitialised);
         methods.put(name + "(0)", request -> {
             GraceObject val = fields.get(name);
@@ -241,7 +225,7 @@ public class BaseObject implements GraceObject {
     // return the old value/object instead of 'done'
     // decrement or unassign the returned value/object
     public void addFieldWriter(String name) {
-        // validateIfUsingIsoWrapper();
+
         methods.put(name + ":=(1)", request -> {
 
             GraceObject objectBeingAssigned = request.getParts().get(0).getArgs().get(0);
@@ -339,12 +323,12 @@ public class BaseObject implements GraceObject {
     }
 
     public void setField(String name, GraceObject value) {
-        // validateIfUsingIsoWrapper();
+
         fields.put(name, value);
     }
 
     public GraceObject findReturnContext() {
-        // validateIfUsingIsoWrapper();
+
         if (returns) {
             return this;
         }
@@ -364,7 +348,7 @@ public class BaseObject implements GraceObject {
     }
 
     private void validateIsoAccess() {
-        // validateIfUsingIsoWrapper();
+
         // only called for iso objects
         if (CapabilityToggles.isDereferencingIsoCheckEnabled()) {
             if (referenceCount > 1) {
