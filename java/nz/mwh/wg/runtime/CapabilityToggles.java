@@ -6,7 +6,7 @@ import nz.mwh.wg.runtime.enums.LocalCheckMode;
 
 public class CapabilityToggles {
     private static IsoCheckMode isoCheckMode = IsoCheckMode.ASSIGNMENT;
-    private static IsoMoveMode isoMoveMode = IsoMoveMode.OFF;
+    private static IsoMoveMode isoMoveMode = IsoMoveMode.WRAPPER;
     private static LocalCheckMode localCheckMode = LocalCheckMode.DEREFERENCING;
 
     public static void setIsoCheckMode(IsoCheckMode mode) {
@@ -67,5 +67,13 @@ public class CapabilityToggles {
         isoCheckMode = IsoCheckMode.ASSIGNMENT;
         isoMoveMode = IsoMoveMode.OFF;
         localCheckMode = LocalCheckMode.DEREFERENCING;
+    }
+
+    public static void printCurrentSettings() {
+        System.out.println("===== Capability Toggles =====");
+        System.out.println("Iso Check Mode: " + isoCheckMode);
+        System.out.println("Iso Move Mode: " + isoMoveMode);
+        System.out.println("Local Check Mode: " + localCheckMode);
+        System.out.println("=============================");
     }
 }

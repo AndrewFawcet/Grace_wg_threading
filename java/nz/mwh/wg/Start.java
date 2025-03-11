@@ -12,6 +12,7 @@ import nz.mwh.wg.ast.Cons;
 import nz.mwh.wg.ast.DefDecl;
 import nz.mwh.wg.ast.ImportStmt;
 import nz.mwh.wg.ast.ObjectConstructor;
+import nz.mwh.wg.runtime.CapabilityToggles;
 
 public class Start {
     public static void main(String[] args) {
@@ -23,7 +24,7 @@ public class Start {
         // };
 
         // String filename = "test/workingTests/dalaDestructive.grace"; // dala destructive read working
-        // String filename = "test/workingTests/dalaLimitationsTest1.grace"; // dala limitation test working
+        String filename = "test/workingTests/dalaLimitationsTest1.grace"; // dala limitation test working
         // String filename = "test/workingTests/dalaLimitationsTest2.grace"; // dala limitation test working
         // String filename = "test/workingTests/dalaLinkedList1.grace"; // dala L list  working
         // String filename = "test/workingTests/dalaLinkedList2.grace"; // dala L list  working
@@ -38,7 +39,7 @@ public class Start {
         // String filename = "test/workingTests/linkedListWithIso2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/square.grace"; // encapsulated basic hash working using iso linked lists.not
         // String filename = "test/workingTests/aliasingDisallowed.grace"; // encapsulated basic hash working using iso linked lists.not
-        String filename = "test/workingTests/dereferencingIsoCheck.grace"; // iso Test working
+        // String filename = "test/workingTests/dereferencingIsoCheck.grace"; // iso Test working
 
         // String filename = "test/DataRaceEtc/twoEventLoops.grace"; // two event loops.not
         // String filename = "test/DataRaceEtc/counter.grace"; // two event loops.not
@@ -63,7 +64,7 @@ public class Start {
         //String filename = "test/DataRaceEtc/autoIsoMoves1.grace"; // auto Iso moves
         // String filename = "test/DataRaceEtc/autoIsoMoves2.grace"; // auto Iso moves
 
-
+        CapabilityToggles.printCurrentSettings(); 
         boolean printAST = false;
         String updateFile = null;
         boolean inlineImports = false;
