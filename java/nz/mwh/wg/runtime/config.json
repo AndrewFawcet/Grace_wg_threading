@@ -1,5 +1,0 @@
-{
-    "isoCheckMode": "DEREFERENCING",
-    "isoMoveMode": "AUTO_UNLINK",
-    "localCheckMode": "THREAD_AND_DEREFERENCING"
-}

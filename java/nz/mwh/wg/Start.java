@@ -13,15 +13,14 @@ import nz.mwh.wg.ast.DefDecl;
 import nz.mwh.wg.ast.ImportStmt;
 import nz.mwh.wg.ast.ObjectConstructor;
 import nz.mwh.wg.runtime.CapabilityToggles;
+import nz.mwh.wg.runtime.enums.IsoCheckMode;
+import nz.mwh.wg.runtime.enums.IsoMoveMode;
+import nz.mwh.wg.runtime.enums.LocalCheckMode;
 
 public class Start {
     public static void main(String[] args) {
-        //testing :)
-        // args = new String[]{
-        //     "-u",
-        //     "java/nz/mwh/wg/parserData.java",
-        //     "parser.grace"
-        // };
+        boolean recompile = false;  // this will recompile the parser.grace file into parserData.java (after you may need to remove the previous code in parserData)
+
 
         // String filename = "test/workingTests/dalaDestructive.grace"; // dala destructive read working
         String filename = "test/workingTests/dalaLimitationsTest1.grace"; // dala limitation test working
@@ -64,22 +63,52 @@ public class Start {
         //String filename = "test/DataRaceEtc/autoIsoMoves1.grace"; // auto Iso moves
         // String filename = "test/DataRaceEtc/autoIsoMoves2.grace"; // auto Iso moves
 
+        if (recompile) {
+            args = new String[]{
+                "-u",
+                "java/nz/mwh/wg/parserData.java",
+                "parser.grace"
+            };
+            filename = null;
+            runProgram(filename, args);
+        } else {
+            for (IsoCheckMode icm : IsoCheckMode.values()) {
+                for (IsoMoveMode imm : IsoMoveMode.values()) {
+                    for (LocalCheckMode lcm : LocalCheckMode.values()) {
+                        System.out.println("===== Running with Settings =====");
+                        CapabilityToggles.setIsoCheckMode(icm);
+                        CapabilityToggles.setIsoMoveMode(imm);
+                        CapabilityToggles.setLocalCheckMode(lcm);
+                        CapabilityToggles.printCurrentSettings();
+
+                        // Run test with this configuration 
+                        runProgram(filename, null);
+                        System.out.println("hi");
+                    }
+                }
+            }
+        }
+    }
+
+    private static void runProgram(String filename, String[] args) {    
         CapabilityToggles.printCurrentSettings(); 
         boolean printAST = false;
         String updateFile = null;
         boolean inlineImports = false;
-        for (String arg : args) {
-            if (arg.equals("-p")) {
-                printAST = true;
-            } else if (arg.equals("-u")) {
-                updateFile = "";
-            } else if (updateFile != null && updateFile.isEmpty()) {
-                updateFile = arg; // first find the update file
-            } else if (arg.equals("-i")) {
-                inlineImports = true;
-            } else {
-                filename = arg;
-                break;
+        if (args != null) {
+            for (String arg : args) {
+                if (arg.equals("-p")) {
+                    printAST = true;
+                } else if (arg.equals("-u")) {
+                    updateFile = "";
+                } else if (updateFile != null && updateFile.isEmpty()) {
+                    updateFile = arg; // first find the update file
+                } else if (arg.equals("-i")) {
+                    inlineImports = true;
+                } else {
+                    filename = arg;
+                    break;
+                }
             }
         }
         try {
