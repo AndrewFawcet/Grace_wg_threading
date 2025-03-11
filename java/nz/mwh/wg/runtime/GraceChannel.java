@@ -35,10 +35,18 @@ public class GraceChannel implements GraceObject {
         if (objectReceived instanceof BaseObject) {
             BaseObject baseObject = (BaseObject) objectReceived;
             if (baseObject.isLocal()) {
-                if (CapabilityToggles.isThreadBoundaryLocalChecking()) {
+                if (CapabilityToggles.isThreadBoundaryLocalCheckingEnabled()) {
                     if (baseObject.getObjectThread() != Thread.currentThread()) {
                         throw new RuntimeException(
                                 "Capability Violation: Local object received on a different thread than the one it was created on");
+                    }
+                }
+            }
+            if (baseObject.isIsolated()) {
+                if (CapabilityToggles.isThreadBoundaryIsoCheckEnabled()) {
+                    if (baseObject.getObjectThread() != Thread.currentThread()) {
+                        throw new RuntimeException(
+                                "Capability Violation: Isolated object received on a different thread than the one it was created on");
                     }
                 }
             }

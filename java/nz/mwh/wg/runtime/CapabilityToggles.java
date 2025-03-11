@@ -6,7 +6,7 @@ import nz.mwh.wg.runtime.enums.LocalCheckMode;
 
 public class CapabilityToggles {
     private static IsoCheckMode isoCheckMode = IsoCheckMode.ASSIGNMENT;
-    private static IsoMoveMode isoMoveMode = IsoMoveMode.WRAPPER;
+    private static IsoMoveMode isoMoveMode = IsoMoveMode.OFF;
     private static LocalCheckMode localCheckMode = LocalCheckMode.DEREFERENCING;
 
     public static void setIsoCheckMode(IsoCheckMode mode) {
@@ -39,7 +39,13 @@ public class CapabilityToggles {
     }
 
     public static boolean isDereferencingIsoCheckEnabled() {
-        return isoCheckMode == IsoCheckMode.DEREFERENCING;
+        return isoCheckMode == IsoCheckMode.DEREFERENCING ||
+                isoCheckMode == IsoCheckMode.DEREFERENCING_AND_THREAD_BOUNDARY;
+    }
+
+    public static boolean isThreadBoundaryIsoCheckEnabled() {
+        return isoCheckMode == IsoCheckMode.THREAD_BOUNDARY ||
+                isoCheckMode == IsoCheckMode.DEREFERENCING_AND_THREAD_BOUNDARY;
     }
 
     // Iso Move Checks
@@ -52,14 +58,14 @@ public class CapabilityToggles {
     }
 
     // Local Checks
-    public static boolean isThreadBoundaryLocalChecking() {
+    public static boolean isThreadBoundaryLocalCheckingEnabled() {
         return localCheckMode == LocalCheckMode.THREAD_BOUNDARY ||
-               localCheckMode == LocalCheckMode.THREAD_AND_DEREFERENCING;
+                localCheckMode == LocalCheckMode.DEREFERENCING_AND_THREAD_BOUNDARY;
     }
 
     public static boolean isDereferencingLocalCheckEnabled() {
         return localCheckMode == LocalCheckMode.DEREFERENCING ||
-               localCheckMode == LocalCheckMode.THREAD_AND_DEREFERENCING;
+                localCheckMode == LocalCheckMode.DEREFERENCING_AND_THREAD_BOUNDARY;
     }
 
     // vanilla Dala
@@ -70,10 +76,25 @@ public class CapabilityToggles {
     }
 
     public static void printCurrentSettings() {
+        // System.out.println("===== Capability Toggles =====");
+        // System.out.println("Iso Check Mode: " + isoCheckMode);
+        // System.out.println("Iso Move Mode: " + isoMoveMode);
+        // System.out.println("Local Check Mode: " + localCheckMode);
+        // System.out.println("=============================");
+
+        // need a bigger print out as there could be more than one Iso Check or Local
+        // check
         System.out.println("===== Capability Toggles =====");
         System.out.println("Iso Check Mode: " + isoCheckMode);
+        System.out.println("  - Assignment Check: " + isAssignmentIsoCheckEnabled());
+        System.out.println("  - Dereferencing Check: " + isDereferencingIsoCheckEnabled());
+        System.out.println("  - Thread Boundary Check: " + isThreadBoundaryIsoCheckEnabled());
         System.out.println("Iso Move Mode: " + isoMoveMode);
+        System.out.println("  - Using Iso Wrapper: " + isUsingIsoWrapper());
+        System.out.println("  - Auto-Unlink Moves: " + isAutoUnlinkingIsoMoves());
         System.out.println("Local Check Mode: " + localCheckMode);
+        System.out.println("  - Thread Boundary Check: " + isThreadBoundaryLocalCheckingEnabled());
+        System.out.println("  - Dereferencing Check: " + isDereferencingLocalCheckEnabled());
         System.out.println("=============================");
     }
 }

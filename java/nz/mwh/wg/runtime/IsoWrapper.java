@@ -113,7 +113,7 @@ public class IsoWrapper implements GraceObject {
     }
 
     public boolean isThreadBoundaryLocalChecking() {
-        return accessBaseObjectWithReturn(BaseObject::isThreadBoundaryLocalChecking);
+        return accessBaseObjectWithReturn(BaseObject::isThreadBoundaryLocalCheckingEnabled);
     }
 
     @Override
