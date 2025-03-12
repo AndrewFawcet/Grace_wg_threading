@@ -35,6 +35,12 @@ public class CapabilityAdjuster {
             object.setLocal(false);
         }
 
+        // If being assigned to local will change the object thread to the thread at point of change.
+        if (local) {
+            Thread thread = Thread.currentThread();
+            object.setObjectThread(thread);
+        }
+
         // Apply new capability settings (if there is one, can be set to unsafe)
         object.setLocal(local);
         object.setIsolated(iso);

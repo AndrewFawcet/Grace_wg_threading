@@ -8,22 +8,26 @@ var objectX:= object {
     }
 }
 
-print ""
-// setLoc (objectX)
-// setIso (objectX)
-// setImm (objectX)
+print "setting object to local"
+setLoc (objectX)
+objectX.foo()
+
+print "setting object to iso"
+setIso(objectX)
+objectX.foo()
 
 
 print ""
 def c1 = spawn { c2 ->
     var objectY := c2.receive
     print "Thread received object with field value: {objectY.variableX}"
-    objectY.variableX := 2
     objectY.foo()
+    print "setting object to local on new thread"
+    setLoc (objectY)
+    objectY.foo()
+    
 }
 
-objectX.foo()
-print ""
 print ""
 
 c1.send(objectX := -1)

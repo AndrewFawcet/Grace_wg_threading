@@ -106,6 +106,10 @@ public class BaseObject implements GraceObject {
         this.isImmutable = isImmutable;
     }
 
+    public void setObjectThread(Thread thread) {
+        this.objectThread = thread;
+    }
+
     public Thread getObjectThread() {
         return objectThread;
     }

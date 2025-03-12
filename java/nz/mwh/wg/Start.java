@@ -63,7 +63,8 @@ public class Start {
         //String filename = "test/DataRaceEtc/autoIsoMoves1.grace"; // auto Iso moves
         // String filename = "test/DataRaceEtc/autoIsoMoves2.grace"; // auto Iso moves
 
-        String filename = "b.grace"; // auto Iso moves
+        // String filename = "b.grace"; // auto Iso moves
+        String filename = "b7.grace"; // auto Iso moves
         
         if (recompile) {
             args = new String[]{
