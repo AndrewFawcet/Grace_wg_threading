@@ -31,8 +31,6 @@ public class BaseObject implements GraceObject {
     private GraceObject holdingObject;
     private boolean isAccessAllowed = false; // Default: no direct access from isoWrapper
 
-    private boolean isLatestIsoReference = false;
-
     // enums governing runtime checking behaviour of capabilities
     IsoCheckMode isoCheckMode = CapabilityToggles.getIsoCheckMode();
     IsoMoveMode isoMoveMode = CapabilityToggles.getIsoMoveMode();
@@ -360,6 +358,8 @@ public class BaseObject implements GraceObject {
     }
 
     // Validate method access
+    // this is not used, it was intended as a security feature to make sure all calls were directed through the isoWrapper
+    // I think it is impossible to call the object directly, hence this is not used.
     private void validateIfUsingIsoWrapper() {
         if (CapabilityToggles.isUsingIsoWrapper() && isIsolated) {
             if (!isAccessAllowed) { // If flag is false, access is denied

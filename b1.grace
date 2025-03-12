@@ -1,7 +1,7 @@
 
 print "Hello beautiful world-----------------------------------------------------------------"
 
-var objectX:= object is local {
+var objectX:= object is loc {
     var variableX := 1
 }
 

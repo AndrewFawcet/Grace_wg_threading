@@ -109,11 +109,11 @@ public class IsoWrapper implements GraceObject {
     }
 
     public boolean isAutoUnlinkingIsoMoves() {
-        return accessBaseObjectWithReturn(BaseObject::isAutoUnlinkingIsoMoves);
+        return CapabilityToggles.isAutoUnlinkingIsoMoves();
     }
 
     public boolean isThreadBoundaryLocalChecking() {
-        return accessBaseObjectWithReturn(BaseObject::isThreadBoundaryLocalCheckingEnabled);
+        return CapabilityToggles.isThreadBoundaryLocalCheckingEnabled();
     }
 
     @Override
