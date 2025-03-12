@@ -482,6 +482,26 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         BaseObject lexicalParent = new BaseObject(null);
 
+        lexicalParent.addMethod("setLocal(1)", request -> {
+            BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
+            CapabilityAdjuster.changeCapability(obj, true, false, false);
+            return done;
+        });
+        lexicalParent.addMethod("setIsolated(1)", request -> {
+            BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
+            CapabilityAdjuster.changeCapability(obj, false, true, false);
+            return done;
+        });
+        lexicalParent.addMethod("setImmutable(1)", request -> {
+            BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
+            CapabilityAdjuster.changeCapability(obj, false, false, true);
+            return done;
+        });
+        lexicalParent.addMethod("setUnsafe(1)", request -> {
+            BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
+            CapabilityAdjuster.changeCapability(obj, false, false, false);
+            return done;
+        });
         lexicalParent.addMethod("array(1)", request -> new GraceArray(1));
         lexicalParent.addMethod("hashprint(1)", request -> {
             Object arg = request.getParts().get(0).getArgs().get(0);

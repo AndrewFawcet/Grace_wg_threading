@@ -24,18 +24,18 @@ public class CapabilityAdjuster {
         // this will require objects to track how many threads they are on in order to have a transitional object check for local appropriateness
         // this will not be required for locals enforced by dereferencing, as an error will be created when the local is dereferenced on the wrong thread.
 
-        // Removes the previous capability (is there was one)
-        if (object.isImmutable()){
+        // Removes the previous capability (if there was one)
+        if (isCurrentlyImmutable){
             object.setImmutable(false);
         }
-        if (object.isIsolated()){
+        if (isCurrentlyIso){
             object.setIsolated(false);
         }
-        if (object.isLocal()){
+        if (isCurrentlyLocal){
             object.setLocal(false);
         }
 
-        // Apply new capability settings
+        // Apply new capability settings (if there is one, can be set to unsafe)
         object.setLocal(local);
         object.setIsolated(iso);
         object.setImmutable(immutable);

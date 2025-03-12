@@ -8,32 +8,23 @@ var objectX:= object {
     }
 }
 
+print ""
+// setLocal (objectX)
+print ""
+def c1 = spawn { c2 ->
+    var objectY := c2.receive
+    print "Thread received object with field value: {objectY.variableX}"
+    objectY.foo()
+}
 
-method bar is thread {
-        print ("meth")
-        print ("meth")
-        print ("meth")
-        print ("meth")
-        print ("meth")        
-    }
-
-
+objectX.foo()
 print ""
 print ""
 
-
-print "after"
-print ""
-
-// objectX.foo()
-
+c1.send(objectX)
 print ""
 print ""
-
-bar()
-
-print ""
-print ""
+objectX.foo()
 
 
 print "Goodbye cruel world"

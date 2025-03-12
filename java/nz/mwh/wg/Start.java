@@ -23,7 +23,7 @@ public class Start {
 
 
         // String filename = "test/workingTests/dalaDestructive.grace"; // dala destructive read working
-        String filename = "test/workingTests/dalaLimitationsTest1.grace"; // dala limitation test working
+        // String filename = "test/workingTests/dalaLimitationsTest1.grace"; // dala limitation test working
         // String filename = "test/workingTests/dalaLimitationsTest2.grace"; // dala limitation test working
         // String filename = "test/workingTests/dalaLinkedList1.grace"; // dala L list  working
         // String filename = "test/workingTests/dalaLinkedList2.grace"; // dala L list  working
@@ -63,6 +63,8 @@ public class Start {
         //String filename = "test/DataRaceEtc/autoIsoMoves1.grace"; // auto Iso moves
         // String filename = "test/DataRaceEtc/autoIsoMoves2.grace"; // auto Iso moves
 
+        String filename = "b.grace"; // auto Iso moves
+        
         if (recompile) {
             args = new String[]{
                 "-u",
@@ -83,7 +85,6 @@ public class Start {
 
                         // Run test with this configuration 
                         runProgram(filename, null);
-                        System.out.println("hi");
                     }
                 }
             }
