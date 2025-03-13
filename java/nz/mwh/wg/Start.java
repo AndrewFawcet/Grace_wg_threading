@@ -1,6 +1,8 @@
 package nz.mwh.wg;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -19,6 +21,9 @@ import nz.mwh.wg.runtime.enums.LocalCheckMode;
 
 public class Start {
     public static void main(String[] args) {
+        // Redirect System.err to suppress error messages
+        // System.setErr(new PrintStream(OutputStream.nullOutputStream()));
+        // System.setErr(new CustomErrorStream(System.err));
         boolean recompile = false;  // this will recompile the parser.grace file into parserData.java (after you may need to remove the previous code in parserData)
 
 
@@ -174,5 +179,31 @@ public class Start {
             // throw new RuntimeException("Error writing file: " + filename, e);
             throw new RuntimeException("Error writing file: " + filename, e);
         }
+    }
+
+    // not used, maybe make a specific error handler class/
+    // Custom PrintStream class to filter error messages
+    static class CustomErrorStream extends PrintStream {
+        public CustomErrorStream(PrintStream original) {
+            super(original);
+        }
+
+        @Override
+        public void println(String message) {
+            // You can filter the message here, e.g., only print certain messages
+            if (message.contains("Cannot make an object immutable while it has multiple references.")) {
+                super.println(message);  // Print the error you care about
+            }
+        }
+
+        @Override
+        public void print(String message) {
+            // You can do the same filtering here
+            if (message.contains("Cannot make an object immutable while it has multiple references.")) {
+                super.print(message);
+            }
+        }
+
+        // Override other print methods as necessary
     }
 }

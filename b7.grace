@@ -13,7 +13,7 @@ setLoc (objectX)
 objectX.foo()
 
 print "setting object to iso"
-setIso(objectX)
+// setIso(objectX)
 objectX.foo()
 
 
