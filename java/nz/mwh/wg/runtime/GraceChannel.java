@@ -42,11 +42,11 @@ public class GraceChannel implements GraceObject {
                     }
                 }
             }
-            if (baseObject.isIsolated()) {
+            if (baseObject.isIsolated()) { //TODO change to a iso reference count check
                 if (CapabilityToggles.isThreadBoundaryIsoCheckEnabled()) {
-                    if (baseObject.getObjectThread() != Thread.currentThread()) {
+                    if (baseObject.getReferenceCount() > 1) {
                         throw new RuntimeException(
-                                "Capability Violation: Isolated object received on a different thread than the one it was created on");
+                                "Capability Violation: Isolated object received on a different thread with more than one reference");
                     }
                 }
             }
