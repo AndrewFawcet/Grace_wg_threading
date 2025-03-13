@@ -51,7 +51,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         if (context instanceof BaseObject) {
             BaseObject contextBaseObject = (BaseObject) context;
             if (contextBaseObject.isLocal()) {
-                System.out.println("in the visit -----------");
+                // System.out.println("in the visit -----------");
             }
             if (contextBaseObject.isIsolated()) {
                 if (isNewObjectLocal) {
@@ -386,8 +386,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             parts.add(new RequestPartR(name + ":=", Collections.singletonList(node.getValue().accept(context, this))));
             Request request = new Request(this, parts);
             GraceObject receiver = context.findReceiver(request.getName());
+            if (context instanceof BaseObject) {
 
+                System.out.println(" Lexical Request, name " + name);
+            }
             // receiver.request(request);
+            
             GraceObject previous = receiver.request(request);
             // changed to send the previous object through for destructive reads of
             // variables and objects
@@ -396,6 +400,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         } else if (node.getTarget() instanceof ExplicitRequest) {
             ExplicitRequest target = (ExplicitRequest) node.getTarget();
             String name = target.getParts().get(0).getName();
+            System.out.println(" name " + name);
             List<RequestPartR> parts = new ArrayList<>();
             parts.add(new RequestPartR(name + ":=", Collections.singletonList(node.getValue().accept(context, this))));
             Request request = new Request(this, parts);

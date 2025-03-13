@@ -1,7 +1,7 @@
 
 print "Hello beautiful world-----------------------------------------------------------------"
 
-var objectX:= object is iso {
+var objectX:= object{
     var variableX := " variable in iso "
 }
 

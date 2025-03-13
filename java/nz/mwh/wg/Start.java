@@ -25,7 +25,7 @@ public class Start {
         // System.setErr(new PrintStream(OutputStream.nullOutputStream()));
         // System.setErr(new CustomErrorStream(System.err));
         boolean recompile = false;  // this will recompile the parser.grace file into parserData.java (after you may need to remove the previous code in parserData)
-
+        boolean vanillaDala = true;
 
         // String filename = "test/workingTests/dalaDestructive.grace"; // dala destructive read working
         // String filename = "test/workingTests/dalaLimitationsTest1.grace"; // dala limitation test working
@@ -69,7 +69,8 @@ public class Start {
         // String filename = "test/DataRaceEtc/autoIsoMoves2.grace"; // auto Iso moves
 
         // String filename = "b.grace"; // auto Iso moves
-        String filename = "b7.grace"; // auto Iso moves
+        String filename = "b2.grace"; // auto Iso moves
+        // String filename = "b7.grace"; // auto Iso moves
         
         if (recompile) {
             args = new String[]{
@@ -79,6 +80,14 @@ public class Start {
             };
             filename = null;
             runProgram(filename, args);
+        } else if (vanillaDala) {
+
+            CapabilityToggles.setIsoCheckMode(IsoCheckMode.ASSIGNMENT);
+            CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
+            CapabilityToggles.setLocalCheckMode(LocalCheckMode.DEREFERENCING);
+            CapabilityToggles.printCurrentSettings();
+            // run test with vanilla Dala settings only
+            runProgram(filename, null);
         } else {
             for (IsoCheckMode icm : IsoCheckMode.values()) {
                 for (IsoMoveMode imm : IsoMoveMode.values()) {
