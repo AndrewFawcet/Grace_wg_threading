@@ -69,8 +69,11 @@ public class Start {
         // String filename = "test/DataRaceEtc/autoIsoMoves2.grace"; // auto Iso moves
 
         // String filename = "b.grace"; // auto Iso moves
-        String filename = "b2.grace"; // auto Iso moves
+        // String filename = "b2.grace"; // auto Iso moves
         // String filename = "b7.grace"; // auto Iso moves
+        String filename = "leakingBlock1.grace"; // leaking a variable from an iso using a block
+        // String filename = "leakingBlock2.grace"; // leaking the object access from an iso using a block
+        
         
         if (recompile) {
             args = new String[]{

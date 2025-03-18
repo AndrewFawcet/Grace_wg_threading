@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "LexicalScopingExample",
+            "request": "launch",
+            "mainClass": "LexicalScopingExample",
+            "projectName": "wg_82845ae5"
+        },
+        {
+            "type": "java",
             "name": "Start",
             "request": "launch",
             "mainClass": "nz.mwh.wg.Start",
