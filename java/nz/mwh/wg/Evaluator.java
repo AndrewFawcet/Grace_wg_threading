@@ -388,7 +388,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             GraceObject receiver = context.findReceiver(request.getName());
             if (context instanceof BaseObject) {
 
-                System.out.println(" Lexical Request, name " + name);
+                // System.out.println(" Lexical Request, name " + name);
             }
             // receiver.request(request);
             
