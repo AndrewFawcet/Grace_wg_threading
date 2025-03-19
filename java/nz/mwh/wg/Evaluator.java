@@ -140,6 +140,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // within a local context.
     // Details: Collects arguments for the request and finds the receiver object to
     // handle the request.
+    // TODO chuck in a iterator check for entering and leaving the method call
+    // TODO this would require somehow resetting all objects to initial state when leaving this...
     @Override
     public GraceObject visit(GraceObject context, LexicalRequest node) {
 
@@ -388,7 +390,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             GraceObject receiver = context.findReceiver(request.getName());
             if (context instanceof BaseObject) {
 
-                // System.out.println(" Lexical Request, name " + name);
+                System.out.println(" Lexical Request, name " + name);
             }
             // receiver.request(request);
             
@@ -405,6 +407,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             parts.add(new RequestPartR(name + ":=", Collections.singletonList(node.getValue().accept(context, this))));
             Request request = new Request(this, parts);
             GraceObject receiver = target.getReceiver().accept(context, this);
+            if (context instanceof BaseObject) {
+
+                System.out.println(" Explicit Request, name " + name);
+            }
 
             // receiver.request(request);
             GraceObject previous = receiver.request(request);

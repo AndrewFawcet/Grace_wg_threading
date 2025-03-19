@@ -258,6 +258,9 @@ public class BaseObject implements GraceObject {
                 BaseObject baseObjectBeingAssigned = (BaseObject) objectBeingAssigned;
 
                 baseObjectBeingAssigned.incrementReferenceCount();
+                if (baseObjectBeingAssigned.isLocal()) {
+                    System.out.println(" adding to ref count " + baseObjectBeingAssigned.referenceCount);
+                }
                 // the is a system to allow the auto unlinking of previous aliases for iso
                 // objects
                 // it makes use of the aliasObject (graceObject) which is a link to the
