@@ -41,6 +41,29 @@ public class BaseObject implements GraceObject {
 
     private boolean returns = false;
 
+
+
+    // scope stuff
+
+    private Map<Scope, Integer> scopeReferenceCounts = new HashMap<>();
+
+    public void addReference(Scope scope) {
+        scopeReferenceCounts.put(scope, scopeReferenceCounts.getOrDefault(scope, 0) + 1);
+    }
+
+    public void removeReference(Scope scope) {
+        scopeReferenceCounts.computeIfPresent(scope, (s, count) -> (count > 1) ? count - 1 : null);
+    }
+
+    public int getTotalReferences() {
+        return scopeReferenceCounts.values().stream().mapToInt(Integer::intValue).sum();
+    }
+
+
+
+
+
+    
     public BaseObject(GraceObject lexicalParent) {
         this(lexicalParent, false);
     }
@@ -185,6 +208,7 @@ public class BaseObject implements GraceObject {
         }
 
         if (method != null) {
+            System.out.println("++");
             return method.apply(request);
         }
         if (fields.containsKey(request.getName())) {
@@ -251,7 +275,7 @@ public class BaseObject implements GraceObject {
                 BaseObject baseObjectBeingRemoved = (BaseObject) objectBeingRemoved;
                 baseObjectBeingRemoved.decrementReferenceCount();
             }
-
+            System.out.println("---");
             fields.put(name, objectBeingAssigned);
             if (objectBeingAssigned instanceof BaseObject) {
                 // System.out.println(name + " assigned to a baseObject ----------");
@@ -268,7 +292,7 @@ public class BaseObject implements GraceObject {
                 // that holds the previous reference (aliasName) to the iso
                 if (baseObjectBeingAssigned.isIsolated()) {
                     if (CapabilityToggles.isAutoUnlinkingIsoMoves()) {
-                            if (baseObjectBeingAssigned.getReferenceCount() > 1) {
+                        if (baseObjectBeingAssigned.getReferenceCount() > 1) {
                             GraceObject oldObjectReferencingIso = baseObjectBeingAssigned.getHoldingObject();
                             if (oldObjectReferencingIso instanceof BaseObject) {
                                 BaseObject oldBaseObjectReferencingIso = (BaseObject) oldObjectReferencingIso;
@@ -365,7 +389,8 @@ public class BaseObject implements GraceObject {
     }
 
     // Validate method access
-    // this is not used, it was intended as a security feature to make sure all calls were directed through the isoWrapper
+    // this is not used, it was intended as a security feature to make sure all
+    // calls were directed through the isoWrapper
     // I think it is impossible to call the object directly, hence this is not used.
     private void validateIfUsingIsoWrapper() {
         if (CapabilityToggles.isUsingIsoWrapper() && isIsolated) {

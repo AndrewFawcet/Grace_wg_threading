@@ -76,7 +76,8 @@ public class Start {
         // String filename = "changingCapabilities1.grace"; // auto Iso moves
         // String filename = "changingCapabilities2.grace"; // auto Iso moves
         // String filename = "referenceCounting1.grace"; // reference counting testing
-        String filename = "referenceCounting2.grace"; // reference counting testing
+        // String filename = "referenceCounting2.grace"; // reference counting testing
+        String filename = "referenceCounting3.grace"; // reference counting testing
         
         
         if (recompile) {

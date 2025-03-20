@@ -13,23 +13,24 @@ var SecondCounter := object is loc {
 }
 
 print("value before {counter.getValue} ...")
+var x := object{
+    method referenceCounter {
 
-method referenceCounter {
-
-    print("A")
-    var alias1 := counter       // Reference count: 2
-    print("B")
-    var alias2 := counter       // Reference count: 3
-    print("C")
-    var alias3 := counter       // Reference count: 4
-    print("D")
-    alias3.increment            // Modify the object
-    print ("Inside method, value: {alias3.getValue} ...")
-}   // End of method → alias1, alias2 and alias3 go out of scope
+        print("A")
+        var alias1 := counter
+        print("B")
+        var alias2 := counter
+        print("C")
+        var alias3 := counter
+        print("D")
+        alias3.increment
+        print ("Inside method, value: {alias3.getValue} ...")
+    }   
+}
 
 print("E")
 print("EE")
-referenceCounter()   // Call method
+x.referenceCounter()   // Call method
 print("F")
 
 // At this point, localObj, alias1 and alias2 should be garbage collected, refernce count for object should be 1

@@ -145,8 +145,20 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, LexicalRequest node) {
 
+        System.out.println(">>>");
+        
+        // try putting a get object name here.
+        if (context instanceof BaseObject) {
+            BaseObject baseContext = (BaseObject) context;
+            if (baseContext.getAliasName() == "x"){
+                System.out.println("alias name is randomly working");
+            }
+    
+        }
+
         List<RequestPartR> parts = new ArrayList<>();
         for (Part part : node.getParts()) {
+
             // System.out.println("getting an arg");
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
             parts.add(new RequestPartR(part.getName(), args));
