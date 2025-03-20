@@ -29,14 +29,12 @@ import nz.mwh.wg.runtime.*;
  * the AST.
  */
 
-
-
 public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
-    
+
     private static GraceDone done = GraceDone.done;
-    
+
     private Map<String, GraceObject> modules = new HashMap<>();
-    
+
     private static final ThreadLocal<Scope> currentScope = ThreadLocal.withInitial(() -> new Scope(null));
     private Deque<Scope> scopeStack = new ArrayDeque<>(); // Scope tracking
 
@@ -288,6 +286,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             List<? extends ASTNode> body = node.getBody();
 
             wrapperContext.addMethod(name, request -> {
+
+                // **Scope Management Integration**
+                Scope parentScope = currentScope.get();
+                Scope newScope = new Scope(parentScope); // New scope for the method
+                currentScope.set(newScope); // Set as active scope
+
                 // Create a method context that wraps the current IsoWrapper context
                 BaseObject methodContextBase = new BaseObject(wrapperContext.getWrappedObject(), true);
 
@@ -328,6 +332,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     } else {
                         throw re;
                     }
+                } finally {
+                    // **Remove references on method exit**
+                    methodContextBase.removeReference(newScope);
+                    currentScope.set(parentScope); // Restore parent scope
                 }
             });
 
@@ -337,6 +345,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             BaseObject object = (BaseObject) context;
             List<? extends ASTNode> body = node.getBody();
             object.addMethod(name, request -> {
+
+                // **Scope Management Integration**
+                Scope parentScope = currentScope.get();
+                Scope newScope = new Scope(parentScope);
+                currentScope.set(newScope);
+
                 BaseObject methodContext = new BaseObject(context, true);
                 List<RequestPartR> requestParts = request.getParts();
                 for (int j = 0; j < requestParts.size(); j++) {
