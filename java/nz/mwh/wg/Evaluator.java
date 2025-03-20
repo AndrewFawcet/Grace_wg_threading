@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +28,17 @@ import nz.mwh.wg.runtime.*;
  * It does this by implementing the visitor pattern for different node types in
  * the AST.
  */
+
+
+
 public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
-
+    
     private static GraceDone done = GraceDone.done;
-
+    
     private Map<String, GraceObject> modules = new HashMap<>();
+    
+    private static final ThreadLocal<Scope> currentScope = ThreadLocal.withInitial(() -> new Scope(null));
+    private Deque<Scope> scopeStack = new ArrayDeque<>(); // Scope tracking
 
     // Purpose: Constructs and initializes a new object context by processing its
     // body elements, including definitions, variable declarations, imports, and
@@ -93,7 +101,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
             // if (object.isUsingIsoWrapper() && object.isIsolated()) {
-                finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper toggle is on
+            finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper toggle is on
         }
 
         List<ASTNode> body = node.getBody();
@@ -141,20 +149,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // Details: Collects arguments for the request and finds the receiver object to
     // handle the request.
     // TODO chuck in a iterator check for entering and leaving the method call
-    // TODO this would require somehow resetting all objects to initial state when leaving this...
+    // TODO this would require somehow resetting all objects to initial state when
+    // leaving this...
     @Override
     public GraceObject visit(GraceObject context, LexicalRequest node) {
 
         System.out.println(">>>");
-        
-        // try putting a get object name here.
-        if (context instanceof BaseObject) {
-            BaseObject baseContext = (BaseObject) context;
-            if (baseContext.getAliasName() == "x"){
-                System.out.println("alias name is randomly working");
-            }
-    
-        }
 
         List<RequestPartR> parts = new ArrayList<>();
         for (Part part : node.getParts()) {
@@ -172,6 +172,20 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             if (receiverBaseObject.isLocal()) {
                 System.out.println("is local object as reciever ");
             }
+
+            // **Scope Management Integration**
+            Scope parentScope = currentScope.get();
+            Scope newScope = new Scope(parentScope); // Create new scope for this method call
+            currentScope.set(newScope); // Set the new scope as current
+
+            receiverBaseObject.addReference(newScope); // Increment reference count for this scope
+
+            GraceObject result = receiverBaseObject.request(request);
+
+            receiverBaseObject.removeReference(newScope); // Remove reference when method exits
+            currentScope.set(parentScope); // Restore parent scope
+
+            return result; // Return the method's result
         }
         return receiver.request(request);
     }
@@ -365,7 +379,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             });
             return done;
         }
-        throw new UnsupportedOperationException("method can only be defined in object context of either BaseObject or IsoWrapper");
+        throw new UnsupportedOperationException(
+                "method can only be defined in object context of either BaseObject or IsoWrapper");
     }
 
     // Purpose: Processes an explicit request (method call) with a specified
@@ -405,7 +420,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 System.out.println(" Lexical Request, name " + name);
             }
             // receiver.request(request);
-            
+
             GraceObject previous = receiver.request(request);
             // changed to send the previous object through for destructive reads of
             // variables and objects
@@ -541,6 +556,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             GraceChannel chan2 = new GraceChannel(dchan2.createPort2(), dchan1.createPort2());
             new Thread(() -> {
                 try {
+
+                    // **Ensure the new thread starts with a new independent scope**
+                    currentScope.set(new Scope(null)); // Root scope for this new thread
                     block.request(new Request(new Evaluator(),
                             Collections.singletonList(new RequestPartR("apply", Collections.singletonList(chan1)))));
                 } catch (ReturnException e) {
