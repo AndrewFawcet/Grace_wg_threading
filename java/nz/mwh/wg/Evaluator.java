@@ -140,6 +140,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // within a local context.
     // Details: Collects arguments for the request and finds the receiver object to
     // handle the request.
+    // TODO develop the incrementing and decrimenting for a local scope method
     @Override
     public GraceObject visit(GraceObject context, LexicalRequest node) {
 
@@ -147,6 +148,21 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         for (Part part : node.getParts()) {
             // System.out.println("getting an arg");
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
+            for (GraceObject arg : args) {
+                if (arg instanceof BaseObject) {
+                    BaseObject baseArg = (BaseObject) arg;
+                    System.out.println("  - is BaseObject");
+                    if (baseArg.isLocal()) {
+                        System.out.println("  - is local");
+                    }
+                    if (baseArg.isIsolated()) {
+                        System.out.println("  - is iso");
+                    }
+                    if (baseArg.isImmutable()) {
+                        System.out.println("  - is immutable");
+                    }
+                }
+            }
             parts.add(new RequestPartR(part.getName(), args));
         }
 

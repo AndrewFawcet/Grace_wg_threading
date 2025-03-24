@@ -26,6 +26,6 @@ print("EE")
 referenceCounter()   // Call method
 print("F")
 
-// At this point, localObj, alias1 and alias2 should be garbage collected, refernce count for object should be 1
+// At this point, localObj, alias1 and alias2 should be garbage collected, reference count for object should be 1
 print "Method finished execution"
 print "Goodbye cruel world"
