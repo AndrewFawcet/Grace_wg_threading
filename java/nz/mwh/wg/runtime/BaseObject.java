@@ -285,16 +285,12 @@ public class BaseObject implements GraceObject {
                 }
             }
 
-            // this looks at the current object and as the fields are being changed checks
-            // if the object is:
-            // -immutable
-            // -does it have one or more references (less than one indicates in
-            // construction)
+            // this looks at the current object and as the fields are being changed checks imm. status
             // This functions in conjunction with the downward propagation of immutable
             // capabilities in the public GraceObject visit(GraceObject context,
             // ObjectConstructor node) method
             if (isImmutable) {
-                if (getReferenceCount() != 0) {
+                if (getReferenceCount() != 0) { // ref count of 0 indicates a fresh object
                     throw new RuntimeException(
                             "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name
                                     + "'.");
@@ -304,6 +300,9 @@ public class BaseObject implements GraceObject {
             // should be value that has been removed, with a decremented reference count.
             // (to zero for an iso)
             // this then should be stored somewhere else...
+            if (objectBeingRemoved instanceof BaseObject) {
+                System.out.println("ref count of " + name + " is: " + ((BaseObject)objectBeingRemoved).getReferenceCount());
+            }
             return objectBeingRemoved;
         });
     }

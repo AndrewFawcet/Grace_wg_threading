@@ -1,6 +1,6 @@
 print "Hello beautiful world-----------------------------------------------------------------"
 
-var counter := object is iso {
+var counter := object is loc {
     var value := 0
     method increment { value := value + 1 }
     method getValue { value }
@@ -25,7 +25,8 @@ print("E")
 print("EE")
 referenceCounter()   // Call method
 print("F")
-
+var b := (counter := -1)
+var c := counter
 // At this point, localObj, alias1 and alias2 should be garbage collected, reference count for object should be 1
 print "Method finished execution"
 print "Goodbye cruel world"

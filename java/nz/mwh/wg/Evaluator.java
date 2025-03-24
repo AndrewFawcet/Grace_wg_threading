@@ -145,15 +145,21 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     public GraceObject visit(GraceObject context, LexicalRequest node) {
 
         List<RequestPartR> parts = new ArrayList<>();
+        boolean isLoc = false;
         for (Part part : node.getParts()) {
             // System.out.println("getting an arg");
+            // Calls visit(context, x) recursively to process each argument, in case they are themselves method calls.
+            // creates a list of RequestPartR objects to store processed method parts.
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
+
+
             for (GraceObject arg : args) {
                 if (arg instanceof BaseObject) {
                     BaseObject baseArg = (BaseObject) arg;
-                    System.out.println("  - is BaseObject");
+                    System.out.println("  - is BaseObject " + part.getName());
                     if (baseArg.isLocal()) {
                         System.out.println("  - is local");
+                        isLoc = true;
                     }
                     if (baseArg.isIsolated()) {
                         System.out.println("  - is iso");
@@ -161,14 +167,24 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     if (baseArg.isImmutable()) {
                         System.out.println("  - is immutable");
                     }
-                    // ((BaseObject)arg).incrementReferenceCount();
+                    // ((BaseObject)arg).incrementReferenceCount(); // incremented when the field is made in BaseObject, even though temporary.
                 }
             }
             parts.add(new RequestPartR(part.getName(), args));
         }
 
-        Request request = new Request(this, parts);
+        Request request = new Request(this, parts); // a method call or message send within a local scope
         GraceObject receiver = context.findReceiver(request.getName());
+
+        if (isLoc) {
+            if (receiver instanceof BaseObject){
+                // System.out.println("reciever " + ((BaseObject)receiver).getName()) ;
+                System.out.println("request " + request.getName()) ;
+                // System.out.println("`context " + ((BaseObject) context).) ;
+
+            }
+        }
+
 
         if (receiver instanceof BaseObject) {
             BaseObject receiverBaseObject = (BaseObject) receiver;
@@ -326,8 +342,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             BaseObject object = (BaseObject) context;
             List<? extends ASTNode> body = node.getBody();
             object.addMethod(name, request -> {
-                BaseObject methodContext = new BaseObject(context, true);
+                BaseObject methodContext = new BaseObject(context, true);   // TODO iterate up here one for the temporary method object
                 List<RequestPartR> requestParts = request.getParts();
+                RequestPartR firstRequestPart = requestParts.get(0); // for testing
+                if (firstRequestPart.getName().equals("referenceCounter")) {
+                    System.out.println(" --- here with the new request Part!");
+                }
                 for (int j = 0; j < requestParts.size(); j++) {
                     Part part = parts.get(j);
                     RequestPartR rpart = requestParts.get(j);
@@ -355,7 +375,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 try {
                     GraceObject last = null;
                     for (ASTNode part : body) {
-                        last = visit(methodContext, part);
+                        last = visit(methodContext, part);      //TODO, could add a decrimenter here for post method visiting! 
+                        // TODO This would be for local context method calls, but could be applicable for wider usage. methodContext iterate up and down...
                     }
                     return last;
                 } catch (ReturnException re) {
@@ -384,7 +405,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         }
         Request request = new Request(this, parts, node.location);
         GraceObject receiver = node.getReceiver().accept(context, this);
-
         return receiver.request(request);
 
     }
@@ -404,7 +424,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             Request request = new Request(this, parts);
             GraceObject receiver = context.findReceiver(request.getName());
             if (context instanceof BaseObject) {
-
                 // System.out.println(" Lexical Request, name " + name);
             }
             // receiver.request(request);
