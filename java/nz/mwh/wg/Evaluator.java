@@ -340,9 +340,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         }
         if (context instanceof BaseObject) {
             BaseObject object = (BaseObject) context;
-            List<? extends ASTNode> body = node.getBody();
+            List<? extends ASTNode> body = node.getBody();  // this body holds all the method statements
             object.addMethod(name, request -> {
-                BaseObject methodContext = new BaseObject(context, true);   // TODO iterate up here one for the temporary method object
+                BaseObject methodContext = new BaseObject(context, true);   // TODO iterate reference count for the temporary method object
+                methodContext.incrementReferenceCount();    // method now operates as a base object with ref count 1.
                 List<RequestPartR> requestParts = request.getParts();
                 RequestPartR firstRequestPart = requestParts.get(0); // for testing
                 if (firstRequestPart.getName().equals("referenceCounter")) {
@@ -378,6 +379,25 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         last = visit(methodContext, part);      //TODO, could add a decrimenter here for post method visiting! 
                         // TODO This would be for local context method calls, but could be applicable for wider usage. methodContext iterate up and down...
                     }
+
+                    methodContext.decrementReferenceCount();    // TODO add in an decrimenter here
+                    if (methodContext.getReferenceCount() == 0) {
+                        System.out.println("gonna rip the guts out of this old method ");
+                        for (ASTNode part : body) {
+                            if (part instanceof DefDecl) {
+                                DefDecl def = (DefDecl) part;
+                                // methodContext.addField(def.getName());
+                                // methodContext. // TODO remove the def field!
+                            } else if (part instanceof VarDecl) {
+                                VarDecl var = (VarDecl) part;
+                                // methodContext.addField(var.getName());
+                                // methodContext.addFieldWriter(var.getName()); // TODO do for iso methods???
+
+                                // methodContext. remove.... // TODO remove teh Field, or decriment it here.
+                            }
+                        }
+                    }
+
                     return last;
                 } catch (ReturnException re) {
                     if (re.context == methodContext) {

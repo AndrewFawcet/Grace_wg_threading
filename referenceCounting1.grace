@@ -25,8 +25,8 @@ print("E")
 print("EE")
 referenceCounter()   // Call method
 print("F")
-var b := (counter := -1)
-var c := counter
+// var b := (counter := -1)
+// var c := counter
 // At this point, localObj, alias1 and alias2 should be garbage collected, reference count for object should be 1
 print "Method finished execution"
 print "Goodbye cruel world"
