@@ -245,7 +245,6 @@ public class BaseObject implements GraceObject {
             // pulls the existing value out here, and returns it at the end.
             // TODO could put a token zero reference object here, which acts as a tombstone.
             GraceObject objectBeingRemoved = null;
-
             objectBeingRemoved = fields.remove(name);
             if (objectBeingRemoved instanceof BaseObject) {
                 BaseObject baseObjectBeingRemoved = (BaseObject) objectBeingRemoved;
@@ -263,24 +262,9 @@ public class BaseObject implements GraceObject {
                 // it makes use of the aliasObject (graceObject) which is a link to the
                 // baseObject
                 // that holds the previous reference (aliasName) to the iso
-                if (baseObjectBeingAssigned.isIsolated()) {
-                    if (CapabilityToggles.isAutoUnlinkingIsoMoves()) {
-                            if (baseObjectBeingAssigned.getReferenceCount() > 1) {
-                            GraceObject oldObjectReferencingIso = baseObjectBeingAssigned.getHoldingObject();
-                            if (oldObjectReferencingIso instanceof BaseObject) {
-                                BaseObject oldBaseObjectReferencingIso = (BaseObject) oldObjectReferencingIso;
-                                String oldRef = baseObjectBeingAssigned.getAliasName();
-                                oldBaseObjectReferencingIso.fields.remove(oldRef);
-                                baseObjectBeingAssigned.decrementReferenceCount();
-                            }
-                        }
-                        baseObjectBeingAssigned.setAliasName(name); // base object now holds the name it is under inside
-                                                                    // itself.
-                        baseObjectBeingAssigned.setHoldingObject(this); // base object now holds the object it is under
-                                                                        // inside itself.
-                    }
+                if (baseObjectBeingAssigned.isIsolated() && CapabilityToggles.isAutoUnlinkingIsoMoves()) {
+                    unlinkPreviousAliasIfNeeded(baseObjectBeingAssigned, name);
                 }
-
                 // initial check if isolated (not dereferencing)
                 // checking if isolated, and runtime exception if too many references
                 if (CapabilityToggles.isAssignmentIsoCheckEnabled()) {
@@ -350,7 +334,6 @@ public class BaseObject implements GraceObject {
     }
 
     private void validateIsoAccess() {
-
         // only called for iso objects
         if (CapabilityToggles.isDereferencingIsoCheckEnabled()) {
             if (referenceCount > 1) {
@@ -361,8 +344,23 @@ public class BaseObject implements GraceObject {
         }
     }
 
+    private void unlinkPreviousAliasIfNeeded(BaseObject baseObjectBeingAssigned, String name) {
+        if (baseObjectBeingAssigned.getReferenceCount() > 1) {
+            GraceObject oldObjectReferencingIso = baseObjectBeingAssigned.getHoldingObject();
+            if (oldObjectReferencingIso instanceof BaseObject) {
+                BaseObject oldBaseObjectReferencingIso = (BaseObject) oldObjectReferencingIso;
+                String oldRef = baseObjectBeingAssigned.getAliasName();
+                oldBaseObjectReferencingIso.fields.remove(oldRef);
+                baseObjectBeingAssigned.decrementReferenceCount();
+            }
+        }
+        baseObjectBeingAssigned.setAliasName(name); // base object now holds the name it is under inside itself.
+        baseObjectBeingAssigned.setHoldingObject(this); // base object now holds the object it is under inside itself.
+    }
+
     // Validate method access
-    // this is not used, it was intended as a security feature to make sure all calls were directed through the isoWrapper
+    // this is not used, it was intended as a security feature to make sure all
+    // calls were directed through the isoWrapper
     // I think it is impossible to call the object directly, hence this is not used.
     private void validateIfUsingIsoWrapper() {
         if (CapabilityToggles.isUsingIsoWrapper() && isIsolated) {

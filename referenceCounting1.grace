@@ -1,6 +1,6 @@
 print "Hello beautiful world-----------------------------------------------------------------"
 
-var counter := object is loc {
+var counter := object is iso {
     var value := 0
     method increment { value := value + 1 }
     method getValue { value }

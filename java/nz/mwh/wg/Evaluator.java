@@ -161,6 +161,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     if (baseArg.isImmutable()) {
                         System.out.println("  - is immutable");
                     }
+                    // ((BaseObject)arg).incrementReferenceCount();
                 }
             }
             parts.add(new RequestPartR(part.getName(), args));
