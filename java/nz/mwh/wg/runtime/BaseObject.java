@@ -225,7 +225,7 @@ public class BaseObject implements GraceObject {
 
     // removing methods or fields to an object, 
     // removing imvolves recusivly decrementing the fields down.
-    public void decrementFieldReferences(String name) {
+    public void decrementFieldReferenceCount(String name) {
 
 
 
@@ -240,7 +240,7 @@ public class BaseObject implements GraceObject {
             fieldBaseObject.fields.forEach((innerName, fieldGraceObject) -> {
                 System.out.println("Field Name: " + name );
                 if (fieldGraceObject instanceof BaseObject) {
-                    ((BaseObject)fieldBaseObject).decrementFieldReferences(innerName);
+                    ((BaseObject)fieldBaseObject).decrementFieldReferenceCount(innerName);
                 }
             });
             

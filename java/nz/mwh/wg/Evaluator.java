@@ -289,54 +289,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         // added for IsoWrapper
         if (context instanceof IsoWrapper) {
-            IsoWrapper wrapperContext = (IsoWrapper) context;
-            List<? extends ASTNode> body = node.getBody();
-
-            wrapperContext.addMethod(name, request -> {
-                // Create a method context that wraps the current IsoWrapper context
-                BaseObject methodContextBase = new BaseObject(wrapperContext.getWrappedObject(), true);
-
-                List<RequestPartR> requestParts = request.getParts();
-                for (int j = 0; j < requestParts.size(); j++) {
-                    Part part = parts.get(j);
-                    RequestPartR rpart = requestParts.get(j);
-                    List<? extends ASTNode> parameters = part.getParameters();
-
-                    for (int i = 0; i < parameters.size(); i++) {
-                        IdentifierDeclaration parameter = (IdentifierDeclaration) parameters.get(i);
-                        methodContextBase.addField(parameter.getName());
-                        methodContextBase.setField(parameter.getName(), rpart.getArgs().get(i));
-                    }
-                }
-
-                // Handle the body of the method by visiting each part
-                for (ASTNode part : body) {
-                    if (part instanceof DefDecl) {
-                        DefDecl def = (DefDecl) part;
-                        methodContextBase.addField(def.getName());
-                    } else if (part instanceof VarDecl) {
-                        VarDecl var = (VarDecl) part;
-                        methodContextBase.addField(var.getName());
-                        methodContextBase.addFieldWriter(var.getName()); // Handle writing to the field
-                    }
-                }
-
-                try {
-                    GraceObject last = null;
-                    for (ASTNode part : body) {
-                        last = visit(methodContextBase, part); // Visit the body parts using the method context
-                    }
-                    return last;
-                } catch (ReturnException re) {
-                    if (re.context == methodContextBase) {
-                        return re.getValue();
-                    } else {
-                        throw re;
-                    }
-                }
-            });
-
-            return done;
+            GraceObject wrappedObject = insertWrapper((IsoWrapper) context, node, parts);
+            return wrappedObject;
         }
         if (context instanceof BaseObject) {
             BaseObject object = (BaseObject) context;
@@ -389,17 +343,14 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         for (ASTNode part : body) {
                             if (part instanceof DefDecl) {
                                 DefDecl def = (DefDecl) part;
-                                methodContext.decrementFieldReferences(def.getName());
+                                methodContext.decrementFieldReferenceCount(def.getName());
 
                                 // methodContext.addField(def.getName());
                                 // methodContext. // TODO remove the def field!
                             } else if (part instanceof VarDecl) {
                                 VarDecl var = (VarDecl) part;
-                                System.out.println("here in var declare for removing the thing...");
-                                methodContext.decrementFieldReferences(var.getName());
-                                // methodContext.addField(var.getName());
-                                // methodContext.addFieldWriter(var.getName()); // TODO do for iso methods???
-                                // methodContext. remove.... // TODO remove the Field, or decriment it here.
+                                System.out.println("here in var declare for removing the referenceCount to fields...");
+                                methodContext.decrementFieldReferenceCount(var.getName());
                             }
                         }
                     }
@@ -417,6 +368,60 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         }
         throw new UnsupportedOperationException(
                 "method can only be defined in object context of either BaseObject or IsoWrapper");
+    }
+
+    // This is mostly a repeat of a base Object, but using a IsoWrapper. 
+    // All methods and fields go through the IsoWrapper object, to the actual BaseObject object.
+    private GraceObject insertWrapper(IsoWrapper wrapperContext, MethodDecl node, List<? extends Part> parts) {
+        List<? extends ASTNode> body = node.getBody();
+    
+        wrapperContext.addMethod(parts.stream().map(x -> x.getName() + "(" + x.getParameters().size() + ")")
+                .collect(Collectors.joining("")), request -> {
+            
+            // Create a method context that wraps the current IsoWrapper context
+            BaseObject methodContextBase = new BaseObject(wrapperContext.getWrappedObject(), true);
+    
+            List<RequestPartR> requestParts = request.getParts();
+            for (int j = 0; j < requestParts.size(); j++) {
+                Part part = parts.get(j);
+                RequestPartR rpart = requestParts.get(j);
+                List<? extends ASTNode> parameters = part.getParameters();
+    
+                for (int i = 0; i < parameters.size(); i++) {
+                    IdentifierDeclaration parameter = (IdentifierDeclaration) parameters.get(i);
+                    methodContextBase.addField(parameter.getName());
+                    methodContextBase.setField(parameter.getName(), rpart.getArgs().get(i));
+                }
+            }
+    
+            // Handle the body of the method by visiting each part
+            for (ASTNode part : body) {
+                if (part instanceof DefDecl) {
+                    DefDecl def = (DefDecl) part;
+                    methodContextBase.addField(def.getName());
+                } else if (part instanceof VarDecl) {
+                    VarDecl var = (VarDecl) part;
+                    methodContextBase.addField(var.getName());
+                    methodContextBase.addFieldWriter(var.getName()); // Handle writing to the field
+                }
+            }
+    
+            try {
+                GraceObject last = null;
+                for (ASTNode part : body) {
+                    last = visit(methodContextBase, part); // Visit the body parts using the method context
+                }
+                return last;
+            } catch (ReturnException re) {
+                if (re.context == methodContextBase) {
+                    return re.getValue();
+                } else {
+                    throw re;
+                }
+            }
+        });
+    
+        return done;
     }
 
     // Purpose: Processes an explicit request (method call) with a specified
