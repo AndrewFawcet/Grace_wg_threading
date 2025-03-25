@@ -223,6 +223,33 @@ public class BaseObject implements GraceObject {
         });
     }
 
+    // removing methods or fields to an object, 
+    // removing imvolves recusivly decrementing the fields down.
+    public void decrementFieldReferences(String name) {
+
+
+
+        System.out.println("decrementing fields in the method");
+        GraceObject fieldObject = fields.get(name);
+        if (fieldObject instanceof BaseObject) {
+            BaseObject fieldBaseObject = (BaseObject) fieldObject;
+            fieldBaseObject.decrementReferenceCount();
+
+            // recursivly decrement the fields.
+            System.out.println("this is recursive, on " + name);
+            fieldBaseObject.fields.forEach((innerName, fieldGraceObject) -> {
+                System.out.println("Field Name: " + name );
+                if (fieldGraceObject instanceof BaseObject) {
+                    ((BaseObject)fieldBaseObject).decrementFieldReferences(innerName);
+                }
+            });
+            
+        }
+
+
+
+    }
+
     // puts the writer method into the object or scope
     // return the old value/object instead of 'done'
     // decrement or unassign the returned value/object

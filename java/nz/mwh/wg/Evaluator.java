@@ -93,7 +93,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
             // if (object.isUsingIsoWrapper() && object.isIsolated()) {
-                finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper toggle is on
+            finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper toggle is on
         }
 
         List<ASTNode> body = node.getBody();
@@ -148,10 +148,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         boolean isLoc = false;
         for (Part part : node.getParts()) {
             // System.out.println("getting an arg");
-            // Calls visit(context, x) recursively to process each argument, in case they are themselves method calls.
+            // Calls visit(context, x) recursively to process each argument, in case they
+            // are themselves method calls.
             // creates a list of RequestPartR objects to store processed method parts.
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
-
 
             for (GraceObject arg : args) {
                 if (arg instanceof BaseObject) {
@@ -167,7 +167,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     if (baseArg.isImmutable()) {
                         System.out.println("  - is immutable");
                     }
-                    // ((BaseObject)arg).incrementReferenceCount(); // incremented when the field is made in BaseObject, even though temporary.
+                    // ((BaseObject)arg).incrementReferenceCount(); // incremented when the field is
+                    // made in BaseObject, even though temporary.
                 }
             }
             parts.add(new RequestPartR(part.getName(), args));
@@ -177,14 +178,13 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         GraceObject receiver = context.findReceiver(request.getName());
 
         if (isLoc) {
-            if (receiver instanceof BaseObject){
+            if (receiver instanceof BaseObject) {
                 // System.out.println("reciever " + ((BaseObject)receiver).getName()) ;
-                System.out.println("request " + request.getName()) ;
+                System.out.println("request " + request.getName());
                 // System.out.println("`context " + ((BaseObject) context).) ;
 
             }
         }
-
 
         if (receiver instanceof BaseObject) {
             BaseObject receiverBaseObject = (BaseObject) receiver;
@@ -340,10 +340,11 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         }
         if (context instanceof BaseObject) {
             BaseObject object = (BaseObject) context;
-            List<? extends ASTNode> body = node.getBody();  // this body holds all the method statements
+            List<? extends ASTNode> body = node.getBody(); // this body holds all the method statements
             object.addMethod(name, request -> {
-                BaseObject methodContext = new BaseObject(context, true);   // TODO iterate reference count for the temporary method object
-                methodContext.incrementReferenceCount();    // method now operates as a base object with ref count 1.
+
+                BaseObject methodContext = new BaseObject(context, true);
+                methodContext.incrementReferenceCount(); // method now operates as a base object with ref count 1.
                 List<RequestPartR> requestParts = request.getParts();
                 RequestPartR firstRequestPart = requestParts.get(0); // for testing
                 if (firstRequestPart.getName().equals("referenceCounter")) {
@@ -369,31 +370,36 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         // parameter handling, each method part will contain parts of this.
                         // how to manage the reference counting in this case?
                         methodContext.addFieldWriter(var.getName()); // TODO do for iso methods???
-                        // GraceObject oldObject = methodContext.addFieldWriter(var.getName()); // TODO
+                        // GraceObject oldObject = methodContext.addFieldWriter(var.getName());
                         // do for iso methods???
                     }
                 }
                 try {
                     GraceObject last = null;
                     for (ASTNode part : body) {
-                        last = visit(methodContext, part);      //TODO, could add a decrimenter here for post method visiting! 
-                        // TODO This would be for local context method calls, but could be applicable for wider usage. methodContext iterate up and down...
+                        last = visit(methodContext, part); // TODO, could add a decrimenter here for post method
+                                                           // visiting!
+                        // TODO This would be for local context method calls, but could be applicable
+                        // for wider usage. methodContext iterate up and down...
                     }
 
-                    methodContext.decrementReferenceCount();    // TODO add in an decrimenter here
+                    methodContext.decrementReferenceCount(); // TODO add in an decrimenter here
                     if (methodContext.getReferenceCount() == 0) {
-                        System.out.println("gonna rip the guts out of this old method ");
+                        System.out.println(" going to decrement all the things alieased by this method as it is now zero");
                         for (ASTNode part : body) {
                             if (part instanceof DefDecl) {
                                 DefDecl def = (DefDecl) part;
+                                methodContext.decrementFieldReferences(def.getName());
+
                                 // methodContext.addField(def.getName());
                                 // methodContext. // TODO remove the def field!
                             } else if (part instanceof VarDecl) {
                                 VarDecl var = (VarDecl) part;
+                                System.out.println("here in var declare for removing the thing...");
+                                methodContext.decrementFieldReferences(var.getName());
                                 // methodContext.addField(var.getName());
                                 // methodContext.addFieldWriter(var.getName()); // TODO do for iso methods???
-
-                                // methodContext. remove.... // TODO remove teh Field, or decriment it here.
+                                // methodContext. remove.... // TODO remove the Field, or decriment it here.
                             }
                         }
                     }
@@ -409,7 +415,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             });
             return done;
         }
-        throw new UnsupportedOperationException("method can only be defined in object context of either BaseObject or IsoWrapper");
+        throw new UnsupportedOperationException(
+                "method can only be defined in object context of either BaseObject or IsoWrapper");
     }
 
     // Purpose: Processes an explicit request (method call) with a specified
@@ -447,7 +454,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 // System.out.println(" Lexical Request, name " + name);
             }
             // receiver.request(request);
-            
+
             GraceObject previous = receiver.request(request);
             // changed to send the previous object through for destructive reads of
             // variables and objects
