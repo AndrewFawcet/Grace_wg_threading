@@ -1,4 +1,3 @@
-
 print "Hello beautiful world-----------------------------------------------------------------"
 
 var counter := object is loc {
@@ -6,13 +5,11 @@ var counter := object is loc {
     method increment { value := value + 1 }
     method getValue { value }
 }
-var SecondCounter := object is loc {
-    var value := 123
-    method increment { value := value + 1 }
-    method getValue { value }
-}
+var alias := counter;
+
 
 print("value before {counter.getValue} ...")
+print("object reference count before method  {refCount(counter)} ...")
 var x := object{
     method referenceCounter {
 

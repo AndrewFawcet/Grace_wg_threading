@@ -73,9 +73,11 @@ public class Start {
         // String filename = "b8.grace"; // auto Iso moves
         // String filename = "leakingBlock1.grace"; // leaking a variable from an iso using a block
         // String filename = "leakingBlock2.grace"; // leaking the object access from an iso using a block
-        // String filename = "changingCapabilities1.grace"; // auto Iso moves
-        // String filename = "changingCapabilities2.grace"; // auto Iso moves
-        // String filename = "referenceCounting1.grace"; // auto Iso moves
+        // String filename = "changingCapabilities1.grace"; // changing capabilities
+        // String filename = "changingCapabilities2.grace"; // changing capabilities
+        // String filename = "referenceCounting1.grace"; // ref counting basic
+        // String filename = "referenceCounting2.grace"; // ref counting basic
+        String filename = "referenceCounting3.grace"; // ref counting more aliases
         
         
         if (recompile) {

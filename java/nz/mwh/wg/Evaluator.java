@@ -338,18 +338,15 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     }
 
                     methodContext.decrementReferenceCount(); // TODO add in an decrimenter here
-                    if (methodContext.getReferenceCount() == 0) {
+                    if (methodContext.getReferenceCount() == 0) {   // test for zero to indicate a local scope method call
                         // System.out.println(" going to decrement all the things aliased by this method as it is now zero");
                         for (ASTNode part : body) {
                             if (part instanceof DefDecl) {
                                 DefDecl def = (DefDecl) part;
                                 methodContext.decrementFieldReferenceCount(def.getName());
 
-                                // methodContext.addField(def.getName());
-                                // methodContext. // TODO remove the def field!
                             } else if (part instanceof VarDecl) {
                                 VarDecl var = (VarDecl) part;
-                                System.out.println("here in var declare for removing the referenceCount to fields...");
                                 methodContext.decrementFieldReferenceCount(var.getName());
                             }
                         }
@@ -554,7 +551,11 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     static BaseObject basePrelude() {
 
         BaseObject lexicalParent = new BaseObject(null);
-
+        lexicalParent.addMethod("refCount(1)", request -> {
+            BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
+            // System.out.print(obj.getReferenceCount());;
+            return new GraceNumber(obj.getReferenceCount());
+        });
         lexicalParent.addMethod("setLoc(1)", request -> {
             BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
             CapabilityAdjuster.changeCapability(obj, true, false, false);
