@@ -223,11 +223,10 @@ public class BaseObject implements GraceObject {
         });
     }
 
+    // TODO implement adaptation for returned objects 
     // removing methods or fields to an object, 
     // removing imvolves recusivly decrementing the fields down.
     public void decrementFieldReferenceCount(String name) {
-
-
 
         System.out.println("decrementing fields in the method");
         GraceObject fieldObject = fields.get(name);
@@ -244,9 +243,6 @@ public class BaseObject implements GraceObject {
             });
             
         }
-
-
-
     }
 
     // puts the writer method into the object or scope

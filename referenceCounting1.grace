@@ -1,7 +1,7 @@
 print "Hello beautiful world-----------------------------------------------------------------"
 
 var counter := object is loc {
-    var value := 0
+    var value := 1
     method increment { value := value + 1 }
     method getValue { value }
 }
@@ -18,7 +18,7 @@ method referenceCounter {
     var alias3 := counter       // Reference count: 4
     print("D")
     alias3.increment            // Modify the object
-    print ("Inside method, value: {alias3.getValue} ...")
+    print ("Inside method, value: {alias3.getValue}, (should be incremented to 2)")
 }   // End of method → alias1, alias2 and alias3 go out of scope
 
 print("E")

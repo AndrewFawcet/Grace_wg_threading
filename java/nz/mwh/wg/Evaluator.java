@@ -84,7 +84,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             }
         }
         // This creates the new BaseObject, the context is the lexical parent
-        // TODO this will have to have a chaperone seperating it as a iso with a wrapper
         BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
                 isNewObjectImmutable);
 
@@ -140,7 +139,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // within a local context.
     // Details: Collects arguments for the request and finds the receiver object to
     // handle the request.
-    // TODO develop the incrementing and decrimenting for a local scope method
     @Override
     public GraceObject visit(GraceObject context, LexicalRequest node) {
 
@@ -276,6 +274,11 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 methodContext.incrementReferenceCount(); // method now operates as a base object with ref count 1.
                 List<RequestPartR> requestParts = request.getParts();
 
+                RequestPartR firstRequestPart = requestParts.get(0); // for testing
+                if (firstRequestPart.getName().equals("referenceCounter")) {
+                    System.out.println(" --- here with the new request Part!");
+                }
+
                 for (int j = 0; j < requestParts.size(); j++) {
                     Part part = parts.get(j);
                     RequestPartR rpart = requestParts.get(j);
@@ -295,19 +298,20 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         methodContext.addField(var.getName());
                         // parameter handling, each method part will contain parts of this.
                         // how to manage the reference counting in this case?
-                        methodContext.addFieldWriter(var.getName()); // TODO do for iso methods???
+                        methodContext.addFieldWriter(var.getName()); // do something for iso methods???
                         // GraceObject oldObject = methodContext.addFieldWriter(var.getName());
                         // do for iso methods???
                     }
                 }
                 try {
-                    GraceObject last = null;
+                      GraceObject last = null;
                     for (ASTNode part : body) {
-                        last = visit(methodContext, part); 
+                        last = visit(methodContext, part); // this is where the method gets actioned
                     }
+                    
                     methodContext.decrementReferenceCount(); // TODO decrimenter used now
                     if (methodContext.getReferenceCount() == 0) {   // test for zero to indicate a local scope method call
-                        // System.out.println(" going to decrement all the things aliased by this method as it is now zero");
+                        System.out.println(" going to decrement all the things aliased by this method as it is now zero");
                         for (ASTNode part : body) {
                             if (part instanceof DefDecl) {
                                 DefDecl def = (DefDecl) part;
@@ -323,7 +327,28 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     return last;
                 } catch (ReturnException re) {
                     if (re.context == methodContext) {
-                        return re.getValue();
+                        GraceObject returningObject = re.getValue();
+                        GraceObject otherStuffInObject = re.context;
+                        if (otherStuffInObject instanceof BaseObject) {
+                            BaseObject otherStuffInObjectBaseObject = (BaseObject) otherStuffInObject;
+                            otherStuffInObjectBaseObject.decrementReferenceCount();
+                            System.out.println("ref  "+ otherStuffInObjectBaseObject.getReferenceCount() );
+                            if (otherStuffInObjectBaseObject.getReferenceCount() == 0) {   // test for zero to indicate a local scope method call
+                                System.out.println(" going to decrement all the things aliased by this method as it is now zero for the reurned object");
+                                for (ASTNode part : body) {
+                                    if (part instanceof DefDecl) {
+                                        DefDecl def = (DefDecl) part;
+                                        otherStuffInObjectBaseObject.decrementFieldReferenceCount(def.getName());
+        
+                                    } else if (part instanceof VarDecl) {
+                                        VarDecl var = (VarDecl) part;
+                                        otherStuffInObjectBaseObject.decrementFieldReferenceCount(var.getName());
+                                    }
+                                }
+                            }
+                        }
+                        return returningObject;   // TODO this is there the decrimenter also needs to be operating for returning aliases or objects
+                        // the getValue() gets the returned object or number or whatever
                     } else {
                         throw re;
                     }

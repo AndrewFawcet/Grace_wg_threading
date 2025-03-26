@@ -22,8 +22,8 @@ var x := object{
         alias3.increment
         print ("Inside method, value: {alias3.getValue}, (should be incremented to 2)")
         print ("Inside method, object reference count {refCount(counter)} ...")
-        return alias3
-    }   
+        return 123
+    }
 }
 
 print("E")
