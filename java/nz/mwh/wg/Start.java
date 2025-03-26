@@ -77,8 +77,8 @@ public class Start {
         // String filename = "changingCapabilities2.grace"; // changing capabilities
         // String filename = "referenceCounting1.grace"; // ref counting basic -ok
         // String filename = "referenceCounting2.grace"; // ref counting more aliases -ok
-        String filename = "referenceCounting3.grace"; // ref counting with an alias return  -notok
-        // String filename = "referenceCounting4.grace"; // ref counting with a number return  -notok
+        // String filename = "referenceCounting3.grace"; // ref counting with an alias return  -notok
+        String filename = "referenceCounting4.grace"; // ref counting with a number return  -notok
         
         
         if (recompile) {

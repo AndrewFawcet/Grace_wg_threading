@@ -31,6 +31,6 @@ print("EE")
 var counterAlias :=   x.referenceCounter()   // Call method
 print("F")
 print("object reference count after method: {refCount(counter)}, (should be 2)")
-// At this point, localObj, alias1 and alias2 should be garbage collected, refernce count for object should be 1
+// At this point, localObj, alias1 and alias2 should be garbage collected, refernce count for object should be 2
 print "Method finished execution"
 print "Goodbye cruel world"
