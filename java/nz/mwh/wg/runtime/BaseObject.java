@@ -236,9 +236,8 @@ public class BaseObject implements GraceObject {
             fieldBaseObject.decrementReferenceCount();
 
             // recursivly decrement the fields.
-            System.out.println("this is recursive, on " + name);
+            System.out.println("this is recursive, decrementing field: " + name);
             fieldBaseObject.fields.forEach((innerName, fieldGraceObject) -> {
-                System.out.println("Field Name: " + name );
                 if (fieldGraceObject instanceof BaseObject) {
                     ((BaseObject)fieldBaseObject).decrementFieldReferenceCount(innerName);
                 }

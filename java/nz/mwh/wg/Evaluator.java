@@ -147,30 +147,11 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         List<RequestPartR> parts = new ArrayList<>();
         boolean isLoc = false;
         for (Part part : node.getParts()) {
-            // System.out.println("getting an arg");
             // Calls visit(context, x) recursively to process each argument, in case they
             // are themselves method calls.
             // creates a list of RequestPartR objects to store processed method parts.
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
 
-            for (GraceObject arg : args) {
-                if (arg instanceof BaseObject) {
-                    BaseObject baseArg = (BaseObject) arg;
-                    System.out.println("  - is BaseObject " + part.getName());
-                    if (baseArg.isLocal()) {
-                        System.out.println("  - is local");
-                        isLoc = true;
-                    }
-                    if (baseArg.isIsolated()) {
-                        System.out.println("  - is iso");
-                    }
-                    if (baseArg.isImmutable()) {
-                        System.out.println("  - is immutable");
-                    }
-                    // ((BaseObject)arg).incrementReferenceCount(); // incremented when the field is
-                    // made in BaseObject, even though temporary.
-                }
-            }
             parts.add(new RequestPartR(part.getName(), args));
         }
 
@@ -186,12 +167,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             }
         }
 
-        if (receiver instanceof BaseObject) {
-            BaseObject receiverBaseObject = (BaseObject) receiver;
-            if (receiverBaseObject.isLocal()) {
-                System.out.println("is local object as reciever ");
-            }
-        }
         return receiver.request(request);
     }
 
@@ -300,10 +275,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 BaseObject methodContext = new BaseObject(context, true);
                 methodContext.incrementReferenceCount(); // method now operates as a base object with ref count 1.
                 List<RequestPartR> requestParts = request.getParts();
-                RequestPartR firstRequestPart = requestParts.get(0); // for testing
-                if (firstRequestPart.getName().equals("referenceCounter")) {
-                    System.out.println(" --- here with the new request Part!");
-                }
+
                 for (int j = 0; j < requestParts.size(); j++) {
                     Part part = parts.get(j);
                     RequestPartR rpart = requestParts.get(j);
@@ -331,13 +303,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 try {
                     GraceObject last = null;
                     for (ASTNode part : body) {
-                        last = visit(methodContext, part); // TODO, could add a decrimenter here for post method
-                                                           // visiting!
-                        // TODO This would be for local context method calls, but could be applicable
-                        // for wider usage. methodContext iterate up and down...
+                        last = visit(methodContext, part); 
                     }
-
-                    methodContext.decrementReferenceCount(); // TODO add in an decrimenter here
+                    methodContext.decrementReferenceCount(); // TODO decrimenter used now
                     if (methodContext.getReferenceCount() == 0) {   // test for zero to indicate a local scope method call
                         // System.out.println(" going to decrement all the things aliased by this method as it is now zero");
                         for (ASTNode part : body) {
@@ -553,7 +521,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         BaseObject lexicalParent = new BaseObject(null);
         lexicalParent.addMethod("refCount(1)", request -> {
             BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
-            // System.out.print(obj.getReferenceCount());;
             return new GraceNumber(obj.getReferenceCount());
         });
         lexicalParent.addMethod("setLoc(1)", request -> {
