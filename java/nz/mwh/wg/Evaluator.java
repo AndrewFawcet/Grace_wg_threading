@@ -339,7 +339,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
                     methodContext.decrementReferenceCount(); // TODO add in an decrimenter here
                     if (methodContext.getReferenceCount() == 0) {
-                        System.out.println(" going to decrement all the things alieased by this method as it is now zero");
+                        // System.out.println(" going to decrement all the things aliased by this method as it is now zero");
                         for (ASTNode part : body) {
                             if (part instanceof DefDecl) {
                                 DefDecl def = (DefDecl) part;

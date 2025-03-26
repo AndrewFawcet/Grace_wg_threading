@@ -36,4 +36,5 @@ var square := object is iso {
 // Example Usage:
 var mySquare := square.new()
 mySquare.setSide(5)
-print("Area of the square: {mySquare.getArea()} . ")  // Should print area as 5 * 5 = 25
+print("Area of the 5 * 5 square: {mySquare.getArea()} . ")  
+print "Should print area as 5 * 5 = 25 "

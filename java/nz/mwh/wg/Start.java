@@ -41,7 +41,7 @@ public class Start {
         // String filename = "test/workingTests/bankAmbientTalk.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/linkedListWithIso1.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/linkedListWithIso2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
-        // String filename = "test/workingTests/square.grace"; // encapsulated basic hash working using iso linked lists.not
+        // String filename = "test/workingTests/square.grace"; // basic method call
         // String filename = "test/workingTests/aliasingDisallowed.grace"; // encapsulated basic hash working using iso linked lists.not
         // String filename = "test/workingTests/dereferencingIsoCheck.grace"; // iso Test working
 
@@ -75,7 +75,7 @@ public class Start {
         // String filename = "leakingBlock2.grace"; // leaking the object access from an iso using a block
         // String filename = "changingCapabilities1.grace"; // auto Iso moves
         // String filename = "changingCapabilities2.grace"; // auto Iso moves
-        String filename = "referenceCounting1.grace"; // auto Iso moves
+        // String filename = "referenceCounting1.grace"; // auto Iso moves
         
         
         if (recompile) {

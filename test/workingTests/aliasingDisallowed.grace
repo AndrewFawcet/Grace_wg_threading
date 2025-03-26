@@ -4,5 +4,6 @@
 
 var x := object is iso {var y := 1}
 var z := (x := -1)  // destructive read
+print " original alias to object removed, following access attempt should fail"
 print ("value is : {x.y} ...")  // not allowed, alias no longer exists
 
