@@ -1,7 +1,8 @@
 // Michael example
 
+print ""
 print "michael example"
-
+print "using var"
 
 method foo {
     var x := object {

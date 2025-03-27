@@ -335,29 +335,30 @@ public class BaseObject implements GraceObject {
             return objectBeingRemoved;
         });
     }
-    // TODO fix the iterator
+    // TODO fix the iterator, this is for def objects
     public void setField(String name, GraceObject value) {
         if (value instanceof BaseObject) {
             BaseObject valueBaseObject = (BaseObject) value;
             System.out.println("here____" + valueBaseObject.getAliasName());
 
-            incrementFieldsReferenceCount();
+            incrementFieldsReferenceCount(valueBaseObject.fields);
             valueBaseObject.incrementReferenceCount(); // incrementing up here for def objects.
         }
         fields.put(name, value);
     }
 
-    // TODO fix the iterator
-    private void incrementFieldsReferenceCount() {
+    // TODO fix the iterator, this is for def objects
+    private void incrementFieldsReferenceCount( Map<String, GraceObject> objectFields) {
         // recursively iterate through the base object fields Map, incrementing the reference
         // counts.
         System.out.println("here____");
-        for (GraceObject field : fields.values()) {
+        for (GraceObject field : objectFields.values()) {
             System.out.println(" + here____" );
             if (field instanceof BaseObject) {
                 BaseObject fieldBaseObject = (BaseObject) field;
                 System.out.println(" now here____");
-                fieldBaseObject.incrementReferenceCount();  
+                fieldBaseObject.incrementReferenceCount();  // increment this field
+                incrementFieldsReferenceCount(fieldBaseObject.fields);  // carry on recusivly incrementing
             }
         }
     }
