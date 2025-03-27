@@ -215,13 +215,6 @@ public class BaseObject implements GraceObject {
         fields.put(name, uninitialised);
         methods.put(name + "(0)", request -> {
 
-
-            // if (name.equals("counter")) {
-            //     System.out.println(" --- here with the new request Part!");
-            // }
-            
-
-
             GraceObject val = fields.get(name);
             if (val instanceof BaseObject) {
                 // put in to increment reference count of def objects.
@@ -236,8 +229,8 @@ public class BaseObject implements GraceObject {
         });
     }
 
-    // TODO implement adaptation for returned objects 
-    // removing methods or fields to an object, 
+    // TODO implement adaptation for returned objects
+    // removing methods or fields to an object,
     // removing imvolves recusivly decrementing the fields down.
     public void decrementFieldReferenceCount(String name) {
 
@@ -251,7 +244,7 @@ public class BaseObject implements GraceObject {
             System.out.println("this is recursive, decrementing field: " + name);
             fieldBaseObject.fields.forEach((innerName, fieldGraceObject) -> {
                 if (fieldGraceObject instanceof BaseObject) {
-                    ((BaseObject)fieldBaseObject).decrementFieldReferenceCount(innerName);
+                    ((BaseObject) fieldBaseObject).decrementFieldReferenceCount(innerName);
                 }
             });
         }
@@ -319,7 +312,8 @@ public class BaseObject implements GraceObject {
                 }
             }
 
-            // this looks at the current object and as the fields are being changed checks imm. status
+            // this looks at the current object and as the fields are being changed checks
+            // imm. status
             // This functions in conjunction with the downward propagation of immutable
             // capabilities in the public GraceObject visit(GraceObject context,
             // ObjectConstructor node) method
@@ -335,17 +329,37 @@ public class BaseObject implements GraceObject {
             // (to zero for an iso)
             // this then should be stored somewhere else...
             if (objectBeingRemoved instanceof BaseObject) {
-                System.out.println("ref count of " + name + " is: " + ((BaseObject)objectBeingRemoved).getReferenceCount());
+                System.out.println(
+                        "ref count of " + name + " is: " + ((BaseObject) objectBeingRemoved).getReferenceCount());
             }
             return objectBeingRemoved;
         });
     }
-
+    // TODO fix the iterator
     public void setField(String name, GraceObject value) {
         if (value instanceof BaseObject) {
-            ((BaseObject)value).incrementReferenceCount();  // incrementing up here for def objects.
+            BaseObject valueBaseObject = (BaseObject) value;
+            System.out.println("here____" + valueBaseObject.getAliasName());
+
+            incrementFieldsReferenceCount();
+            valueBaseObject.incrementReferenceCount(); // incrementing up here for def objects.
         }
         fields.put(name, value);
+    }
+
+    // TODO fix the iterator
+    private void incrementFieldsReferenceCount() {
+        // recursively iterate through the base object fields Map, incrementing the reference
+        // counts.
+        System.out.println("here____");
+        for (GraceObject field : fields.values()) {
+            System.out.println(" + here____" );
+            if (field instanceof BaseObject) {
+                BaseObject fieldBaseObject = (BaseObject) field;
+                System.out.println(" now here____");
+                fieldBaseObject.incrementReferenceCount();  
+            }
+        }
     }
 
     public GraceObject findReturnContext() {
