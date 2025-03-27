@@ -78,17 +78,17 @@ public class Start {
 
         // String filename = "test/referenceCounting/referenceCounting1.grace"; // ref counting basic -ok
         // String filename = "test/referenceCounting/referenceCounting2.grace"; // ref counting more aliases -ok
-        // String filename = "test/referenceCounting/referenceCounting3.grace"; // ref counting with an alias return  -notok
-        // String filename = "test/referenceCounting/referenceCounting4.grace"; // ref counting with a number return  -notok
-        // String filename = "test/referenceCounting/referenceCounting5.grace"; // ref counting with a number return  -notok
-        // String filename = "test/referenceCounting/referenceCounting6.grace"; // ref counting with a number return  -notok
-        // String filename = "test/referenceCounting/referenceCounting7.grace"; // ref counting with a number return  -notok
-        // String filename = "test/referenceCounting/referenceCounting8.grace"; // ref counting with a number return  -notok
+        // String filename = "test/referenceCounting/referenceCounting3.grace"; // ref counting with an alias return  -ok
+        // String filename = "test/referenceCounting/referenceCounting4.grace"; // ref counting with a number return  -ok
+        // String filename = "test/referenceCounting/referenceCounting5.grace"; // ref counting with a number return  -ok
+        // String filename = "test/referenceCounting/referenceCounting6.grace"; // ref counting with a number return  -ok
+        // String filename = "test/referenceCounting/referenceCounting7.grace"; // ref counting with a number return  -ok
+        // String filename = "test/referenceCounting/referenceCounting8.grace"; // ref counting with a number return  -ok
         // String filename = "test/referenceCounting/referenceCounting9.grace"; // ref counting with a number return  -notok
-        // String filename = "test/referenceCounting/referenceCounting10.grace"; // ref counting with a number return  -notok
+        String filename = "test/referenceCounting/referenceCounting10.grace"; // ref counting with a number return  -notok
         
         // String filename = "test/referenceCounting/defRefCount1.grace"; // ref counting with a number return  -notok
-        String filename = "test/referenceCounting/defRefCount2.grace"; // ref counting with a number return  -notok
+        // String filename = "test/referenceCounting/defRefCount2.grace"; // ref counting with a number return  -notok
         
         if (recompile) {
             args = new String[]{

@@ -6,7 +6,7 @@ method b {
     return a
 }
 
-var newNumber :=  1 + b().value   // Call method
+var newNumber :=  1 + b.value   // Call method
 
 print("newNumber value :  {newNumber}, (should be 2)")
-print("object reference count after method: {refCount(a)}, (should be 1 or 2?, currently is 1)")
+print("object reference count after method: {refCount(a)}, (should be 1)")
