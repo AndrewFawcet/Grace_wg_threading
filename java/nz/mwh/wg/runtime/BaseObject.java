@@ -343,9 +343,8 @@ public class BaseObject implements GraceObject {
 
     public void setField(String name, GraceObject value) {
         if (value instanceof BaseObject) {
-            ((BaseObject)value).incrementReferenceCount();
+            ((BaseObject)value).incrementReferenceCount();  // incrementing up here for def objects.
         }
-        System.out.println("blah--");
         fields.put(name, value);
     }
 
