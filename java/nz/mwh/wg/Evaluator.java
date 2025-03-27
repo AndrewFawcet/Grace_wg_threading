@@ -63,9 +63,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             if (part instanceof DefDecl) {
                 DefDecl def = (DefDecl) part;
                 object.addField(def.getName()); // Always add to the base object (no difference for isoWrapper)
-
-                System.out.println("--DefDecl in Eval making baseObject--");
-
             } else if (part instanceof VarDecl) { // TODO could make a variable Consume and Declare
                 VarDecl var = (VarDecl) part;
                 if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
@@ -154,7 +151,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     public GraceObject visit(GraceObject context, LexicalRequest node) {
 
         List<RequestPartR> parts = new ArrayList<>();
-        boolean isLoc = false;
         for (Part part : node.getParts()) {
             // Calls visit(context, x) recursively to process each argument, in case they
             // are themselves method calls.
@@ -166,15 +162,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         Request request = new Request(this, parts); // a method call or message send within a local scope
         GraceObject receiver = context.findReceiver(request.getName());
-
-        if (isLoc) {
-            if (receiver instanceof BaseObject) {
-                // System.out.println("reciever " + ((BaseObject)receiver).getName()) ;
-                System.out.println("request " + request.getName());
-                // System.out.println("`context " + ((BaseObject) context).) ;
-
-            }
-        }
 
         return receiver.request(request);
     }
@@ -233,7 +220,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     public GraceObject visit(GraceObject context, DefDecl node) {
 
         if (context instanceof BaseObject) {
+            System.out.println("blah");
             BaseObject object = (BaseObject) context;
+            // object.incrementReferenceCount();
             GraceObject value = node.getValue().accept(context, this);
             object.setField(node.getName(), value);
             return done;

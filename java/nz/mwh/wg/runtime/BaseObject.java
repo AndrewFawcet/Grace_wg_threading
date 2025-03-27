@@ -342,7 +342,10 @@ public class BaseObject implements GraceObject {
     }
 
     public void setField(String name, GraceObject value) {
-
+        if (value instanceof BaseObject) {
+            ((BaseObject)value).incrementReferenceCount();
+        }
+        System.out.println("blah--");
         fields.put(name, value);
     }
 
