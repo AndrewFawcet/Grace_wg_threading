@@ -100,6 +100,13 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             if (part instanceof DefDecl) {
                 DefDecl def = (DefDecl) part;
                 object.addField(def.getName()); // Always add to the base object (no difference for isoWrapper)
+
+                System.out.println("--hereere--");
+                object.incrementReferenceCount();
+
+
+
+
             } else if (part instanceof VarDecl) { // TODO could make a variable Consume and Declare
                 VarDecl var = (VarDecl) part;
                 if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {

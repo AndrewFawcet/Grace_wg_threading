@@ -214,13 +214,27 @@ public class BaseObject implements GraceObject {
 
         fields.put(name, uninitialised);
         methods.put(name + "(0)", request -> {
+
+
+            // if (name.equals("counter")) {
+            //     System.out.println(" --- here with the new request Part!");
+            // }
+            
+            
+            
             GraceObject val = fields.get(name);
+            if (val instanceof BaseObject) {
+                // put in to increment reference count of def objects.
+                // ((BaseObject) val).incrementReferenceCount();
+            }
+
             if (val == uninitialised) {
                 throw new RuntimeException(
                         "Field " + name + " is not initialised; other fields are " + fields.keySet());
             }
             return val;
         });
+
     }
 
     // TODO implement adaptation for returned objects 
@@ -241,7 +255,6 @@ public class BaseObject implements GraceObject {
                     ((BaseObject)fieldBaseObject).decrementFieldReferenceCount(innerName);
                 }
             });
-            
         }
     }
 

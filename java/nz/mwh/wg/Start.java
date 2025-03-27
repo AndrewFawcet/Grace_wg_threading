@@ -78,7 +78,13 @@ public class Start {
         // String filename = "referenceCounting1.grace"; // ref counting basic -ok
         // String filename = "referenceCounting2.grace"; // ref counting more aliases -ok
         // String filename = "referenceCounting3.grace"; // ref counting with an alias return  -notok
-        String filename = "referenceCounting4.grace"; // ref counting with a number return  -notok
+        // String filename = "referenceCounting4.grace"; // ref counting with a number return  -notok
+        // String filename = "referenceCounting5.grace"; // ref counting with a number return  -notok
+        // String filename = "referenceCounting6.grace"; // ref counting with a number return  -notok
+        // String filename = "referenceCounting7.grace"; // ref counting with a number return  -notok
+        // String filename = "referenceCounting8.grace"; // ref counting with a number return  -notok
+        // String filename = "referenceCounting9.grace"; // ref counting with a number return  -notok
+        String filename = "referenceCounting10.grace"; // ref counting with a number return  -notok
         
         
         if (recompile) {
