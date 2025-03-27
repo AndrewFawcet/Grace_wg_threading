@@ -220,8 +220,8 @@ public class BaseObject implements GraceObject {
             //     System.out.println(" --- here with the new request Part!");
             // }
             
-            
-            
+
+
             GraceObject val = fields.get(name);
             if (val instanceof BaseObject) {
                 // put in to increment reference count of def objects.
@@ -234,7 +234,6 @@ public class BaseObject implements GraceObject {
             }
             return val;
         });
-
     }
 
     // TODO implement adaptation for returned objects 

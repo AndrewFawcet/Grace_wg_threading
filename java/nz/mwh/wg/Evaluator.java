@@ -40,6 +40,68 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, ObjectConstructor node) {
 
+        baseObejctCapabilityChecks(context, node);
+        
+        boolean isNewObjectLocal = node.isLocal();
+        boolean isNewObjectIsolated = node.isIsolated();
+        boolean isNewObjectImmutable = node.isImmutable();
+
+        // This creates the new BaseObject, the context is the lexical parent
+        BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
+                isNewObjectImmutable);
+
+        // If isoWrapper should be applied, wrap the object
+        GraceObject finalObject = object;
+
+        if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
+            // if (object.isUsingIsoWrapper() && object.isIsolated()) {
+            finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper toggle is on
+        }
+
+        List<ASTNode> body = node.getBody();
+        for (ASTNode part : body) {
+            if (part instanceof DefDecl) {
+                DefDecl def = (DefDecl) part;
+                object.addField(def.getName()); // Always add to the base object (no difference for isoWrapper)
+
+                System.out.println("--DefDecl in Eval making baseObject--");
+
+            } else if (part instanceof VarDecl) { // TODO could make a variable Consume and Declare
+                VarDecl var = (VarDecl) part;
+                if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
+                    IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
+                    finalObjectWrapper.addField(var.getName());
+                    finalObjectWrapper.addFieldWriter(var.getName()); // for new object field
+                } else {
+                    BaseObject finalObjectBase = (BaseObject) finalObject;
+                    finalObjectBase.addField(var.getName());
+                    finalObjectBase.addFieldWriter(var.getName()); // for new object field
+                }
+            } else if (part instanceof ImportStmt) {
+                ImportStmt imp = (ImportStmt) part;
+                object.addField(imp.getName());
+            } else if (part instanceof MethodDecl) {
+                visit(object, part);
+            }
+        }
+
+        for (ASTNode part : body) {
+            // System.out.println("++++");
+            if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
+                IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
+                visit(finalObjectWrapper, part);
+            } else {
+                BaseObject finalObjectBase = (BaseObject) finalObject;
+                visit(finalObjectBase, part);
+            }
+            // visit(object, part);
+            // System.out.println("----");
+        }
+
+        return finalObject;
+    }
+
+    private void baseObejctCapabilityChecks(GraceObject context, ObjectConstructor node) {
         // checks if baseObject that is immutable or isolated is making another nested
         // object, if so it will pass on the capability (propagates downward)
         // also checks if baseObject that is immutable and if the newObject is isolated,
@@ -47,7 +109,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         boolean isNewObjectLocal = node.isLocal();
         boolean isNewObjectIsolated = node.isIsolated();
         boolean isNewObjectImmutable = node.isImmutable();
-
         if (context instanceof BaseObject) {
             BaseObject contextBaseObject = (BaseObject) context;
             if (contextBaseObject.isLocal()) {
@@ -83,63 +144,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 }
             }
         }
-        // This creates the new BaseObject, the context is the lexical parent
-        BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
-                isNewObjectImmutable);
-
-        // If isoWrapper should be applied, wrap the object
-        GraceObject finalObject = object;
-
-        if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
-            // if (object.isUsingIsoWrapper() && object.isIsolated()) {
-            finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper toggle is on
-        }
-
-        List<ASTNode> body = node.getBody();
-        for (ASTNode part : body) {
-            if (part instanceof DefDecl) {
-                DefDecl def = (DefDecl) part;
-                object.addField(def.getName()); // Always add to the base object (no difference for isoWrapper)
-
-                System.out.println("--hereere--");
-                object.incrementReferenceCount();
-
-
-
-
-            } else if (part instanceof VarDecl) { // TODO could make a variable Consume and Declare
-                VarDecl var = (VarDecl) part;
-                if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
-                    IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
-                    finalObjectWrapper.addField(var.getName());
-                    finalObjectWrapper.addFieldWriter(var.getName()); // for new object field
-                } else {
-                    BaseObject finalObjectBase = (BaseObject) finalObject;
-                    finalObjectBase.addField(var.getName());
-                    finalObjectBase.addFieldWriter(var.getName()); // for new object field
-                }
-            } else if (part instanceof ImportStmt) {
-                ImportStmt imp = (ImportStmt) part;
-                object.addField(imp.getName());
-            } else if (part instanceof MethodDecl) {
-                visit(object, part);
-            }
-        }
-
-        for (ASTNode part : body) {
-            // System.out.println("++++");
-            if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
-                IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
-                visit(finalObjectWrapper, part);
-            } else {
-                BaseObject finalObjectBase = (BaseObject) finalObject;
-                visit(finalObjectBase, part);
-            }
-            // visit(object, part);
-            // System.out.println("----");
-        }
-
-        return finalObject;
     }
 
     // Purpose: Processes a lexical request, which is a method call or message send
@@ -311,14 +315,15 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     }
                 }
                 try {
-                      GraceObject last = null;
+                    GraceObject last = null;
                     for (ASTNode part : body) {
                         last = visit(methodContext, part); // this is where the method gets actioned
                     }
-                    
+
                     methodContext.decrementReferenceCount(); // TODO decrimenter used now
-                    if (methodContext.getReferenceCount() == 0) {   // test for zero to indicate a local scope method call
-                        System.out.println(" going to decrement all the things aliased by this method as it is now zero");
+                    if (methodContext.getReferenceCount() == 0) { // test for zero to indicate a local scope method call
+                        System.out
+                                .println(" going to decrement all the things aliased by this method as it is now zero");
                         for (ASTNode part : body) {
                             if (part instanceof DefDecl) {
                                 DefDecl def = (DefDecl) part;
@@ -339,14 +344,16 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         if (otherStuffInObject instanceof BaseObject) {
                             BaseObject otherStuffInObjectBaseObject = (BaseObject) otherStuffInObject;
                             otherStuffInObjectBaseObject.decrementReferenceCount();
-                            System.out.println("ref  "+ otherStuffInObjectBaseObject.getReferenceCount() );
-                            if (otherStuffInObjectBaseObject.getReferenceCount() == 0) {   // test for zero to indicate a local scope method call
-                                System.out.println(" going to decrement all the things aliased by this method as it is now zero for the reurned object");
+                            System.out.println("ref  " + otherStuffInObjectBaseObject.getReferenceCount());
+                            if (otherStuffInObjectBaseObject.getReferenceCount() == 0) { // test for zero to indicate a
+                                                                                         // local scope method call
+                                System.out.println(
+                                        " going to decrement all the things aliased by this method as it is now zero for the reurned object");
                                 for (ASTNode part : body) {
                                     if (part instanceof DefDecl) {
                                         DefDecl def = (DefDecl) part;
                                         otherStuffInObjectBaseObject.decrementFieldReferenceCount(def.getName());
-        
+
                                     } else if (part instanceof VarDecl) {
                                         VarDecl var = (VarDecl) part;
                                         otherStuffInObjectBaseObject.decrementFieldReferenceCount(var.getName());
@@ -354,7 +361,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                                 }
                             }
                         }
-                        return returningObject;   // TODO this is there the decrimenter also needs to be operating for returning aliases or objects
+                        return returningObject; // TODO this is there the decrimenter also needs to be operating for
+                                                // returning aliases or objects
                         // the getValue() gets the returned object or number or whatever
                     } else {
                         throw re;
@@ -367,57 +375,58 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 "method can only be defined in object context of either BaseObject or IsoWrapper");
     }
 
-    // This is mostly a repeat of a base Object, but using a IsoWrapper. 
-    // All methods and fields go through the IsoWrapper object, to the actual BaseObject object.
+    // This is mostly a repeat of a base Object, but using a IsoWrapper.
+    // All methods and fields go through the IsoWrapper object, to the actual
+    // BaseObject object.
     private GraceObject insertWrapper(IsoWrapper wrapperContext, MethodDecl node, List<? extends Part> parts) {
         List<? extends ASTNode> body = node.getBody();
-    
+
         wrapperContext.addMethod(parts.stream().map(x -> x.getName() + "(" + x.getParameters().size() + ")")
                 .collect(Collectors.joining("")), request -> {
-            
-            // Create a method context that wraps the current IsoWrapper context
-            BaseObject methodContextBase = new BaseObject(wrapperContext.getWrappedObject(), true);
-    
-            List<RequestPartR> requestParts = request.getParts();
-            for (int j = 0; j < requestParts.size(); j++) {
-                Part part = parts.get(j);
-                RequestPartR rpart = requestParts.get(j);
-                List<? extends ASTNode> parameters = part.getParameters();
-    
-                for (int i = 0; i < parameters.size(); i++) {
-                    IdentifierDeclaration parameter = (IdentifierDeclaration) parameters.get(i);
-                    methodContextBase.addField(parameter.getName());
-                    methodContextBase.setField(parameter.getName(), rpart.getArgs().get(i));
-                }
-            }
-    
-            // Handle the body of the method by visiting each part
-            for (ASTNode part : body) {
-                if (part instanceof DefDecl) {
-                    DefDecl def = (DefDecl) part;
-                    methodContextBase.addField(def.getName());
-                } else if (part instanceof VarDecl) {
-                    VarDecl var = (VarDecl) part;
-                    methodContextBase.addField(var.getName());
-                    methodContextBase.addFieldWriter(var.getName()); // Handle writing to the field
-                }
-            }
-    
-            try {
-                GraceObject last = null;
-                for (ASTNode part : body) {
-                    last = visit(methodContextBase, part); // Visit the body parts using the method context
-                }
-                return last;
-            } catch (ReturnException re) {
-                if (re.context == methodContextBase) {
-                    return re.getValue();
-                } else {
-                    throw re;
-                }
-            }
-        });
-    
+
+                    // Create a method context that wraps the current IsoWrapper context
+                    BaseObject methodContextBase = new BaseObject(wrapperContext.getWrappedObject(), true);
+
+                    List<RequestPartR> requestParts = request.getParts();
+                    for (int j = 0; j < requestParts.size(); j++) {
+                        Part part = parts.get(j);
+                        RequestPartR rpart = requestParts.get(j);
+                        List<? extends ASTNode> parameters = part.getParameters();
+
+                        for (int i = 0; i < parameters.size(); i++) {
+                            IdentifierDeclaration parameter = (IdentifierDeclaration) parameters.get(i);
+                            methodContextBase.addField(parameter.getName());
+                            methodContextBase.setField(parameter.getName(), rpart.getArgs().get(i));
+                        }
+                    }
+
+                    // Handle the body of the method by visiting each part
+                    for (ASTNode part : body) {
+                        if (part instanceof DefDecl) {
+                            DefDecl def = (DefDecl) part;
+                            methodContextBase.addField(def.getName());
+                        } else if (part instanceof VarDecl) {
+                            VarDecl var = (VarDecl) part;
+                            methodContextBase.addField(var.getName());
+                            methodContextBase.addFieldWriter(var.getName()); // Handle writing to the field
+                        }
+                    }
+
+                    try {
+                        GraceObject last = null;
+                        for (ASTNode part : body) {
+                            last = visit(methodContextBase, part); // Visit the body parts using the method context
+                        }
+                        return last;
+                    } catch (ReturnException re) {
+                        if (re.context == methodContextBase) {
+                            return re.getValue();
+                        } else {
+                            throw re;
+                        }
+                    }
+                });
+
         return done;
     }
 
