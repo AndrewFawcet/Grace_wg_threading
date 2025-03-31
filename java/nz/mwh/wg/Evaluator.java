@@ -285,6 +285,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     List<? extends ASTNode> parameters = part.getParameters();
                     for (int i = 0; i < parameters.size(); i++) {
                         IdentifierDeclaration parameter = (IdentifierDeclaration) parameters.get(i);
+                        System.out.println("--" + parameter.getName());
                         methodContext.addField(parameter.getName());
                         methodContext.setField(parameter.getName(), rpart.getArgs().get(i));
                     }
@@ -315,11 +316,16 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 } catch (ReturnException re) {
                     if (re.context == methodContext) {
                         GraceObject returningObject = re.getValue();
+                        System.out.println("-----------------");
+                        if (returningObject instanceof BaseObject) {
+                            ((BaseObject) returningObject).incrementReferenceCount();
+                        }
                         GraceObject otherStuffInObject = re.context;
                         if (otherStuffInObject instanceof BaseObject) {
                             BaseObject otherStuffInObjectBaseObject = (BaseObject) otherStuffInObject;
                             System.out.println("decrementing in methodContect (catch)");
-                            otherStuffInObjectBaseObject.decrementReferenceCount();
+                            // otherStuffInObjectBaseObject.decrementReferenceCount();
+                            // otherStuffInObjectBaseObject.incrementReferenceCount();
                             System.out.println("ref  " + otherStuffInObjectBaseObject.getReferenceCount());
                         }
                         return returningObject; // TODO this is there the decrimenter also needs to be operating for
