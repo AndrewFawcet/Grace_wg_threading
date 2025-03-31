@@ -19,6 +19,7 @@ public class BaseObject implements GraceObject {
     private Map<String, GraceObject> fields = new HashMap<>();
     private Map<String, Function<Request, GraceObject>> methods = new HashMap<>();
     private int referenceCount = 0;
+    private boolean decrementedToZero = false;
     private boolean isIsolated = false;
     private boolean isImmutable = false;
     private boolean isLocal = false;
@@ -62,10 +63,7 @@ public class BaseObject implements GraceObject {
         this.isLocal = isLocal;
         this.isIsolated = isIsolated;
         this.isImmutable = isImmutable;
-        if (isLocal) {
-            System.out.println("-------------");
-        }
-        // If the object is marked as local, set objectThread to the current thread
+        // set objectThread to the current thread
         this.objectThread = Thread.currentThread();
 
         // Add basic methods
@@ -119,12 +117,25 @@ public class BaseObject implements GraceObject {
     }
 
     public void incrementReferenceCount() {
+        if (decrementedToZero && referenceCount != 0) {
+            System.out.println("oddly the decrementedToZero is true and the ref count is " + referenceCount);
+        }
         referenceCount++;
+        if (decrementedToZero) {
+            decrementedToZero = false;
+            // recursively iterate through the fields checking all that have been decremented to zero.
+            for (GraceObject val : fields.values()) { 
+                if (val instanceof BaseObject) {
+                    ((BaseObject)val).incrementReferenceCount();
+                }
+            }
+        }
     }
 
     public void decrementReferenceCount() {
         referenceCount--;
         if (referenceCount == 0) {
+            decrementedToZero = true;
             for (GraceObject val : fields.values()) { 
                 if (val instanceof BaseObject) {
                     ((BaseObject)val).decrementReferenceCount();
@@ -213,10 +224,11 @@ public class BaseObject implements GraceObject {
         methods.put(name + "(0)", request -> {
 
             GraceObject val = fields.get(name);
-            if (val instanceof BaseObject) {
-                // put in to increment reference count of def objects.
-                // ((BaseObject) val).incrementReferenceCount();
-            }
+            // junk?
+            // if (val instanceof BaseObject) {
+            //     // put in to increment reference count of def objects.
+            //     // ((BaseObject) val).incrementReferenceCount();
+            // }
 
             if (val == uninitialised) {
                 throw new RuntimeException(
@@ -279,8 +291,7 @@ public class BaseObject implements GraceObject {
                         }
                     }
                 }
-                // checking if isolated and imutable, and runtime exception if multiple
-                // capabilities
+                // runtime exception if multiple capabilities
                 if (baseObjectBeingAssigned.isIsolated() && baseObjectBeingAssigned.isImmutable()) {
                     throw new RuntimeException(
                             "Capability Violation: Object '" + name
@@ -288,11 +299,6 @@ public class BaseObject implements GraceObject {
                 }
             }
 
-            // this looks at the current object and as the fields are being changed checks
-            // imm. status
-            // This functions in conjunction with the downward propagation of immutable
-            // capabilities in the public GraceObject visit(GraceObject context,
-            // ObjectConstructor node) method
             if (isImmutable) {
                 if (getReferenceCount() != 0) { // ref count of 0 indicates a fresh object
                     throw new RuntimeException(
@@ -316,29 +322,28 @@ public class BaseObject implements GraceObject {
     public void setField(String name, GraceObject value) {
         if (value instanceof BaseObject) {
             BaseObject valueBaseObject = (BaseObject) value;
-            System.out.println("here____" + valueBaseObject.getAliasName());
+            // System.out.println("here____" + valueBaseObject.getAliasName());
 
-            incrementFieldsReferenceCount(valueBaseObject.fields);
             valueBaseObject.incrementReferenceCount(); // incrementing up here for def objects.
         }
         fields.put(name, value);
     }
 
-    // TODO fix the iterator, this is for def objects
-    private void incrementFieldsReferenceCount( Map<String, GraceObject> objectFields) {
-        // recursively iterate through the base object fields Map, incrementing the reference
-        // counts.
-        System.out.println("here____");
-        for (GraceObject field : objectFields.values()) {
-            System.out.println(" + here____" );
-            if (field instanceof BaseObject) {
-                BaseObject fieldBaseObject = (BaseObject) field;
-                System.out.println(" now here____");
-                fieldBaseObject.incrementReferenceCount();  // increment this field
-                incrementFieldsReferenceCount(fieldBaseObject.fields);  // carry on recusivly incrementing
-            }
-        }
-    }
+    // // TODO fix the iterator, this is for def objects
+    // private void incrementFieldsReferenceCount( Map<String, GraceObject> objectFields) {
+    //     // recursively iterate through the base object fields Map, incrementing the reference
+    //     // counts.
+    //     System.out.println("here____");
+    //     for (GraceObject field : objectFields.values()) {
+    //         System.out.println(" + here____" );
+    //         if (field instanceof BaseObject) {
+    //             BaseObject fieldBaseObject = (BaseObject) field;
+    //             System.out.println(" now here____");
+    //             fieldBaseObject.incrementReferenceCount();  // increment this field
+    //             incrementFieldsReferenceCount(fieldBaseObject.fields);  // carry on recusivly incrementing
+    //         }
+    //     }
+    // }
 
     public GraceObject findReturnContext() {
 

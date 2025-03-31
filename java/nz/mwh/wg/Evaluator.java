@@ -218,7 +218,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // TODO throw in a check here is the object is iso.
     @Override
     public GraceObject visit(GraceObject context, DefDecl node) {
-
         if (context instanceof BaseObject) {
             System.out.println("blah");
             BaseObject object = (BaseObject) context;
@@ -271,6 +270,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             object.addMethod(name, request -> {
 
                 BaseObject methodContext = new BaseObject(context, true);
+                System.out.println("incrementing in methodContext");
                 methodContext.incrementReferenceCount(); // method now operates as a base object with ref count 1.
                 List<RequestPartR> requestParts = request.getParts();
 
@@ -308,7 +308,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     for (ASTNode part : body) {
                         last = visit(methodContext, part); // this is where the method gets actioned
                     }
-
+                    System.out.println("decrementing in methodContect");
                     methodContext.decrementReferenceCount(); // TODO decrimenter used now
 
                     return last;
@@ -318,6 +318,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         GraceObject otherStuffInObject = re.context;
                         if (otherStuffInObject instanceof BaseObject) {
                             BaseObject otherStuffInObjectBaseObject = (BaseObject) otherStuffInObject;
+                            System.out.println("decrementing in methodContect (catch)");
                             otherStuffInObjectBaseObject.decrementReferenceCount();
                             System.out.println("ref  " + otherStuffInObjectBaseObject.getReferenceCount());
                         }
