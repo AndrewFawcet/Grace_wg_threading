@@ -310,20 +310,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     }
 
                     methodContext.decrementReferenceCount(); // TODO decrimenter used now
-                    if (methodContext.getReferenceCount() == 0) { // test for zero to indicate a local scope method call
-                        System.out
-                                .println(" going to decrement all the things aliased by this method as it is now zero");
-                        for (ASTNode part : body) {
-                            if (part instanceof DefDecl) {
-                                DefDecl def = (DefDecl) part;
-                                methodContext.decrementFieldReferenceCount(def.getName());
-
-                            } else if (part instanceof VarDecl) {
-                                VarDecl var = (VarDecl) part;
-                                methodContext.decrementFieldReferenceCount(var.getName());
-                            }
-                        }
-                    }
 
                     return last;
                 } catch (ReturnException re) {
@@ -334,21 +320,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                             BaseObject otherStuffInObjectBaseObject = (BaseObject) otherStuffInObject;
                             otherStuffInObjectBaseObject.decrementReferenceCount();
                             System.out.println("ref  " + otherStuffInObjectBaseObject.getReferenceCount());
-                            if (otherStuffInObjectBaseObject.getReferenceCount() == 0) { // test for zero to indicate a
-                                                                                         // local scope method call
-                                System.out.println(
-                                        " going to decrement all the things aliased by this method as it is now zero for the reurned object");
-                                for (ASTNode part : body) {
-                                    if (part instanceof DefDecl) {
-                                        DefDecl def = (DefDecl) part;
-                                        otherStuffInObjectBaseObject.decrementFieldReferenceCount(def.getName());
-
-                                    } else if (part instanceof VarDecl) {
-                                        VarDecl var = (VarDecl) part;
-                                        otherStuffInObjectBaseObject.decrementFieldReferenceCount(var.getName());
-                                    }
-                                }
-                            }
                         }
                         return returningObject; // TODO this is there the decrimenter also needs to be operating for
                                                 // returning aliases or objects

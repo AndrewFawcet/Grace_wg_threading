@@ -124,8 +124,15 @@ public class BaseObject implements GraceObject {
 
     public void decrementReferenceCount() {
         referenceCount--;
+        if (referenceCount == 0) {
+            for (GraceObject val : fields.values()) { 
+                if (val instanceof BaseObject) {
+                    ((BaseObject)val).decrementReferenceCount();
+                }
+            }
+        }
     }
-
+ 
     public void setAliasName(String name) {
         aliasName = name;
     }
@@ -141,16 +148,6 @@ public class BaseObject implements GraceObject {
     public GraceObject getHoldingObject() {
         return holdingObject;
     }
-
-    // // Called when the IsoWrapper is created
-    // public void setWrapper(IsoWrapper wrapper) {
-    // // validateIfUsingIsoWrapper(); //TODO how should this be checked?
-    // if (this.wrapper != null) {
-    // throw new RuntimeException("IsoWrapper is already set and cannot be
-    // changed.");
-    // }
-    // this.wrapper = wrapper;
-    // }
 
     public void setIsAccessAllowed(boolean access) {
         isAccessAllowed = access;
@@ -227,27 +224,6 @@ public class BaseObject implements GraceObject {
             }
             return val;
         });
-    }
-
-    // TODO implement adaptation for returned objects
-    // removing methods or fields to an object,
-    // removing imvolves recusivly decrementing the fields down.
-    public void decrementFieldReferenceCount(String name) {
-
-        System.out.println("decrementing fields in the method");
-        GraceObject fieldObject = fields.get(name);
-        if (fieldObject instanceof BaseObject) {
-            BaseObject fieldBaseObject = (BaseObject) fieldObject;
-            fieldBaseObject.decrementReferenceCount();
-
-            // recursivly decrement the fields.
-            System.out.println("this is recursive, decrementing field: " + name);
-            fieldBaseObject.fields.forEach((innerName, fieldGraceObject) -> {
-                if (fieldGraceObject instanceof BaseObject) {
-                    ((BaseObject) fieldBaseObject).decrementFieldReferenceCount(innerName);
-                }
-            });
-        }
     }
 
     // puts the writer method into the object or scope
@@ -335,6 +311,7 @@ public class BaseObject implements GraceObject {
             return objectBeingRemoved;
         });
     }
+
     // TODO fix the iterator, this is for def objects
     public void setField(String name, GraceObject value) {
         if (value instanceof BaseObject) {
