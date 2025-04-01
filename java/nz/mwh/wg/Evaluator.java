@@ -219,7 +219,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     @Override
     public GraceObject visit(GraceObject context, DefDecl node) {
         if (context instanceof BaseObject) {
-            System.out.println("blah");
             BaseObject object = (BaseObject) context;
             // object.incrementReferenceCount();
             GraceObject value = node.getValue().accept(context, this);
@@ -309,7 +308,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     for (ASTNode part : body) {
                         last = visit(methodContext, part); // this is where the method gets actioned
                     }
-                    System.out.println("decrementing in methodContect");
+                    System.out.println("decrementing in methodContext");
                     methodContext.decrementReferenceCount(); // TODO decrimenter used now
 
                     return last;
@@ -318,16 +317,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         GraceObject returningObject = re.getValue();
                         System.out.println("-----------------");
                         if (returningObject instanceof BaseObject) {
-                            ((BaseObject) returningObject).incrementReferenceCount();
+                            // ((BaseObject) returningObject).incrementReferenceCount();
                         }
-                        GraceObject otherStuffInObject = re.context;
-                        if (otherStuffInObject instanceof BaseObject) {
-                            BaseObject otherStuffInObjectBaseObject = (BaseObject) otherStuffInObject;
-                            System.out.println("decrementing in methodContect (catch)");
-                            // otherStuffInObjectBaseObject.decrementReferenceCount();
-                            // otherStuffInObjectBaseObject.incrementReferenceCount();
-                            System.out.println("ref  " + otherStuffInObjectBaseObject.getReferenceCount());
-                        }
+                        // GraceObject otherStuffInObject = re.context;
+                        methodContext.decrementReferenceCount();
+                        System.out.println("ref  " + methodContext.getReferenceCount());
+                        System.out.println("decrementing in methodContect (catch)");
                         return returningObject; // TODO this is there the decrimenter also needs to be operating for
                                                 // returning aliases or objects
                         // the getValue() gets the returned object or number or whatever
