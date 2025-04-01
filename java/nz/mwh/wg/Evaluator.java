@@ -269,14 +269,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             object.addMethod(name, request -> {
 
                 BaseObject methodContext = new BaseObject(context, true);
-                System.out.println("incrementing in methodContext");
+                // System.out.println("incrementing in methodContext");
                 methodContext.incrementReferenceCount(); // method now operates as a base object with ref count 1.
                 List<RequestPartR> requestParts = request.getParts();
-
-                RequestPartR firstRequestPart = requestParts.get(0); // for testing
-                if (firstRequestPart.getName().equals("referenceCounter")) {
-                    System.out.println(" --- here with the new request Part!");
-                }
 
                 for (int j = 0; j < requestParts.size(); j++) {
                     Part part = parts.get(j);
@@ -307,7 +302,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     for (ASTNode part : body) {
                         last = visit(methodContext, part); // this is where the method gets actioned
                     }
-                    System.out.println("decrementing in methodContext");
+                    // System.out.println("decrementing in methodContext");
                     methodContext.decrementReferenceCount(); // TODO decrimenter used now
 
                     return last;
@@ -322,7 +317,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                             ((BaseObject) returningObject).setExtraRefIncrement(true);
                         }
                         methodContext.decrementReferenceCount();
-                        System.out.println("decrementing in methodContect (catch)");
+                        // System.out.println("decrementing in methodContect (catch)");
                         return returningObject;
                     } else {
                         throw re;
