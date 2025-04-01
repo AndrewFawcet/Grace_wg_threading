@@ -87,7 +87,8 @@ public class Start {
         // String filename = "test/referenceCounting/referenceCounting9.grace"; // ref counting with a number return  -ok
         // String filename = "test/referenceCounting/referenceCounting9a.grace"; // ref counting with a number return  -ok
         // String filename = "test/referenceCounting/referenceCounting9b.grace"; // ref counting with a number return  -ok
-        String filename = "test/referenceCounting/referenceCounting10.grace"; // ref counting with a number return  -notok
+        String filename = "test/referenceCounting/referenceCounting9c.grace"; // ref counting with a number return  -ok
+        // String filename = "test/referenceCounting/referenceCounting10.grace"; // ref counting with a number return  -notok
         
         // String filename = "test/referenceCounting/defRefCount1.grace"; // ref counting with a number return  -notok
         // String filename = "test/referenceCounting/defRefCount2.grace"; // ref counting with a number return  -notok
