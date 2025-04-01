@@ -19,7 +19,8 @@ public class BaseObject implements GraceObject {
     private Map<String, GraceObject> fields = new HashMap<>();
     private Map<String, Function<Request, GraceObject>> methods = new HashMap<>();
     private int referenceCount = 0;
-    private boolean decrementedToZero = false;
+    // private boolean decrementedToZero = false;
+    private boolean extraRefIncrement = false;
     private boolean isIsolated = false;
     private boolean isImmutable = false;
     private boolean isLocal = false;
@@ -117,31 +118,33 @@ public class BaseObject implements GraceObject {
     }
 
     public void incrementReferenceCount() {
-        if (decrementedToZero && referenceCount != 0) {
-            System.out.println("oddly the decrementedToZero is true and the ref count is " + referenceCount);
+        if (extraRefIncrement && referenceCount != 1) {
+            System.out.println("oddly the extraRefIncrement is true and the ref count is " + referenceCount);
         }
-        referenceCount++;
-        if (decrementedToZero) {
-            decrementedToZero = false;
-            // recursively iterate through the fields checking all that have been decremented to zero.
-            for (GraceObject val : fields.values()) { 
-                if (val instanceof BaseObject) {
-                    ((BaseObject)val).incrementReferenceCount();
-                }
-            }
+        if (extraRefIncrement) {
+            extraRefIncrement = false;
+        } else {
+            referenceCount++;
         }
     }
 
     public void decrementReferenceCount() {
         referenceCount--;
         if (referenceCount == 0) {
-            decrementedToZero = true;
             for (GraceObject val : fields.values()) { 
                 if (val instanceof BaseObject) {
                     ((BaseObject)val).decrementReferenceCount();
                 }
             }
         }
+    }
+
+    public boolean getExtraRefIncrement() {
+        return extraRefIncrement;
+    }
+
+    public void setExtraRefIncrement(boolean refIncrement) {
+        extraRefIncrement = refIncrement;
     }
  
     public void setAliasName(String name) {

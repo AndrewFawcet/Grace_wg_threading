@@ -248,7 +248,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         return done;
     }
 
-    // Purpose: Declares a method and adds it to the current object context.
+    // method
     // Details: Processes the method’s parts and body, setting up parameter handling
     // and method execution.
     @Override
@@ -284,7 +284,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     List<? extends ASTNode> parameters = part.getParameters();
                     for (int i = 0; i < parameters.size(); i++) {
                         IdentifierDeclaration parameter = (IdentifierDeclaration) parameters.get(i);
-                        System.out.println("--" + parameter.getName());
                         methodContext.addField(parameter.getName());
                         methodContext.setField(parameter.getName(), rpart.getArgs().get(i));
                     }
@@ -313,19 +312,18 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
                     return last;
                 } catch (ReturnException re) {
+                    // for a method return
                     if (re.context == methodContext) {
                         GraceObject returningObject = re.getValue();
-                        System.out.println("-----------------");
                         if (returningObject instanceof BaseObject) {
-                            // ((BaseObject) returningObject).incrementReferenceCount();
+                            // this increments gives the returning object an extra object ref. and set a boolean to indicate this has been done.
+                            // the boolean will be found later and redet when the returning object is incremented for being assigned to a variable.
+                            ((BaseObject) returningObject).incrementReferenceCount();
+                            ((BaseObject) returningObject).setExtraRefIncrement(true);
                         }
-                        // GraceObject otherStuffInObject = re.context;
                         methodContext.decrementReferenceCount();
-                        System.out.println("ref  " + methodContext.getReferenceCount());
                         System.out.println("decrementing in methodContect (catch)");
-                        return returningObject; // TODO this is there the decrimenter also needs to be operating for
-                                                // returning aliases or objects
-                        // the getValue() gets the returned object or number or whatever
+                        return returningObject;
                     } else {
                         throw re;
                     }
