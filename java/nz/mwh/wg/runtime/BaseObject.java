@@ -183,9 +183,9 @@ public class BaseObject implements GraceObject {
         if (request.getParts().get(0).getName().equals("hash")) { // Added hash method
             return new GraceNumber(hashNumber);
         }
-
+        
         Function<Request, GraceObject> method = methods.get(request.getName());
-
+        
         // dereferencing check for local
         if (isLocal()) {
             validateThreadAccess();
@@ -194,7 +194,8 @@ public class BaseObject implements GraceObject {
         if (isIsolated()) {
             validateIsoAccess();
         }
-
+        
+        // TODO where requests for method calls are made from
         if (method != null) {
             return method.apply(request);
         }
@@ -328,6 +329,7 @@ public class BaseObject implements GraceObject {
             // System.out.println("here____" + valueBaseObject.getAliasName());
 
             valueBaseObject.incrementReferenceCount(); // incrementing up here for def objects.
+            // TODO add in special case for self here!!!!
         }
         fields.put(name, value);
     }
