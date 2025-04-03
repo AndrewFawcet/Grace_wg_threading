@@ -156,11 +156,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // Calls visit(context, x) recursively to process each argument, in case they
             // are themselves method calls.
             // creates a list of RequestPartR objects to store processed method parts.
-            System.out.println("here in visit for lexical request " + part.getName());
+            //  System.out.println("here in visit for lexical request " + part.getName());  //TODO
             if (part.getName().equals("z:=")) {
                 System.out.println("---------------------------------------------------------------------");
             }
-            System.out.println("part name " + part.getName());
             if (part.getName().equals("foo")) {
                 System.out.println("---------------------------------------------------------------------");
             }
@@ -429,7 +428,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             Request request = new Request(this, parts);
             GraceObject receiver = context.findReceiver(request.getName());
             if (context instanceof BaseObject) {
-                System.out.println(" Lexical Request, name " + name);
+                // System.out.println(" Lexical Request, name " + name);    // TODO debugging bit
             }
             // receiver.request(request);
 
@@ -527,6 +526,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     static BaseObject basePrelude() {
 
         BaseObject lexicalParent = new BaseObject(null);
+        lexicalParent.addMethod("extraRefInc(1)", request -> {
+            BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
+            return new GraceBoolean(obj.getExtraRefIncrement());
+        });
         lexicalParent.addMethod("refCount(1)", request -> {
             BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
             return new GraceNumber(obj.getReferenceCount());

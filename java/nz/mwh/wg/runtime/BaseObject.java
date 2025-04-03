@@ -246,7 +246,6 @@ public class BaseObject implements GraceObject {
     // return the old value/object instead of 'done'
     // decrement or unassign the returned value/object
     public void addFieldWriter(String name) {
-
         methods.put(name + ":=(1)", request -> {
 
             GraceObject objectBeingAssigned = request.getParts().get(0).getArgs().get(0);
@@ -267,15 +266,15 @@ public class BaseObject implements GraceObject {
             objectBeingRemoved = fields.remove(name);
             if (objectBeingRemoved instanceof BaseObject) {
                 BaseObject baseObjectBeingRemoved = (BaseObject) objectBeingRemoved;
-                baseObjectBeingRemoved.decrementReferenceCount();
+                // baseObjectBeingRemoved.setExtraRefIncrement(true);   // TODO check, but this does not seem to be needed.
+                baseObjectBeingRemoved.decrementReferenceCount();   // TODO why two???
             }
 
             fields.put(name, objectBeingAssigned);
             if (objectBeingAssigned instanceof BaseObject) {
                 // System.out.println(name + " assigned to a baseObject ----------");
                 BaseObject baseObjectBeingAssigned = (BaseObject) objectBeingAssigned;
-
-                baseObjectBeingAssigned.incrementReferenceCount();
+                baseObjectBeingAssigned.incrementReferenceCount();  // the main one :)
                 // the is a system to allow the auto unlinking of previous aliases for iso
                 // objects
                 // it makes use of the aliasObject (graceObject) which is a link to the
@@ -315,8 +314,8 @@ public class BaseObject implements GraceObject {
             // (to zero for an iso)
             // this then should be stored somewhere else...
             if (objectBeingRemoved instanceof BaseObject) {
-                System.out.println(
-                        "ref count of " + name + " is: " + ((BaseObject) objectBeingRemoved).getReferenceCount());
+                // TODO debugger
+                // System.out.println( "ref count of " + name + " is: " + ((BaseObject) objectBeingRemoved).getReferenceCount());
             }
             return objectBeingRemoved;
         });
