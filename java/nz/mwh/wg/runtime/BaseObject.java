@@ -129,8 +129,14 @@ public class BaseObject implements GraceObject {
     }
 
     public void decrementReferenceCount() {
+        
         referenceCount--;
-        if (referenceCount == 0) {
+        if (extraRefIncrement) {
+            // TODO trying to remove the extraIncrement here...
+            // referenceCount--;
+            // extraRefIncrement = false;
+            // TODO the else if will condition will stop the recursive chainiing to remove refs.
+        } else if  (referenceCount == 0) {
             for (GraceObject val : fields.values()) { 
                 if (val instanceof BaseObject) {
                     ((BaseObject)val).decrementReferenceCount();

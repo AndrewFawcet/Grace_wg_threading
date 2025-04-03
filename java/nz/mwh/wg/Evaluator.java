@@ -157,12 +157,13 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // are themselves method calls.
             // creates a list of RequestPartR objects to store processed method parts.
             //  System.out.println("here in visit for lexical request " + part.getName());  //TODO
-            if (part.getName().equals("z:=")) {
-                System.out.println("---------------------------------------------------------------------");
-            }
-            if (part.getName().equals("foo")) {
-                System.out.println("---------------------------------------------------------------------");
-            }
+            // if (part.getName().equals("z:=")) {
+            //     System.out.println("---------------------------------------------------------------------");
+            // }
+            // if (part.getName().equals("foo")) {
+            //     System.out.println("---------------------------------------------------------------------");
+            // }
+            System.out.println("GraceObject context, LexicalRequest node " + part.getName());
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
 
             parts.add(new RequestPartR(part.getName(), args));
@@ -247,11 +248,13 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // is initialized, so it creates a setter method to assign the value.
             // A LexicalRequest is generated to record or process this declaration and its
             // value.
+            System.out.println("----" + node.getName());
             new LexicalRequest(new Cons<Part>(
 
                     new Part(node.getName() + ":=", new Cons<ASTNode>(node.getValue(),
                             Cons.<ASTNode>nil())),
                     Cons.<Part>nil())).accept(context, this);
+
         }
         return done;
     }
@@ -324,7 +327,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         if (returningObject instanceof BaseObject) {
                             // this increments gives the returning object an extra object ref. and set a boolean to indicate this has been done.
                             // the boolean will be found later and redet when the returning object is incremented for being assigned to a variable.
-                            ((BaseObject) returningObject).incrementReferenceCount();
+                            // ((BaseObject) returningObject).incrementReferenceCount();    //TODO is this is not used the return that recieves the object MUST increment (referring to those objects returned and NOT discarded), only the object being recieved. 
                             ((BaseObject) returningObject).setExtraRefIncrement(true);
                         }
                         methodContext.decrementReferenceCount();
@@ -399,6 +402,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // Purpose: Processes an explicit request (method call) with a specified
     // receiver.
     // Details: Collects arguments, builds a Request, and sends it to the receiver.
+    // This is used for returning specific values from an object, 
     @Override
     public GraceObject visit(GraceObject context, ExplicitRequest node) {
 
@@ -407,6 +411,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
             parts.add(new RequestPartR(part.getName(), args));
         }
+        System.out.println("visit(GraceObject context, ExplicitRequest node)");
         Request request = new Request(this, parts, node.location);
         GraceObject receiver = node.getReceiver().accept(context, this);
         return receiver.request(request);
@@ -417,6 +422,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // Details: Identifies the target and updates its value through a corresponding
     // request.
     // TODO done something here for returning stuff allowing destructive reads
+    // not used for methods.
     @Override
     public GraceObject visit(GraceObject context, Assign node) {
 
@@ -431,7 +437,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 // System.out.println(" Lexical Request, name " + name);    // TODO debugging bit
             }
             // receiver.request(request);
-
+            System.out.println("GraceObject context, Assign node ... node.getTarget() instanceof LexicalRequest ");
             GraceObject previous = receiver.request(request);
             // changed to send the previous object through for destructive reads of
             // variables and objects
@@ -445,6 +451,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             parts.add(new RequestPartR(name + ":=", Collections.singletonList(node.getValue().accept(context, this))));
             Request request = new Request(this, parts);
             GraceObject receiver = target.getReceiver().accept(context, this);
+            System.out.println("GraceObject context, Assign node ... node.getTarget() instanceof ExplicitRequest ");
 
             // receiver.request(request);
             GraceObject previous = receiver.request(request);
