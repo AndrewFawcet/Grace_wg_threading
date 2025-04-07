@@ -86,10 +86,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // System.out.println("++++");
             if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
                 IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
-                visit(finalObjectWrapper, part);
+                visit(finalObjectWrapper, part);    // TODO top level statement handling 
             } else {
                 BaseObject finalObjectBase = (BaseObject) finalObject;
-                visit(finalObjectBase, part);
+                visit(finalObjectBase, part);   // TODO top level statement handling, 
             }
             // visit(object, part);
             // System.out.println("----");
@@ -314,7 +314,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 try {
                     GraceObject last = null;
                     for (ASTNode part : body) {
-                        last = visit(methodContext, part); // this is where the method gets actioned
+                        last = visit(methodContext, part); // TODO top level statement handling this is where the method gets actioned
                     }
                     // System.out.println("decrementing in methodContext");
                     methodContext.decrementReferenceCount(); // TODO decrimenter used now
@@ -414,6 +414,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         System.out.println("visit(GraceObject context, ExplicitRequest node)");
         Request request = new Request(this, parts, node.location);
         GraceObject receiver = node.getReceiver().accept(context, this);
+        // make the request, clean up the reciever, and make the return (56:00)
+        //TODO split this up.
         return receiver.request(request);
 
     }
