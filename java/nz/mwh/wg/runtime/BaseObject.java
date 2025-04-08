@@ -20,7 +20,7 @@ public class BaseObject implements GraceObject {
     private Map<String, Function<Request, GraceObject>> methods = new HashMap<>();
     private int referenceCount = 0;
     // private boolean decrementedToZero = false;
-    private boolean extraRefIncrement = false;
+    private boolean hasNotionalRef = false;
     private boolean isIsolated = false;
     private boolean isImmutable = false;
     private boolean isLocal = false;
@@ -118,11 +118,11 @@ public class BaseObject implements GraceObject {
     }
 
     public void incrementReferenceCount() {
-        if (extraRefIncrement && referenceCount != 1) {
+        if (hasNotionalRef && referenceCount != 1) {
             System.out.println("oddly the extraRefIncrement is true and the ref count is " + referenceCount);
         }
-        if (extraRefIncrement) {
-            extraRefIncrement = false;
+        if (hasNotionalRef) {
+            hasNotionalRef = false;
         } else {
             referenceCount++;
         }
@@ -131,7 +131,7 @@ public class BaseObject implements GraceObject {
     public void decrementReferenceCount() {
         
         referenceCount--;
-        if (extraRefIncrement) {
+        if (hasNotionalRef) {
             // TODO trying to remove the extraIncrement here...
             // referenceCount--;
             // extraRefIncrement = false;
@@ -145,12 +145,12 @@ public class BaseObject implements GraceObject {
         }
     }
 
-    public boolean getExtraRefIncrement() {
-        return extraRefIncrement;
+    public boolean getHasNotionalRef() {
+        return hasNotionalRef;
     }
 
-    public void setExtraRefIncrement(boolean refIncrement) {
-        extraRefIncrement = refIncrement;
+    public void setHasNotionalRef(boolean refIncrement) {
+        hasNotionalRef = refIncrement;
     }
  
     public void setAliasName(String name) {

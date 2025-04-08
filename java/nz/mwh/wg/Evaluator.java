@@ -49,6 +49,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         // This creates the new BaseObject, the context is the lexical parent
         BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
                 isNewObjectImmutable);
+        
+        object.incrementReferenceCount(); // give the object a reference count the entire time (extraNotionalRef set at end of construction)
 
         // If isoWrapper should be applied, wrap the object
         GraceObject finalObject = object;
@@ -94,6 +96,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // visit(object, part);
             // System.out.println("----");
         }
+
+        //extra reference to the object during construction removed via boolean flag
+        object.setHasNotionalRef(true);
 
         return finalObject;
     }
@@ -328,7 +333,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                             // this increments gives the returning object an extra object ref. and set a boolean to indicate this has been done.
                             // the boolean will be found later and redet when the returning object is incremented for being assigned to a variable.
                             // ((BaseObject) returningObject).incrementReferenceCount();    //TODO is this is not used the return that recieves the object MUST increment (referring to those objects returned and NOT discarded), only the object being recieved. 
-                            ((BaseObject) returningObject).setExtraRefIncrement(true);
+                            ((BaseObject) returningObject).setHasNotionalRef(true);
                         }
                         methodContext.decrementReferenceCount();
                         // System.out.println("decrementing in methodContect (catch)");
@@ -537,7 +542,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         BaseObject lexicalParent = new BaseObject(null);
         lexicalParent.addMethod("extraRefInc(1)", request -> {
             BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
-            return new GraceBoolean(obj.getExtraRefIncrement());
+            return new GraceBoolean(obj.getHasNotionalRef());
         });
         lexicalParent.addMethod("refCount(1)", request -> {
             BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
