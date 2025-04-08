@@ -76,9 +76,14 @@ public class GraceBlock implements GraceObject {
                 Map<String, GraceObject> lexicalParentFields = ((BaseObject) lexicalParent).getFields();
                 if (lexicalParentFields.containsValue(last)) {
                     ((BaseObject) last).setHasNotionalRef(true);
+                } else {
+                    // ((BaseObject) last).decrementReferenceCount();   // do this here??
                 }
             }
-            ((BaseObject) last).decrementReferenceCount();
+            if (last instanceof BaseObject) {
+                ((BaseObject) last).decrementReferenceCount(); //  (TODO don't think this should be here as it is a baseObject)
+            }
+        // ((BaseObject) last).decrementReferenceCount();
             return last; // Return the result of the last executed statement
 
         }
