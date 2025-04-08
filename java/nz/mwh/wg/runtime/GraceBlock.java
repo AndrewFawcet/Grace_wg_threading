@@ -83,7 +83,6 @@ public class GraceBlock implements GraceObject {
             if (last instanceof BaseObject) {
                 ((BaseObject) last).decrementReferenceCount(); //  (TODO don't think this should be here as it is a baseObject)
             }
-        // ((BaseObject) last).decrementReferenceCount();
             return last; // Return the result of the last executed statement
 
         }

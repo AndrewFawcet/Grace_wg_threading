@@ -41,7 +41,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     public GraceObject visit(GraceObject context, ObjectConstructor node) {
 
         baseObejctCapabilityChecks(context, node);
-        
+
         boolean isNewObjectLocal = node.isLocal();
         boolean isNewObjectIsolated = node.isIsolated();
         boolean isNewObjectImmutable = node.isImmutable();
@@ -49,14 +49,16 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         // This creates the new BaseObject, the context is the lexical parent
         BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
                 isNewObjectImmutable);
-        
-        object.incrementReferenceCount(); // give the object a reference count the entire time (extraNotionalRef set at end of construction)
 
-        GraceObject finalObject = object;   // If isoWrapper should be applied, wrap the object
+        object.incrementReferenceCount(); // give the object a reference count the entire time (extraNotionalRef set at
+                                          // end of construction)
+
+        GraceObject finalObject = object; // If isoWrapper should be applied, wrap the object
 
         if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
             // if (object.isUsingIsoWrapper() && object.isIsolated()) {
-            finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper flag is on TODO give wrapper a ref count?
+            finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper flag is on TODO give wrapper
+                                                  // a ref count?
         }
 
         List<ASTNode> body = node.getBody();
@@ -86,11 +88,11 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         for (ASTNode part : body) {
             if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
                 IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
-                visit(finalObjectWrapper, part);    // TODO top level statement handling
+                visit(finalObjectWrapper, part); // TODO top level statement handling
                 finalObjectWrapper.setHasNotionalRef(true);
             } else {
                 BaseObject finalObjectBase = (BaseObject) finalObject;
-                visit(finalObjectBase, part);   // TODO top level statement handling,
+                visit(finalObjectBase, part); // TODO top level statement handling,
                 finalObjectBase.setHasNotionalRef(true);
             }
         }
@@ -156,12 +158,13 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // Calls visit(context, x) recursively to process each argument, in case they
             // are themselves method calls.
             // creates a list of RequestPartR objects to store processed method parts.
-            //  System.out.println("here in visit for lexical request " + part.getName());  //TODO
+            // System.out.println("here in visit for lexical request " + part.getName());
+            // //TODO
             // if (part.getName().equals("z:=")) {
-            //     System.out.println("---------------------------------------------------------------------");
+            // System.out.println("---------------------------------------------------------------------");
             // }
             // if (part.getName().equals("foo")) {
-            //     System.out.println("---------------------------------------------------------------------");
+            // System.out.println("---------------------------------------------------------------------");
             // }
             System.out.println("GraceObject context, LexicalRequest node " + part.getName());
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
@@ -274,9 +277,9 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             return wrappedObject;
         }
         if (context instanceof BaseObject) {
-            BaseObject object = (BaseObject) context;
+            BaseObject contextBaseObject = (BaseObject) context;
             List<? extends ASTNode> body = node.getBody(); // this body holds all the method statements
-            object.addMethod(name, request -> {
+            contextBaseObject.addMethod(name, request -> {
 
                 BaseObject methodContext = new BaseObject(context, true);
                 // System.out.println("incrementing in methodContext");
@@ -315,12 +318,24 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     GraceObject last = null;
                     for (ASTNode part : body) {
                         if (last instanceof BaseObject) {
-                            ((BaseObject) last).decrementReferenceCount(); // all but the last last is decremented. (TODO should this be a removeNotionalReferences?)
+                            ((BaseObject) last).decrementReferenceCount(); // all but the last last is decremented.
+                                                                           // (TODO should this be a
+                                                                           // removeNotionalReferences?)
                         }
-                        last = visit(methodContext, part); // top level statement handling this is where the method gets actioned
+                        last = visit(methodContext, part); // top level statement handling this is where the method gets
+                                                           // actioned
                     }
+                    // if object being returned is held in the local scope (in fields HashMap) then
+                    // set the "being returned" flag on it before decrementing method context count
+                        Map<String, GraceObject> contextBaseObjectFields = contextBaseObject.getFields();
+                        if (contextBaseObjectFields.containsValue(last)) {
+                            ((BaseObject) last).setHasNotionalRef(true);
+                        } else {
+                            ((BaseObject) last).decrementReferenceCount(); // TODO do this here??
+                        }
+                    
                     // System.out.println("decrementing in methodContext");
-                    methodContext.decrementReferenceCount(); // TODO decrimenter used now
+                    // methodContext.decrementReferenceCount(); // TODO decrimenter used now
 
                     return last;
                 } catch (ReturnException re) {
@@ -328,9 +343,13 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     if (re.context == methodContext) {
                         GraceObject returningObject = re.getValue();
                         if (returningObject instanceof BaseObject) {
-                            // this increments gives the returning object an extra object ref. and set a boolean to indicate this has been done.
-                            // the boolean will be found later and redet when the returning object is incremented for being assigned to a variable.
-                            // ((BaseObject) returningObject).incrementReferenceCount();    //TODO is this is not used the return that recieves the object MUST increment (referring to those objects returned and NOT discarded), only the object being recieved. 
+                            // this increments gives the returning object an extra object ref. and set a
+                            // boolean to indicate this has been done.
+                            // the boolean will be found later and redet when the returning object is
+                            // incremented for being assigned to a variable.
+                            // ((BaseObject) returningObject).incrementReferenceCount(); //TODO is this is
+                            // not used the return that recieves the object MUST increment (referring to
+                            // those objects returned and NOT discarded), only the object being recieved.
                             ((BaseObject) returningObject).setHasNotionalRef(true);
                         }
                         methodContext.decrementReferenceCount();
@@ -405,7 +424,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // Purpose: Processes an explicit request (method call) with a specified
     // receiver.
     // Details: Collects arguments, builds a Request, and sends it to the receiver.
-    // This is used for returning specific values from an object, 
+    // This is used for returning specific values from an object,
     @Override
     public GraceObject visit(GraceObject context, ExplicitRequest node) {
         List<RequestPartR> parts = new ArrayList<>();
@@ -417,7 +436,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         Request request = new Request(this, parts, node.location);
         GraceObject receiver = node.getReceiver().accept(context, this);
         // make the request, clean up the reciever, and make the return (56:00)
-        //TODO split this up.
+        // TODO split this up.
         return receiver.request(request);
     }
 
@@ -437,7 +456,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             Request request = new Request(this, parts);
             GraceObject receiver = context.findReceiver(request.getName());
             if (context instanceof BaseObject) {
-                // System.out.println(" Lexical Request, name " + name);    // TODO debugging bit
+                // System.out.println(" Lexical Request, name " + name); // TODO debugging bit
             }
             // receiver.request(request);
             System.out.println("GraceObject context, Assign node ... node.getTarget() instanceof LexicalRequest ");
