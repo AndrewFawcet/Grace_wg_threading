@@ -319,8 +319,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     for (ASTNode part : body) {
                         if (last instanceof BaseObject) {
                             ((BaseObject) last).decrementReferenceCount(); // all but the last last is decremented.
-                                                                           // (TODO should this be a
-                                                                           // removeNotionalReferences?)
+                            // (TODO should this be a removeNotionalReferences?)
                         }
                         last = visit(methodContext, part); // top level statement handling this is where the method gets
                                                            // actioned
