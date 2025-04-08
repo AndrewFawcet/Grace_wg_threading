@@ -52,12 +52,11 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         
         object.incrementReferenceCount(); // give the object a reference count the entire time (extraNotionalRef set at end of construction)
 
-        // If isoWrapper should be applied, wrap the object
-        GraceObject finalObject = object;
+        GraceObject finalObject = object;   // If isoWrapper should be applied, wrap the object
 
         if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
             // if (object.isUsingIsoWrapper() && object.isIsolated()) {
-            finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper toggle is on
+            finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper flag is on TODO give wrapper a ref count?
         }
 
         List<ASTNode> body = node.getBody();
@@ -85,20 +84,16 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         }
 
         for (ASTNode part : body) {
-            // System.out.println("++++");
             if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
                 IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
-                visit(finalObjectWrapper, part);    // TODO top level statement handling 
+                visit(finalObjectWrapper, part);    // TODO top level statement handling
+                finalObjectWrapper.setHasNotionalRef(true);
             } else {
                 BaseObject finalObjectBase = (BaseObject) finalObject;
-                visit(finalObjectBase, part);   // TODO top level statement handling, 
+                visit(finalObjectBase, part);   // TODO top level statement handling,
+                finalObjectBase.setHasNotionalRef(true);
             }
-            // visit(object, part);
-            // System.out.println("----");
         }
-
-        //extra reference to the object during construction removed via boolean flag
-        object.setHasNotionalRef(true);
 
         return finalObject;
     }
@@ -319,7 +314,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 try {
                     GraceObject last = null;
                     for (ASTNode part : body) {
-                        last = visit(methodContext, part); // TODO top level statement handling this is where the method gets actioned
+                        if (last instanceof BaseObject) {
+                            ((BaseObject) last).decrementReferenceCount(); // all but the last last is decremented. (TODO should this be a removeNotionalReferences?)
+                        }
+                        last = visit(methodContext, part); // top level statement handling this is where the method gets actioned
                     }
                     // System.out.println("decrementing in methodContext");
                     methodContext.decrementReferenceCount(); // TODO decrimenter used now
@@ -410,7 +408,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // This is used for returning specific values from an object, 
     @Override
     public GraceObject visit(GraceObject context, ExplicitRequest node) {
-
         List<RequestPartR> parts = new ArrayList<>();
         for (Part part : node.getParts()) {
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
@@ -422,7 +419,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         // make the request, clean up the reciever, and make the return (56:00)
         //TODO split this up.
         return receiver.request(request);
-
     }
 
     // Purpose: Handles assignments to fields or variables.

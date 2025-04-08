@@ -1,6 +1,7 @@
 package nz.mwh.wg.runtime;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*; // For threading and Future
 
 import javax.sound.sampled.Port;
@@ -63,8 +64,21 @@ public class GraceBlock implements GraceObject {
 
             GraceObject last = null;
             for (ASTNode node : body) {
+                if (last instanceof BaseObject) {
+                    // handles statement level discards
+                    ((BaseObject) last).decrementReferenceCount(); // all but the last last is decremented. (TODO should this be a removeNotionalReferences?)
+                }
                 last = node.accept(blockContext, request.getVisitor());
             }
+
+            // if object being returned is held in the local scope (in fields HashMap) then set the "being returned" flag on it before decrementing method context count
+            if (lexicalParent instanceof BaseObject) {
+                Map<String, GraceObject> lexicalParentFields = ((BaseObject) lexicalParent).getFields();
+                if (lexicalParentFields.containsValue(last)) {
+                    ((BaseObject) last).setHasNotionalRef(true);
+                }
+            }
+            ((BaseObject) last).decrementReferenceCount();
             return last; // Return the result of the last executed statement
 
         }

@@ -92,6 +92,14 @@ public class IsoWrapper implements GraceObject {
         accessBaseObjectWithoutReturn(BaseObject::decrementReferenceCount);
     }
 
+    public boolean getHasNotionalRef() {
+        return accessBaseObjectWithReturn(BaseObject::getHasNotionalRef);
+    }
+
+    public void setHasNotionalRef(boolean refIncrement) {
+        accessBaseObjectWithoutReturn(obj -> obj.setHasNotionalRef(refIncrement));
+    }
+
     public void setAliasName(String name) {
         accessBaseObjectWithoutReturn(obj -> obj.setAliasName(name));
     }

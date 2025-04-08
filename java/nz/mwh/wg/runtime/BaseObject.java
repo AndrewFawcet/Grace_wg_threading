@@ -109,6 +109,10 @@ public class BaseObject implements GraceObject {
         this.objectThread = thread;
     }
 
+    public Map<String, GraceObject> getFields(){
+        return fields;
+    }
+
     public Thread getObjectThread() {
         return objectThread;
     }
@@ -129,19 +133,22 @@ public class BaseObject implements GraceObject {
     }
 
     public void decrementReferenceCount() {
-        
         referenceCount--;
-        if (hasNotionalRef) {
-            // TODO trying to remove the extraIncrement here...
-            // referenceCount--;
-            // extraRefIncrement = false;
-            // TODO the else if will condition will stop the recursive chainiing to remove refs.
-        } else if  (referenceCount == 0) {
+        if  (referenceCount == 0) {
             for (GraceObject val : fields.values()) { 
                 if (val instanceof BaseObject) {
                     ((BaseObject)val).decrementReferenceCount();
                 }
             }
+        }
+    }
+
+    public void removeNotionalReferences() {
+        // Removes any notional references if the flag has been set and decrements ref count
+        // This decrementing if at zero will effect all objects it references.
+        if (hasNotionalRef) {
+            hasNotionalRef = false;
+            decrementReferenceCount();
         }
     }
 
