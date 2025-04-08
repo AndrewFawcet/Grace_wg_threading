@@ -97,11 +97,19 @@ public class Start {
         
         // String filename = "test/referenceCounting/testingMethods1.grace"; // ref counting with a number return  -ok
         // String filename = "test/referenceCounting/testingMethods1b.grace"; // ref counting with a number return  -ok
-        String filename = "test/referenceCounting/testingMethods2.grace"; // ref counting with a number return  -ok
+        // String filename = "test/referenceCounting/testingMethods2.grace"; // ref counting with a number return  -ok
         // String filename = "test/referenceCounting/testingMethods3.grace"; // ref counting with a number return  -ok
         
         // String filename = "test/referenceCounting/defRefCount1.grace"; // ref counting with a number return  -notok
         // String filename = "test/referenceCounting/defRefCount2.grace"; // ref counting with a number return  -notok
+
+        // String filename = "blockTest1.grace"; // blocks -notok
+        // String filename = "blockTest15.grace"; // blocks  -ok
+        // String filename = "blockTest15ok.grace"; // blocks  -notok
+        // String filename = "blockTest16.grace"; // blocks  -notok
+        // String filename = "blockTest17.grace"; // blocks  -ok
+        // String filename = "blockTest17ok.grace"; // blocks  -notok
+        String filename = "blockTest18.grace"; // blocks  -notok
         
         if (recompile) {
             args = new String[]{

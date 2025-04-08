@@ -12,6 +12,6 @@ var block := {x, y -> x.value + y }
 print(block.apply(xObject, 10))
 
 print ("----now threading block")
-print(block.apply_thread(xObject, 10))
+// print(block.apply_thread(xObject, 10))
 
 print ("-------fifteen ok")

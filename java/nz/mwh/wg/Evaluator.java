@@ -326,13 +326,14 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     }
                     // if object being returned is held in the local scope (in fields HashMap) then
                     // set the "being returned" flag on it before decrementing method context count
-                        Map<String, GraceObject> contextBaseObjectFields = contextBaseObject.getFields();
+                    Map<String, GraceObject> contextBaseObjectFields = contextBaseObject.getFields();
+                    if (last instanceof BaseObject) {
                         if (contextBaseObjectFields.containsValue(last)) {
                             ((BaseObject) last).setHasNotionalRef(true);
                         } else {
                             ((BaseObject) last).decrementReferenceCount(); // TODO do this here??
                         }
-                    
+                    }
                     // System.out.println("decrementing in methodContext");
                     // methodContext.decrementReferenceCount(); // TODO decrimenter used now
 
