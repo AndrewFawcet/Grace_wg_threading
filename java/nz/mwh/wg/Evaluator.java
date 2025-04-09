@@ -166,7 +166,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // if (part.getName().equals("foo")) {
             // System.out.println("---------------------------------------------------------------------");
             // }
-            System.out.println("GraceObject context, LexicalRequest node " + part.getName());
+            // System.out.println("GraceObject context, LexicalRequest node " + part.getName());
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
 
             parts.add(new RequestPartR(part.getName(), args));
@@ -432,7 +432,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
             parts.add(new RequestPartR(part.getName(), args));
         }
-        System.out.println("visit(GraceObject context, ExplicitRequest node)");
+        // System.out.println("visit(GraceObject context, ExplicitRequest node)");
         Request request = new Request(this, parts, node.location);
         GraceObject receiver = node.getReceiver().accept(context, this);
         // make the request, clean up the reciever, and make the return (56:00)
@@ -459,7 +459,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 // System.out.println(" Lexical Request, name " + name); // TODO debugging bit
             }
             // receiver.request(request);
-            System.out.println("GraceObject context, Assign node ... node.getTarget() instanceof LexicalRequest ");
+            // System.out.println("GraceObject context, Assign node ... node.getTarget() instanceof LexicalRequest ");
             GraceObject previous = receiver.request(request);
             // changed to send the previous object through for destructive reads of
             // variables and objects
@@ -555,7 +555,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     static BaseObject basePrelude() {
 
         BaseObject lexicalParent = new BaseObject(null);
-        lexicalParent.addMethod("extraRefInc(1)", request -> {
+        lexicalParent.addMethod("hasNotionalRef(1)", request -> {
             BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
             return new GraceBoolean(obj.getHasNotionalRef());
         });
