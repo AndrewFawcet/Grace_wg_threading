@@ -1,6 +1,8 @@
 print "Hello beautiful world-----------------------------------------------------------------"
+// example showing aliasing and method used. Too cluttered to be useful.
 
-var counter := object is loc {
+
+var counter := object {
     var value := 1
     method increment { value := value + 1 }
     method getValue { value }
@@ -28,9 +30,15 @@ var x := object{
 
 print("E")
 print("EE")
-var counterAlias :=   x.referenceCounter()   // Call method
+var y :=  x
+x.referenceCounter()   // Call method
+
+// var counterAlias :=   x.referenceCounter()   // Call method
 print("F")
-print("object reference count after method: {refCount(counter)}, (should be 2)")
+print("object reference count after method: {refCount(counter)}, (should be 1)")
+print("hasNotionalRef: {hasNotionalRef(counter)}, (should be false)")
+
+print("object reference count after method: {refCount(y)}, (should be 2)")
 // At this point, localObj, alias1 and alias2 should be garbage collected, refernce count for object should be 2
 print "Method finished execution"
 print "Goodbye cruel world"

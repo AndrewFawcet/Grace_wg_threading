@@ -174,8 +174,29 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         Request request = new Request(this, parts); // a method call or message send within a local scope
         GraceObject receiver = context.findReceiver(request.getName());
+        // if (receiver instanceof BaseObject) {
+        //     System.out.println( " its a base object lex req");
+        //     if (((BaseObject)receiver).getHasNotionalRef()) {
+        //         System.out.println("???");
+        //         System.out.println("true" + ((BaseObject)receiver).getReferenceCount());
+        //     } else {
+        //         System.out.println(">>>");
+        //         System.out.println("false " + ((BaseObject)receiver).getReferenceCount());
+        //     }
+        // }
 
-        return receiver.request(request);
+        GraceObject ret = receiver.request(request);
+        if (receiver instanceof BaseObject) {
+            if (((BaseObject)receiver).getHasNotionalRef()) {
+                System.out.println("...................removing extras...");
+                ((BaseObject)receiver).setHasNotionalRef(false);
+                ((BaseObject)receiver).decrementReferenceCount();
+            } else {
+                System.out.println("doing nothing");
+            }
+        }
+        // return receiver.request(request);
+        return ret;
     }
 
     // Purpose: Converts a number node into a GraceNumber object.
@@ -343,17 +364,21 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     if (re.context == methodContext) {
                         GraceObject returningObject = re.getValue();
                         if (returningObject instanceof BaseObject) {
-                            // this increments gives the returning object an extra object ref. and set a
+                            //  pointless to check if in fields, as object could be pre exisiting
+                            // if (contextBaseObject.getFields().containsValue(returningObject)) {
+                            //     ((BaseObject) returningObject).incrementReferenceCount();
+                            //     ((BaseObject) returningObject).setHasNotionalRef(true);
+                            // }
+                            // this incrementing gives the returning object an extra object ref. and sets a
                             // boolean to indicate this has been done.
-                            // the boolean will be found later and redet when the returning object is
+                            // the boolean will be found later and reset when the returning object is
                             // incremented for being assigned to a variable.
-                            // ((BaseObject) returningObject).incrementReferenceCount(); //TODO is this is
                             // not used the return that recieves the object MUST increment (referring to
                             // those objects returned and NOT discarded), only the object being recieved.
+                            ((BaseObject) returningObject).incrementReferenceCount();
                             ((BaseObject) returningObject).setHasNotionalRef(true);
                         }
                         methodContext.decrementReferenceCount();
-                        // System.out.println("decrementing in methodContect (catch)");
                         return returningObject;
                     } else {
                         throw re;
@@ -432,12 +457,38 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
             parts.add(new RequestPartR(part.getName(), args));
         }
-        // System.out.println("visit(GraceObject context, ExplicitRequest node)");
+        System.out.println("visit(GraceObject context, ExplicitRequest node)");
         Request request = new Request(this, parts, node.location);
+        
+        
         GraceObject receiver = node.getReceiver().accept(context, this);
+        if (receiver instanceof BaseObject) {
+            System.out.println( " its a base object ");
+            if (((BaseObject)receiver).getHasNotionalRef()) {
+                System.out.println("???");
+            } else {
+                System.out.println(">>>");
+                System.out.println(((BaseObject)receiver).getReferenceCount());
+            }
+        } else {
+
+        }
+        
         // make the request, clean up the reciever, and make the return (56:00)
-        // TODO split this up.
-        return receiver.request(request);
+        // TODO split this up. WHAT TO CLEAN UP?????
+
+        GraceObject result = receiver.request(request); 
+        // then handle a flag or decrement on the reciever...
+        if (receiver instanceof BaseObject) {
+            System.out .println("---------------------");
+            if (((BaseObject)receiver).getHasNotionalRef()) {
+                System.out.println("+++");
+            } else {
+                System.out.println("---");
+            }
+        } 
+//        return receiver.request(request);
+        return result;
     }
 
     // Purpose: Handles assignments to fields or variables.
