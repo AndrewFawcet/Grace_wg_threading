@@ -330,18 +330,34 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     }
                 }
                 try {
+                    ASTNode previousPart = null;
                     GraceObject last = null;
                     for (ASTNode part : body) {
-                        if (last instanceof BaseObject) {
-                            ((BaseObject) last).removeNotionalReferences(); // all but the last last has notional reference removed.
-                            System.out.println("last is a baseObject " + ((BaseObject) last).getHasNotionalRef() + " " + ((BaseObject) last).getReferenceCount());
+                        if (previousPart instanceof DefDecl ) {
+                            // System.out.println("blah var  "+ ((DefDecl) previousPart).getName() );
+                            GraceObject object = methodContext.getFields().get(((DefDecl) previousPart).getName());
+                            if (object instanceof BaseObject) {
+                                // ((BaseObject) object).removeNotionalReferences();    // where has the notional ref gone?
+                                ((BaseObject) object).decrementReferenceCount();
+                            }
+                        } else if (previousPart instanceof VarDecl) {
+                            // System.out.println("blah var  "+ ((VarDecl) previousPart).getName() );
+                            GraceObject object = methodContext.getFields().get(((VarDecl) previousPart).getName());
+                            if (object instanceof BaseObject) {
+                                // ((BaseObject) object).removeNotionalReferences();    // where has the notional ref gone?
+                                ((BaseObject) object).decrementReferenceCount();
+                            }
+                        } else {
+                            System.out.println("not var or def in method to decriment");
                         }
-                        last = visit(methodContext, part); // top level statement handling this is where the method gets
-                                                           // actioned
+                        last = visit(methodContext, part); // top level statement handling, where the method gets actioned
+                        previousPart = part;
+                    
                     }
                     // if object being returned is held in the local scope (in fields HashMap) then
                     // set the "being returned" flag on it before decrementing method context count
-                    Map<String, GraceObject> contextBaseObjectFields = contextBaseObject.getFields();
+                    Map<String, GraceObject> contextBaseObjectFields = contextBaseObject.getFields();   
+                    // above not used, maybe could be used to find if last last exists outside in field references... 
                     // the last last has a notional reference of 1
                     return last;
                 } catch (ReturnException re) {
@@ -360,8 +376,13 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                             // incremented for being assigned to a variable.
                             // not used the return that recieves the object MUST increment (referring to
                             // those objects returned and NOT discarded), only the object being recieved.
+                            System.out.println( " ref count " + ((BaseObject) returningObject).getReferenceCount() +"  " +  ((BaseObject) returningObject).getHasNotionalRef());
+                            if (((BaseObject) returningObject).getReferenceCount() == 5) {
+                                System.out.println("pwqeirpoqwperoi");
+                            }
                             ((BaseObject) returningObject).incrementReferenceCount();
                             ((BaseObject) returningObject).setHasNotionalRef(true);
+                            System.out.println( " After ref count " + ((BaseObject) returningObject).getReferenceCount() +"  " +  ((BaseObject) returningObject).getHasNotionalRef());
                         }
                         methodContext.decrementReferenceCount();
                         return returningObject;
