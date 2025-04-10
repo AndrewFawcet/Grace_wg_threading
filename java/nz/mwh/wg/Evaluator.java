@@ -187,13 +187,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         GraceObject ret = receiver.request(request);
         if (receiver instanceof BaseObject) {
-            if (((BaseObject)receiver).getHasNotionalRef()) {
-                System.out.println("...................removing extras...");
-                ((BaseObject)receiver).setHasNotionalRef(false);
-                ((BaseObject)receiver).decrementReferenceCount();
-            } else {
-                System.out.println("doing nothing");
-            }
+            ((BaseObject)receiver).removeNotionalReferences();
         }
         // return receiver.request(request);
         return ret;
@@ -339,8 +333,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     GraceObject last = null;
                     for (ASTNode part : body) {
                         if (last instanceof BaseObject) {
-                            ((BaseObject) last).decrementReferenceCount(); // all but the last last is decremented.
-                            // (TODO should this be a removeNotionalReferences?)
+                            ((BaseObject) last).removeNotionalReferences(); // all but the last last has notional reference removed.
+                            System.out.println("last is a baseObject " + ((BaseObject) last).getHasNotionalRef() + " " + ((BaseObject) last).getReferenceCount());
                         }
                         last = visit(methodContext, part); // top level statement handling this is where the method gets
                                                            // actioned
@@ -348,16 +342,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     // if object being returned is held in the local scope (in fields HashMap) then
                     // set the "being returned" flag on it before decrementing method context count
                     Map<String, GraceObject> contextBaseObjectFields = contextBaseObject.getFields();
-                    if (last instanceof BaseObject) {
-                        if (contextBaseObjectFields.containsValue(last)) {
-                            ((BaseObject) last).setHasNotionalRef(true);
-                        } else {
-                            ((BaseObject) last).decrementReferenceCount(); // TODO do this here??
-                        }
-                    }
-                    // System.out.println("decrementing in methodContext");
-                    // methodContext.decrementReferenceCount(); // TODO decrimenter used now
-
+                    // the last last has a notional reference of 1
                     return last;
                 } catch (ReturnException re) {
                     // for a method return
@@ -473,7 +458,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         } else {
 
         }
-        
         // make the request, clean up the reciever, and make the return (56:00)
         // TODO split this up. WHAT TO CLEAN UP?????
 
