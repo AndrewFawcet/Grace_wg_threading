@@ -376,13 +376,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                             // incremented for being assigned to a variable.
                             // not used the return that recieves the object MUST increment (referring to
                             // those objects returned and NOT discarded), only the object being recieved.
-                            System.out.println( " ref count " + ((BaseObject) returningObject).getReferenceCount() +"  " +  ((BaseObject) returningObject).getHasNotionalRef());
-                            if (((BaseObject) returningObject).getReferenceCount() == 5) {
-                                System.out.println("pwqeirpoqwperoi");
-                            }
                             ((BaseObject) returningObject).incrementReferenceCount();
                             ((BaseObject) returningObject).setHasNotionalRef(true);
-                            System.out.println( " After ref count " + ((BaseObject) returningObject).getReferenceCount() +"  " +  ((BaseObject) returningObject).getHasNotionalRef());
                         }
                         methodContext.decrementReferenceCount();
                         return returningObject;

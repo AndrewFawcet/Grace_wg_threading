@@ -27,13 +27,13 @@ method foo {
     var g := i
     var h := i
 
-    return e
 }
 
 print ""
 print " calling foo"
 def z := foo
 
-print ""
+// print " ref count {refCount(z)} .. "
 print "dropping on floor"
 foo
+print (" ref count {refCount(z)} .. " )
