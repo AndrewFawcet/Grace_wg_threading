@@ -18,9 +18,8 @@ public class BaseObject implements GraceObject {
     private GraceObject lexicalParent; // scope that surrounds this object
     private Map<String, GraceObject> fields = new HashMap<>();
     private Map<String, Function<Request, GraceObject>> methods = new HashMap<>();
-    private int referenceCount = 0;
-    // private boolean decrementedToZero = false;
-    private boolean hasNotionalRef = false;
+    private int refCount = 0;
+    private boolean notionalReference = false;
     private boolean isIsolated = false;
     private boolean isImmutable = false;
     private boolean isLocal = false;
@@ -81,6 +80,10 @@ public class BaseObject implements GraceObject {
         }
     }
 
+    public int getRefCount() {
+        return refCount;
+    }
+
     public boolean isLocal() {
         return isLocal;
     }
@@ -115,49 +118,6 @@ public class BaseObject implements GraceObject {
 
     public Thread getObjectThread() {
         return objectThread;
-    }
-
-    public int getReferenceCount() {
-        return referenceCount;
-    }
-
-    public void incrementReferenceCount() {
-        if (hasNotionalRef && referenceCount != 1) {
-            System.out.println("oddly the extraRefIncrement is true and the ref count is " + referenceCount);
-        }
-        if (hasNotionalRef) {
-            hasNotionalRef = false;
-        } else {
-            referenceCount++;
-        }
-    }
-
-    public void decrementReferenceCount() {
-        referenceCount--;
-        if  (referenceCount == 0) {
-            for (GraceObject val : fields.values()) { 
-                if (val instanceof BaseObject) {
-                    ((BaseObject)val).decrementReferenceCount();
-                }
-            }
-        }
-    }
-
-    public void removeNotionalReferences() {
-        // Removes any notional references if the flag has been set and decrements ref count
-        // This decrementing if at zero will effect all objects it references.
-        if (hasNotionalRef) {
-            hasNotionalRef = false;
-            decrementReferenceCount();
-        }
-    }
-
-    public boolean getHasNotionalRef() {
-        return hasNotionalRef;
-    }
-
-    public void setHasNotionalRef(boolean refIncrement) {
-        hasNotionalRef = refIncrement;
     }
  
     public void setAliasName(String name) {
@@ -261,6 +221,7 @@ public class BaseObject implements GraceObject {
     public void addFieldWriter(String name) {
         methods.put(name + ":=(1)", request -> {
 
+            GraceObject oldObject = fields.get(name);
             GraceObject objectBeingAssigned = request.getParts().get(0).getArgs().get(0);
 
             // Check if the assigned value is null and throw an exception.
@@ -275,20 +236,15 @@ public class BaseObject implements GraceObject {
 
             // pulls the existing value out here, and returns it at the end.
             // TODO could put a token zero reference object here, which acts as a tombstone.
-            GraceObject objectBeingRemoved = null;
-            objectBeingRemoved = fields.remove(name);
-            if (objectBeingRemoved instanceof BaseObject) {
-                BaseObject baseObjectBeingRemoved = (BaseObject) objectBeingRemoved;
-                // baseObjectBeingRemoved.setExtraRefIncrement(true);   // TODO check, but this does not seem to be needed.
-                baseObjectBeingRemoved.decrementReferenceCount();   // TODO why two???
-            }
+            // GraceObject objectBeingRemoved = null;
+            // objectBeingRemoved = fields.remove(name);
 
             fields.put(name, objectBeingAssigned);
+            
             if (objectBeingAssigned instanceof BaseObject) {
                 // System.out.println(name + " assigned to a baseObject ----------");
                 BaseObject baseObjectBeingAssigned = (BaseObject) objectBeingAssigned;
-                baseObjectBeingAssigned.incrementReferenceCount();  // the main one :)
-                // the is a system to allow the auto unlinking of previous aliases for iso
+                baseObjectBeingAssigned.incRefCount();// the is a system to allow the auto unlinking of previous aliases for iso
                 // objects
                 // it makes use of the aliasObject (graceObject) which is a link to the
                 // baseObject
@@ -300,7 +256,7 @@ public class BaseObject implements GraceObject {
                 // checking if isolated, and runtime exception if too many references
                 if (CapabilityToggles.isAssignmentIsoCheckEnabled()) {
                     if (baseObjectBeingAssigned.isIsolated()) {
-                        if (baseObjectBeingAssigned.getReferenceCount() > 1) {
+                        if (baseObjectBeingAssigned.getRefCount() > 1) {
                             throw new RuntimeException(
                                     "Capability Violation: Isolated object '" + name
                                             + "' cannot have more than one reference.");
@@ -316,21 +272,19 @@ public class BaseObject implements GraceObject {
             }
 
             if (isImmutable) {
-                if (getReferenceCount() != 0) { // ref count of 0 indicates a fresh object
+                if (getRefCount() != 0) { // ref count of 0 indicates a fresh object
                     throw new RuntimeException(
                             "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name
                                     + "'.");
                 }
             }
 
-            // should be value that has been removed, with a decremented reference count.
-            // (to zero for an iso)
-            // this then should be stored somewhere else...
-            if (objectBeingRemoved instanceof BaseObject) {
-                // TODO debugger
-                // System.out.println( "ref count of " + name + " is: " + ((BaseObject) objectBeingRemoved).getReferenceCount());
+            // Do not decrement the old value's count, as it is switched into a notional reference
+            // during the return
+            if (oldObject instanceof BaseObject) {
+                ((BaseObject)oldObject).beReturned();
             }
-            return objectBeingRemoved;
+            return oldObject;
         });
     }
 
@@ -340,27 +294,11 @@ public class BaseObject implements GraceObject {
             BaseObject valueBaseObject = (BaseObject) value;
             // System.out.println("here____" + valueBaseObject.getAliasName());
 
-            valueBaseObject.incrementReferenceCount(); // incrementing up here for def objects.
+            valueBaseObject.incRefCount(); // incrementing up here for def objects.
             // TODO add in special case for self here!!!!
         }
         fields.put(name, value);
     }
-
-    // // TODO fix the iterator, this is for def objects
-    // private void incrementFieldsReferenceCount( Map<String, GraceObject> objectFields) {
-    //     // recursively iterate through the base object fields Map, incrementing the reference
-    //     // counts.
-    //     System.out.println("here____");
-    //     for (GraceObject field : objectFields.values()) {
-    //         System.out.println(" + here____" );
-    //         if (field instanceof BaseObject) {
-    //             BaseObject fieldBaseObject = (BaseObject) field;
-    //             System.out.println(" now here____");
-    //             fieldBaseObject.incrementReferenceCount();  // increment this field
-    //             incrementFieldsReferenceCount(fieldBaseObject.fields);  // carry on recusivly incrementing
-    //         }
-    //     }
-    // }
 
     public GraceObject findReturnContext() {
 
@@ -371,6 +309,47 @@ public class BaseObject implements GraceObject {
             return ((BaseObject) lexicalParent).findReturnContext();
         }
         throw new RuntimeException("No return context found");
+    }
+
+    public BaseObject beReturned() {
+        notionalReference = true;
+        return this;
+    }
+
+    public boolean isBeingReturned() {
+        return notionalReference;
+    }
+
+    public void incRefCount() {
+        if (notionalReference) {
+            // If there is a notional reference (in the midst of being returned),
+            // we just take over that reference as real.
+            notionalReference = false;
+        } else {
+            refCount++;
+        }
+    }
+
+    public void decRefCount() {
+        refCount--;
+        if (refCount == 0) {
+            free();
+        }
+    }
+
+    public void discard() {
+        if (notionalReference) {
+            notionalReference = false;
+            decRefCount();
+        }
+    }
+
+    private void free() {
+        for (GraceObject field : fields.values()) {
+            if (field instanceof BaseObject) {
+                ((BaseObject) field).decRefCount();
+            }
+        }
     }
 
     private void validateThreadAccess() {
@@ -385,7 +364,7 @@ public class BaseObject implements GraceObject {
     private void validateIsoAccess() {
         // only called for iso objects
         if (CapabilityToggles.isDereferencingIsoCheckEnabled()) {
-            if (referenceCount > 1) {
+            if (refCount > 1) {
                 // TODO include name
                 throw new RuntimeException(
                         "Capability Violation: Isolated object cannot be accessed while having more than one reference.");
@@ -394,13 +373,13 @@ public class BaseObject implements GraceObject {
     }
 
     private void unlinkPreviousAliasIfNeeded(BaseObject baseObjectBeingAssigned, String name) {
-        if (baseObjectBeingAssigned.getReferenceCount() > 1) {
+        if (baseObjectBeingAssigned.getRefCount() > 1) {
             GraceObject oldObjectReferencingIso = baseObjectBeingAssigned.getHoldingObject();
             if (oldObjectReferencingIso instanceof BaseObject) {
                 BaseObject oldBaseObjectReferencingIso = (BaseObject) oldObjectReferencingIso;
                 String oldRef = baseObjectBeingAssigned.getAliasName();
                 oldBaseObjectReferencingIso.fields.remove(oldRef);
-                baseObjectBeingAssigned.decrementReferenceCount();
+                baseObjectBeingAssigned.decRefCount();
             }
         }
         baseObjectBeingAssigned.setAliasName(name); // base object now holds the name it is under inside itself.

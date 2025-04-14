@@ -50,15 +50,11 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         BaseObject object = new BaseObject(context, false, true, isNewObjectLocal, isNewObjectIsolated,
                 isNewObjectImmutable);
 
-        object.incrementReferenceCount(); // give the object a reference count the entire time (extraNotionalRef set at
-                                          // end of construction)
 
         GraceObject finalObject = object; // If isoWrapper should be applied, wrap the object
 
         if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
-            // if (object.isUsingIsoWrapper() && object.isIsolated()) {
-            finalObject = new IsoWrapper(object); // Wrap the object if iso and isoWrapper flag is on TODO give wrapper
-                                                  // a ref count?
+            finalObject = new IsoWrapper(object);
         }
 
         List<ASTNode> body = node.getBody();
@@ -84,20 +80,20 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 visit(object, part);
             }
         }
-
+        object.incRefCount();
         for (ASTNode part : body) {
             if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
                 IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
-                visit(finalObjectWrapper, part); // TODO top level statement handling
-                finalObjectWrapper.setHasNotionalRef(true);
+                GraceObject ret = visit(finalObjectWrapper, part); 
+                ret.discard();
             } else {
                 BaseObject finalObjectBase = (BaseObject) finalObject;
-                visit(finalObjectBase, part); // TODO top level statement handling,
-                finalObjectBase.setHasNotionalRef(true);
+                GraceObject ret = visit(finalObjectBase, part);
+                ret.discard();
             }
         }
 
-        return finalObject;
+        return finalObject.beReturned();
     }
 
     private void baseObejctCapabilityChecks(GraceObject context, ObjectConstructor node) {
@@ -174,22 +170,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         Request request = new Request(this, parts); // a method call or message send within a local scope
         GraceObject receiver = context.findReceiver(request.getName());
-        // if (receiver instanceof BaseObject) {
-        //     System.out.println( " its a base object lex req");
-        //     if (((BaseObject)receiver).getHasNotionalRef()) {
-        //         System.out.println("???");
-        //         System.out.println("true" + ((BaseObject)receiver).getReferenceCount());
-        //     } else {
-        //         System.out.println(">>>");
-        //         System.out.println("false " + ((BaseObject)receiver).getReferenceCount());
-        //     }
-        // }
-
         GraceObject ret = receiver.request(request);
-        if (receiver instanceof BaseObject) {
-            ((BaseObject)receiver).removeNotionalReferences();
-        }
-        // return receiver.request(request);
         return ret;
     }
 
@@ -266,7 +247,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // is initialized, so it creates a setter method to assign the value.
             // A LexicalRequest is generated to record or process this declaration and its
             // value.
-            System.out.println("----" + node.getName());
             new LexicalRequest(new Cons<Part>(
 
                     new Part(node.getName() + ":=", new Cons<ASTNode>(node.getValue(),
@@ -329,58 +309,41 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                         // do for iso methods???
                     }
                 }
+                methodContext.incRefCount();
                 try {
                     ASTNode previousPart = null;
                     GraceObject last = null;
                     for (ASTNode part : body) {
-                        if (previousPart instanceof DefDecl ) {
-                            // System.out.println("blah var  "+ ((DefDecl) previousPart).getName() );
-                            GraceObject object = methodContext.getFields().get(((DefDecl) previousPart).getName());
-                            if (object instanceof BaseObject) {
-                                // ((BaseObject) object).removeNotionalReferences();    // where has the notional ref gone?
-                                ((BaseObject) object).decrementReferenceCount();
-                            }
-                        } else if (previousPart instanceof VarDecl) {
-                            // System.out.println("blah var  "+ ((VarDecl) previousPart).getName() );
-                            GraceObject object = methodContext.getFields().get(((VarDecl) previousPart).getName());
-                            if (object instanceof BaseObject) {
-                                // ((BaseObject) object).removeNotionalReferences();    // where has the notional ref gone?
-                                ((BaseObject) object).decrementReferenceCount();
-                            }
-                        } else {
-                            System.out.println("not var or def in method to decriment");
+                        if (last != null) {
+                            last.discard();
                         }
-                        last = visit(methodContext, part); // top level statement handling, where the method gets actioned
-                        previousPart = part;
-                    
+                        last = visit(methodContext, part); // top level statement handling, where the method gets actioned                    
                     }
                     // if object being returned is held in the local scope (in fields HashMap) then
                     // set the "being returned" flag on it before decrementing method context count
-                    Map<String, GraceObject> contextBaseObjectFields = contextBaseObject.getFields();   
-                    // above not used, maybe could be used to find if last last exists outside in field references... 
-                    // the last last has a notional reference of 1
+                    for (GraceObject field : methodContext.getFields().values()) {
+                        if (field == last) {
+                            last.incRefCount();
+                            last.beReturned();
+                            break;
+                        }   
+                    }
+                    methodContext.decRefCount(); 
                     return last;
                 } catch (ReturnException re) {
                     // for a method return
                     if (re.context == methodContext) {
                         GraceObject returningObject = re.getValue();
-                        if (returningObject instanceof BaseObject) {
-                            //  pointless to check if in fields, as object could be pre exisiting
-                            // if (contextBaseObject.getFields().containsValue(returningObject)) {
-                            //     ((BaseObject) returningObject).incrementReferenceCount();
-                            //     ((BaseObject) returningObject).setHasNotionalRef(true);
-                            // }
-                            // this incrementing gives the returning object an extra object ref. and sets a
-                            // boolean to indicate this has been done.
-                            // the boolean will be found later and reset when the returning object is
-                            // incremented for being assigned to a variable.
-                            // not used the return that recieves the object MUST increment (referring to
-                            // those objects returned and NOT discarded), only the object being recieved.
-                            ((BaseObject) returningObject).incrementReferenceCount();
-                            ((BaseObject) returningObject).setHasNotionalRef(true);
+                        GraceObject last = re.getValue();
+                        for (GraceObject field : methodContext.getFields().values()) {
+                            if (field == last) {
+                                last.beReturned();
+                                last.incRefCount();
+                                break;
+                            }
                         }
-                        methodContext.decrementReferenceCount();
-                        return returningObject;
+                        methodContext.decRefCount();
+                        return re.getValue();
                     } else {
                         throw re;
                     }
@@ -395,6 +358,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     // This is mostly a repeat of a base Object, but using a IsoWrapper.
     // All methods and fields go through the IsoWrapper object, to the actual
     // BaseObject object.
+    // TODO ref counting here
     private GraceObject insertWrapper(IsoWrapper wrapperContext, MethodDecl node, List<? extends Part> parts) {
         List<? extends ASTNode> body = node.getBody();
 
@@ -463,32 +427,12 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         
         
         GraceObject receiver = node.getReceiver().accept(context, this);
-        if (receiver instanceof BaseObject) {
-            System.out.println( " its a base object ");
-            if (((BaseObject)receiver).getHasNotionalRef()) {
-                System.out.println("???");
-            } else {
-                System.out.println(">>>");
-                System.out.println(((BaseObject)receiver).getReferenceCount());
-            }
-        } else {
-
-        }
         // make the request, clean up the reciever, and make the return (56:00)
         // TODO split this up. WHAT TO CLEAN UP?????
 
-        GraceObject result = receiver.request(request); 
-        // then handle a flag or decrement on the reciever...
-        if (receiver instanceof BaseObject) {
-            System.out .println("---------------------");
-            if (((BaseObject)receiver).getHasNotionalRef()) {
-                System.out.println("+++");
-            } else {
-                System.out.println("---");
-            }
-        } 
-//        return receiver.request(request);
-        return result;
+        GraceObject ret = receiver.request(request); 
+        receiver.discard();
+        return ret;
     }
 
     // Purpose: Handles assignments to fields or variables.
@@ -515,7 +459,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             // changed to send the previous object through for destructive reads of
             // variables and objects
             return previous;
-            // return done;
         } else if (node.getTarget() instanceof ExplicitRequest) {
             ExplicitRequest target = (ExplicitRequest) node.getTarget();
             String name = target.getParts().get(0).getName();
@@ -530,7 +473,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             GraceObject previous = receiver.request(request);
             // changed to send the previous object through for destructive reads of fields
             return previous;
-            // return done;
         }
         throw new UnsupportedOperationException(
                 "Invalid assignment to " + node.getTarget().getClass().getName() + " node");
@@ -606,14 +548,24 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     static BaseObject basePrelude() {
 
         BaseObject lexicalParent = new BaseObject(null);
-        lexicalParent.addMethod("hasNotionalRef(1)", request -> {
-            BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
-            return new GraceBoolean(obj.getHasNotionalRef());
+        lexicalParent.addMethod("getRefCount(1)", request -> {
+            Object o = request.getParts().get(0).getArgs().get(0);
+            int count;
+            if (o instanceof BaseObject) {
+                o.getRefCount();
+            } else {
+                count = -1;
+            }
+            return new GraceNumber(count);
         });
-        lexicalParent.addMethod("refCount(1)", request -> {
-            BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
-            return new GraceNumber(obj.getReferenceCount());
-        });
+        // lexicalParent.addMethod("hasNotionalRef(1)", request -> {
+        //     BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
+        //     return new GraceBoolean(obj.getHasNotionalRef());
+        // });
+        // lexicalParent.addMethod("refCount(1)", request -> {
+        //     BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
+        //     return new GraceNumber(obj.getReferenceCount());
+        // });
         lexicalParent.addMethod("setLoc(1)", request -> {
             BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
             CapabilityAdjuster.changeCapability(obj, true, false, false);
@@ -659,7 +611,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             return chan2;
         });
         lexicalParent.addMethod("print(1)", request -> {
-            System.out.println(request.getParts().get(0).getArgs().get(0).toString());
+            // System.out.println(request.getParts().get(0).getArgs().get(0).toString());
+            GraceObject obj = request.getParts().get(0).getArgs().get(0);
+            System.out.println(obj.toString());
+            obj.discard();
             return done;
         });
         lexicalParent.addMethod("true(0)", request -> new GraceBoolean(true));
