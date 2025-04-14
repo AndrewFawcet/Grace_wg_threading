@@ -83,6 +83,9 @@ public class BaseObject implements GraceObject {
     public int getRefCount() {
         return refCount;
     }
+    public boolean getNotionalRef() {
+        return notionalReference;
+    }
 
     public boolean isLocal() {
         return isLocal;

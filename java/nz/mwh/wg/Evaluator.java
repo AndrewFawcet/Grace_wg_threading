@@ -278,7 +278,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
                 BaseObject methodContext = new BaseObject(context, true);
                 // System.out.println("incrementing in methodContext");
-                methodContext.incrementReferenceCount(); // method now operates as a base object with ref count 1.
+                methodContext.incRefCount(); // method now operates as a base object with ref count 1.
                 List<RequestPartR> requestParts = request.getParts();
                 RequestPartR firstRequestPart = requestParts.get(0); // for testing
                 if (firstRequestPart.getName().equals("foo")) {
@@ -311,7 +311,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 }
                 methodContext.incRefCount();
                 try {
-                    ASTNode previousPart = null;
                     GraceObject last = null;
                     for (ASTNode part : body) {
                         if (last != null) {
@@ -334,11 +333,10 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                     // for a method return
                     if (re.context == methodContext) {
                         GraceObject returningObject = re.getValue();
-                        GraceObject last = re.getValue();
                         for (GraceObject field : methodContext.getFields().values()) {
-                            if (field == last) {
-                                last.beReturned();
-                                last.incRefCount();
+                            if (field == returningObject) {
+                                returningObject.beReturned();
+                                returningObject.incRefCount();
                                 break;
                             }
                         }
@@ -422,10 +420,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
             parts.add(new RequestPartR(part.getName(), args));
         }
-        System.out.println("visit(GraceObject context, ExplicitRequest node)");
         Request request = new Request(this, parts, node.location);
-        
-        
         GraceObject receiver = node.getReceiver().accept(context, this);
         // make the request, clean up the reciever, and make the return (56:00)
         // TODO split this up. WHAT TO CLEAN UP?????
@@ -550,18 +545,18 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
         BaseObject lexicalParent = new BaseObject(null);
         lexicalParent.addMethod("getRefCount(1)", request -> {
             Object o = request.getParts().get(0).getArgs().get(0);
-            int count;
+            int count = -1;
             if (o instanceof BaseObject) {
-                o.getRefCount();
+                count = ((BaseObject)o).getRefCount();
             } else {
                 count = -1;
             }
             return new GraceNumber(count);
         });
-        // lexicalParent.addMethod("hasNotionalRef(1)", request -> {
-        //     BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
-        //     return new GraceBoolean(obj.getHasNotionalRef());
-        // });
+        lexicalParent.addMethod("getNotionalRef(1)", request -> {
+            BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
+            return new GraceBoolean(obj.getNotionalRef());
+        });
         // lexicalParent.addMethod("refCount(1)", request -> {
         //     BaseObject obj = (BaseObject) request.getParts().get(0).getArgs().get(0);
         //     return new GraceNumber(obj.getReferenceCount());

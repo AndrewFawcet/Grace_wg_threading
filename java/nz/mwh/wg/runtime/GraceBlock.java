@@ -72,10 +72,8 @@ public class GraceBlock implements GraceObject {
         // if object being returned is held in the local scope (in fields HashMap) then set the "being returned" flag on it before decrementing method context count
         for (GraceObject field : blockContext.getFields().values()) {
             if (field == last) {
-                if (last instanceof BaseObject) {
-                    ((BaseObject) last).incRefCount();
-                    ((BaseObject) last).beReturned();
-                }
+                last.incRefCount();
+                last.beReturned();
                 break;
             }
         }
