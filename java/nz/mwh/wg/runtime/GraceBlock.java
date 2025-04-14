@@ -34,7 +34,7 @@ public class GraceBlock implements GraceObject {
 
     private GraceObject apply(Request request, RequestPartR part) {
         BaseObject blockContext = new BaseObject(lexicalParent);
-
+        blockContext.incRefCount();
         // Setting up the block parameters
         for (int i = 0; i < parameters.size(); i++) {
             ASTNode parameter = parameters.get(i);
@@ -47,7 +47,6 @@ public class GraceBlock implements GraceObject {
                 throw new RuntimeException("Invalid parameter in block: " + parameter);
             }
             blockContext.addField(name);
-
             blockContext.setField(name, part.getArgs().get(i));
         }
 
@@ -66,23 +65,21 @@ public class GraceBlock implements GraceObject {
         for (ASTNode node : body) {
             if (last instanceof BaseObject) {
                 // handles statement level discards
-                ((BaseObject) last).decrementReferenceCount(); // all but the last last is decremented. 
-                // (TODO should this be a removeNotionalReferences?)
+                ((BaseObject) last).discard(); // all but the last last is decremented. 
             }
             last = node.accept(blockContext, request.getVisitor());
         }
         // if object being returned is held in the local scope (in fields HashMap) then set the "being returned" flag on it before decrementing method context count
-        if (lexicalParent instanceof BaseObject) {
-            Map<String, GraceObject> lexicalParentFields = ((BaseObject) lexicalParent).getFields();
-            if (lexicalParentFields.containsValue(last)) {
-                ((BaseObject) last).setHasNotionalRef(true);
-            } else {
-                // ((BaseObject) last).decrementReferenceCount();   // do this here??
+        for (GraceObject field : blockContext.getFields().values()) {
+            if (field == last) {
+                if (last instanceof BaseObject) {
+                    ((BaseObject) last).incRefCount();
+                    ((BaseObject) last).beReturned();
+                }
+                break;
             }
         }
-        if (last instanceof BaseObject) {
-            ((BaseObject) last).decrementReferenceCount(); //  (TODO don't think this should be here as it is a baseObject)
-        }
+        blockContext.decRefCount();
         return last; // Return the result of the last executed statement
 
     }
