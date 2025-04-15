@@ -25,7 +25,7 @@ public class Start {
         // System.setErr(new PrintStream(OutputStream.nullOutputStream()));
         // System.setErr(new CustomErrorStream(System.err));
         boolean recompile = false;  // this will recompile the parser.grace file into parserData.java (after you may need to remove the previous code in parserData)
-        boolean vanillaDala = true;
+        boolean vanillaDala = false;
 
         // String filename = "test/workingTests/dalaDestructive.grace"; // dala destructive read working
         // String filename = "test/workingTests/dalaLimitationsTest1.grace"; // dala limitation test working
@@ -139,10 +139,9 @@ public class Start {
                         CapabilityToggles.setIsoCheckMode(icm);
                         CapabilityToggles.setIsoMoveMode(imm);
                         CapabilityToggles.setLocalCheckMode(lcm);
-                        CapabilityToggles.printCurrentSettings();
-
-                        // Run test with this configuration 
-                        runProgram(filename, null);
+                        System.out.println();
+                        System.out.println(); 
+                        runProgram(filename, null); // Run test with this configuration
                     }
                 }
             }
