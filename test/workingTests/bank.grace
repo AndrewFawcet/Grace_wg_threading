@@ -31,9 +31,7 @@ var makeAccount := object {
 
             method deposit(amount, description) {
                 var transaction := makeTransaction.new(amount, description)
-                print ("here")
                 balance.amount := balance.amount + amount
-                print ("here--")
             }
 
             method withdraw(amount, description) {
@@ -55,8 +53,8 @@ print "Initial Balance: {myAccount.balance.amount} ..."
 
 // Perform transactions
 myAccount.deposit(200, "Salary Payment")
-// myAccount.withdraw(150, "Grocery Shopping")
+myAccount.withdraw(150, "Grocery Shopping")
 
 // Print updated account information
-// print "Balance after transactions: {myAccount.balance.amount} ..."
+print "Balance after transactions: {myAccount.balance.amount} ..."
 
