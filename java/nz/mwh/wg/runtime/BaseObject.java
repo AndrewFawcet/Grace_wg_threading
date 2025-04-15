@@ -83,8 +83,13 @@ public class BaseObject implements GraceObject {
     public int getRefCount() {
         return refCount;
     }
+
     public boolean getNotionalRef() {
         return notionalReference;
+    }
+
+    public void setNotionalRef(boolean b) {
+        notionalReference = b;
     }
 
     public boolean isLocal() {
@@ -115,14 +120,14 @@ public class BaseObject implements GraceObject {
         this.objectThread = thread;
     }
 
-    public Map<String, GraceObject> getFields(){
+    public Map<String, GraceObject> getFields() {
         return fields;
     }
 
     public Thread getObjectThread() {
         return objectThread;
     }
- 
+
     public void setAliasName(String name) {
         aliasName = name;
     }
@@ -159,9 +164,9 @@ public class BaseObject implements GraceObject {
         if (request.getParts().get(0).getName().equals("hash")) { // Added hash method
             return new GraceNumber(hashNumber);
         }
-        
+
         Function<Request, GraceObject> method = methods.get(request.getName());
-        
+
         // dereferencing check for local
         if (isLocal()) {
             validateThreadAccess();
@@ -170,7 +175,7 @@ public class BaseObject implements GraceObject {
         if (isIsolated()) {
             validateIsoAccess();
         }
-        
+
         // TODO where requests for method calls are made from
         if (method != null) {
             return method.apply(request);
@@ -206,8 +211,8 @@ public class BaseObject implements GraceObject {
             GraceObject val = fields.get(name);
             // junk?
             // if (val instanceof BaseObject) {
-            //     // put in to increment reference count of def objects.
-            //     // ((BaseObject) val).incrementReferenceCount();
+            // // put in to increment reference count of def objects.
+            // // ((BaseObject) val).incrementReferenceCount();
             // }
 
             if (val == uninitialised) {
@@ -243,14 +248,12 @@ public class BaseObject implements GraceObject {
             // objectBeingRemoved = fields.remove(name);
 
             fields.put(name, objectBeingAssigned);
-            
+
             if (objectBeingAssigned instanceof BaseObject) {
-                // System.out.println(name + " assigned to a baseObject ----------");
                 BaseObject baseObjectBeingAssigned = (BaseObject) objectBeingAssigned;
-                baseObjectBeingAssigned.incRefCount();// the is a system to allow the auto unlinking of previous aliases for iso
-                // objects
-                // it makes use of the aliasObject (graceObject) which is a link to the
-                // baseObject
+                baseObjectBeingAssigned.incRefCount();
+                // the is a system to allow the auto unlinking of prev aliases for iso objects
+                // it makes use of the aliasObject which is a link to the baseObject
                 // that holds the previous reference (aliasName) to the iso
                 if (baseObjectBeingAssigned.isIsolated() && CapabilityToggles.isAutoUnlinkingIsoMoves()) {
                     unlinkPreviousAliasIfNeeded(baseObjectBeingAssigned, name);
@@ -259,7 +262,7 @@ public class BaseObject implements GraceObject {
                 // checking if isolated, and runtime exception if too many references
                 if (CapabilityToggles.isAssignmentIsoCheckEnabled()) {
                     if (baseObjectBeingAssigned.isIsolated()) {
-                        if (baseObjectBeingAssigned.getRefCount() > 1) {
+                        if (baseObjectBeingAssigned.getRefCount() > 1 && !baseObjectBeingAssigned.getNotionalRef() || baseObjectBeingAssigned.getRefCount() > 2 && baseObjectBeingAssigned.getNotionalRef()) {
                             throw new RuntimeException(
                                     "Capability Violation: Isolated object '" + name
                                             + "' cannot have more than one reference.");
@@ -275,17 +278,18 @@ public class BaseObject implements GraceObject {
             }
 
             if (isImmutable) {
-                if (getRefCount() != 0) { // ref count of 0 indicates a fresh object
+                if (getRefCount() > 0 && !notionalReference || getRefCount() > 1 && notionalReference ) { // ref count of 0 indicates a fresh object
                     throw new RuntimeException(
                             "Capability Violation: Immutable object, cannot mutate 'immutable' object field '" + name
                                     + "'.");
                 }
             }
 
-            // Do not decrement the old value's count, as it is switched into a notional reference
+            // Do not decrement the old value's count, as it is switched into a notional
+            // reference
             // during the return
             if (oldObject instanceof BaseObject) {
-                ((BaseObject)oldObject).beReturned();
+                ((BaseObject) oldObject).beReturned();
             }
             return oldObject;
         });
@@ -295,8 +299,6 @@ public class BaseObject implements GraceObject {
     public void setField(String name, GraceObject value) {
         if (value instanceof BaseObject) {
             BaseObject valueBaseObject = (BaseObject) value;
-            // System.out.println("here____" + valueBaseObject.getAliasName());
-
             valueBaseObject.incRefCount(); // incrementing up here for def objects.
             // TODO add in special case for self here!!!!
         }

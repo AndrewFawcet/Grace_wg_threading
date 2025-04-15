@@ -7,7 +7,7 @@ public class CapabilityAdjuster {
         boolean isCurrentlyLocal = object.isLocal();
         boolean isCurrentlyIso = object.isIsolated();
         boolean isCurrentlyImmutable = object.isImmutable();
-        int refCount = object.getReferenceCount();
+        int refCount = object.getRefCount();
 
         // Enforce capability transition rules
         if (isCurrentlyImmutable) {

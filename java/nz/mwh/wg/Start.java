@@ -37,7 +37,7 @@ public class Start {
         // String filename = "test/workingTests/isoTest.grace"; // iso Test working
         // String filename = "test/workingTests/localTest.grace"; // loc Test working
         // String filename = "test/workingTests/bankDistantObjects.grace"; // dala dist bank working
-        // String filename = "test/workingTests/bank.grace"; // dala bank working
+        String filename = "test/workingTests/bank.grace"; // dala bank working
         // String filename = "test/workingTests/bankAmbientTalk.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/linkedListWithIso1.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/linkedListWithIso2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
@@ -78,7 +78,7 @@ public class Start {
 
         // String filename = "test/referenceCounting/referenceCounting1.grace"; // ref counting basic -ok
         // String filename = "test/referenceCounting/referenceCounting2.grace"; // ref counting more aliases -ok
-        String filename = "test/referenceCounting/referenceCounting3.grace"; // ref counting with an alias return  -ok
+        // String filename = "test/referenceCounting/referenceCounting3.grace"; // ref counting with an alias return  -ok
         // String filename = "test/referenceCounting/referenceCounting4.grace"; // ref counting with a number return  -ok
         // String filename = "test/referenceCounting/referenceCounting5.grace"; // ref counting with a number return  -ok
         // String filename = "test/referenceCounting/referenceCounting6.grace"; // ref counting with a number return  -ok

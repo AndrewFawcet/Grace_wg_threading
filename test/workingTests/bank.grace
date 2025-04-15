@@ -55,8 +55,8 @@ print "Initial Balance: {myAccount.balance.amount} ..."
 
 // Perform transactions
 myAccount.deposit(200, "Salary Payment")
-myAccount.withdraw(150, "Grocery Shopping")
+// myAccount.withdraw(150, "Grocery Shopping")
 
 // Print updated account information
-print "Balance after transactions: {myAccount.balance.amount} ..."
+// print "Balance after transactions: {myAccount.balance.amount} ..."
 

@@ -80,24 +80,24 @@ public class IsoWrapper implements GraceObject {
         return accessBaseObjectWithReturn(BaseObject::getObjectThread);
     }
 
-    public int getReferenceCount() {
-        return accessBaseObjectWithReturn(BaseObject::getReferenceCount);
+    public int getRefCount() {
+        return accessBaseObjectWithReturn(BaseObject::getRefCount);
     }
 
-    public void incrementReferenceCount() {
-        accessBaseObjectWithoutReturn(BaseObject::incrementReferenceCount);
+    public void incRefCount() {
+        accessBaseObjectWithoutReturn(BaseObject::incRefCount);
     }
 
-    public void decrementReferenceCount() {
-        accessBaseObjectWithoutReturn(BaseObject::decrementReferenceCount);
+    public void decRefCount() {
+        accessBaseObjectWithoutReturn(BaseObject::decRefCount);
     }
 
-    public boolean getHasNotionalRef() {
-        return accessBaseObjectWithReturn(BaseObject::getHasNotionalRef);
+    public boolean getNotionalRef() {
+        return accessBaseObjectWithReturn(BaseObject::getNotionalRef);
     }
 
-    public void setHasNotionalRef(boolean refIncrement) {
-        accessBaseObjectWithoutReturn(obj -> obj.setHasNotionalRef(refIncrement));
+    public void setNotionalRef(boolean refIncrement) {
+        accessBaseObjectWithoutReturn(obj -> obj.setNotionalRef(refIncrement));
     }
 
     public void setAliasName(String name) {

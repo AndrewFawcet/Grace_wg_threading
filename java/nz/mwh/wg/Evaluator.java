@@ -81,6 +81,7 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             }
         }
         object.incRefCount();
+        object.beReturned();
         for (ASTNode part : body) {
             if (CapabilityToggles.isUsingIsoWrapper() && object.isIsolated()) {
                 IsoWrapper finalObjectWrapper = (IsoWrapper) finalObject;
@@ -92,8 +93,8 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
                 ret.discard();
             }
         }
-
-        return finalObject.beReturned();
+    //    return finalObject.beReturned();
+        return finalObject;
     }
 
     private void baseObejctCapabilityChecks(GraceObject context, ObjectConstructor node) {
@@ -151,18 +152,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
 
         List<RequestPartR> parts = new ArrayList<>();
         for (Part part : node.getParts()) {
-            // Calls visit(context, x) recursively to process each argument, in case they
-            // are themselves method calls.
-            // creates a list of RequestPartR objects to store processed method parts.
-            // System.out.println("here in visit for lexical request " + part.getName());
-            // //TODO
-            // if (part.getName().equals("z:=")) {
-            // System.out.println("---------------------------------------------------------------------");
-            // }
-            // if (part.getName().equals("foo")) {
-            // System.out.println("---------------------------------------------------------------------");
-            // }
-            // System.out.println("GraceObject context, LexicalRequest node " + part.getName());
             List<GraceObject> args = part.getArgs().stream().map(x -> visit(context, x)).collect(Collectors.toList());
 
             parts.add(new RequestPartR(part.getName(), args));
@@ -445,11 +434,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             parts.add(new RequestPartR(name + ":=", Collections.singletonList(node.getValue().accept(context, this))));
             Request request = new Request(this, parts);
             GraceObject receiver = context.findReceiver(request.getName());
-            if (context instanceof BaseObject) {
-                // System.out.println(" Lexical Request, name " + name); // TODO debugging bit
-            }
-            // receiver.request(request);
-            // System.out.println("GraceObject context, Assign node ... node.getTarget() instanceof LexicalRequest ");
             GraceObject previous = receiver.request(request);
             // changed to send the previous object through for destructive reads of
             // variables and objects
@@ -462,9 +446,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             parts.add(new RequestPartR(name + ":=", Collections.singletonList(node.getValue().accept(context, this))));
             Request request = new Request(this, parts);
             GraceObject receiver = target.getReceiver().accept(context, this);
-            System.out.println("GraceObject context, Assign node ... node.getTarget() instanceof ExplicitRequest ");
-
-            // receiver.request(request);
             GraceObject previous = receiver.request(request);
             // changed to send the previous object through for destructive reads of fields
             return previous;
@@ -548,8 +529,6 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
             int count = -1;
             if (o instanceof BaseObject) {
                 count = ((BaseObject)o).getRefCount();
-            } else {
-                count = -1;
             }
             return new GraceNumber(count);
         });
