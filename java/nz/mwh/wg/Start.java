@@ -37,13 +37,15 @@ public class Start {
         // String filename = "test/workingTests/isoTest.grace"; // iso Test working
         // String filename = "test/workingTests/localTest.grace"; // loc Test working
         // String filename = "test/workingTests/bankDistantObjects.grace"; // dala dist bank working
-        String filename = "test/workingTests/bank.grace"; // dala bank working
+        // String filename = "test/workingTests/bank.grace"; // dala bank working
         // String filename = "test/workingTests/bankAmbientTalk.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/linkedListWithIso1.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/linkedListWithIso2.grace"; // dala AmbientTalk bank test working (psuedo encapsulation?)
         // String filename = "test/workingTests/square.grace"; // basic method call
         // String filename = "test/workingTests/aliasingDisallowed.grace"; // encapsulated basic hash working using iso linked lists.not
         // String filename = "test/workingTests/dereferencingIsoCheck.grace"; // iso Test working
+        // String filename = "test/workingTests/leakingBlock1.grace"; // leaking a variable from an iso using a block
+        // String filename = "test/workingTests/leakingBlock2.grace"; // leaking the object access from an iso using a block
 
         // String filename = "test/DataRaceEtc/twoEventLoops.grace"; // two event loops.not
         // String filename = "test/DataRaceEtc/counter.grace"; // two event loops.not
@@ -71,8 +73,6 @@ public class Start {
         // String filename = "b.grace"; // auto Iso moves
         // String filename = "b2.grace"; // auto Iso moves
         // String filename = "b8.grace"; // auto Iso moves
-        // String filename = "leakingBlock1.grace"; // leaking a variable from an iso using a block
-        // String filename = "leakingBlock2.grace"; // leaking the object access from an iso using a block
         // String filename = "changingCapabilities1.grace"; // changing capabilities
         // String filename = "changingCapabilities2.grace"; // changing capabilities
 
@@ -114,6 +114,8 @@ public class Start {
         // String filename = "blockTest17.grace"; // blocks  -ok
         // String filename = "blockTest17ok.grace"; // blocks  -notok
         // String filename = "blockTest18.grace"; // blocks  -notok
+
+        String filename = "test/caseStudies/bankCaseStudy.grace"; //case stuy bank with iso 
         
         if (recompile) {
             args = new String[]{
