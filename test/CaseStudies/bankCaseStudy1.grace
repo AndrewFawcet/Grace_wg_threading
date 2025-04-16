@@ -55,12 +55,13 @@ def channel1 = spawn { channel2 ->
     print (" new thread ")
     print "Account Name: {AliceAccount2.accountName.name} ..."
     print "Account Balance: {AliceAccount2.balance.amount} ..."
+    print "Reference Count AliceAccount2.balance: {getRefCount(AliceAccount2.balance)} ..."
 }
 
 // Send the local object to another thread.
 // This should trigger a runtime error or failure due to the "local" constraint.
-channel1.send(AliceAccount := -1)
-// AliceAccount.deposit(2000, "Salary Payment")
+channel1.send(AliceAccount)
+AliceAccount.deposit(2000, "Salary Payment")
 // AliceAccount.withdraw(1000, "Grocery Shopping")
 
 print(" main end ")
