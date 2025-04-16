@@ -1,16 +1,3 @@
-// Object factory for creating nested objects
-var makeNestedObject := object {
-    method newImm(value) -> Object {
-        object is imm {
-            var name := value
-        }
-    }
-    method newIso(value) -> Object {
-        object is iso {
-            var amount := value
-        }
-    }
-}
 
 // Transaction factory (Immutable)
 var makeTransaction := object {
@@ -26,8 +13,12 @@ var makeTransaction := object {
 var makeAccount := object {
     method new(accountNameValue, initialBalance) -> Object {
         object {
-            var accountName := makeNestedObject.newImm(accountNameValue)  // Immutable account name
-            var balance := makeNestedObject.newIso(initialBalance)        // Isolated balance
+            var accountName := object is imm {
+                var name := accountNameValue
+            }
+            var balance := object is iso {
+                var amount := initialBalance
+            }
 
             method deposit(amount, description) {
                 var transaction := makeTransaction.new(amount, description)
@@ -68,8 +59,8 @@ def channel1 = spawn { channel2 ->
 
 // Send the local object to another thread.
 // This should trigger a runtime error or failure due to the "local" constraint.
-channel1.send(AliceAccount)
-AliceAccount.deposit(2000, "Salary Payment")
-AliceAccount.withdraw(1000, "Grocery Shopping")
+channel1.send(AliceAccount := -1)
+// AliceAccount.deposit(2000, "Salary Payment")
+// AliceAccount.withdraw(1000, "Grocery Shopping")
 
 print(" main end ")

@@ -115,7 +115,8 @@ public class Start {
         // String filename = "blockTest17ok.grace"; // blocks  -notok
         // String filename = "blockTest18.grace"; // blocks  -notok
 
-        String filename = "test/caseStudies/bankCaseStudy.grace"; //case stuy bank with iso 
+        // String filename = "test/caseStudies/bankCaseStudy.grace"; //case stuy bank with iso 
+        String filename = "test/caseStudies/bankCaseStudy1.grace"; //case stuy bank with iso 
         
         if (recompile) {
             args = new String[]{
