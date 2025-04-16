@@ -1,16 +1,20 @@
-var objectX := object {
-    var fieldX : Number := 10
-    method getField -> Number {
-        fieldX
+print("")
+print("  start")
+
+var x := object is iso {
+    var a := 10
+    var z := object {
+        var b := 20
     }
 }
 
 def c1 = spawn { c2 ->
-    var objectY := c2.receive
-    print "Thread received object with field value: {objectY.getField}"
+    var y := c2.receive
+    print "Thread received object with field value: {y.a} .."
+    print "Reference Count y: {getRefCount(x)} ..."
 
 }
 
-c1.send(objectX)
-
+c1.send(x)
+print "Reference Count x: {getRefCount(x)} ..."
 print("main end")

@@ -118,6 +118,8 @@ public class Start {
         // String filename = "test/caseStudies/bankCaseStudy.grace"; //case stuy bank with iso 
         String filename = "test/caseStudies/bankCaseStudy1.grace"; //case stuy bank with iso 
         
+        // String filename = "testSpawnLocal1.grace"; //case stuy bank with iso 
+        
         if (recompile) {
             args = new String[]{
                 "-u",

@@ -12,7 +12,7 @@ var makeTransaction := object {
 // Account factory
 var makeAccount := object {
     method new(accountNameValue, initialBalance) -> Object {
-        object {
+        object is loc {
             var accountName := object is imm {
                 var name := accountNameValue
             }
@@ -36,7 +36,7 @@ var makeAccount := object {
         }
     }
 }
-
+print ""
 // Create an account instance
 var AliceAccount := makeAccount.new("Alice's Savings Account", 1000)
 print "Account Name: {AliceAccount.accountName.name} ..."
@@ -51,7 +51,7 @@ print "Balance after transactions: {AliceAccount.balance.amount} ..."
 
 def channel1 = spawn { channel2 ->
     // Attempt to receive and use the local object
-    var AliceAccount2 := channel2.receive
+    var AliceAccount2 := channel2.receive   // local thread boundry failure
     print (" new thread ")
     print "Account Name: {AliceAccount2.accountName.name} ..."
     print "Account Balance: {AliceAccount2.balance.amount} ..."
@@ -65,3 +65,4 @@ AliceAccount.deposit(2000, "Salary Payment")
 // AliceAccount.withdraw(1000, "Grocery Shopping")
 
 print(" main end ")
+print ""
