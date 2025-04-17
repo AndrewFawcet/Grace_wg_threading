@@ -26,6 +26,8 @@ public class Start {
         // System.setErr(new CustomErrorStream(System.err));
         boolean recompile = false;  // this will recompile the parser.grace file into parserData.java (after you may need to remove the previous code in parserData)
         boolean vanillaDala = false;
+        boolean fourTests = true;
+
 
         // String filename = "test/workingTests/dalaDestructive.grace"; // dala destructive read working
         // String filename = "test/workingTests/dalaLimitationsTest1.grace"; // dala limitation test working
@@ -136,6 +138,48 @@ public class Start {
             CapabilityToggles.printCurrentSettings();
             // run test with vanilla Dala settings only
             runProgram(filename, null);
+        } else if (fourTests) {
+            // for running the four tests in the Dala paper.
+            System.out.println("===== Running Dala Vanilla =====");
+            CapabilityToggles.setIsoCheckMode(IsoCheckMode.ASSIGNMENT);
+            CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
+            CapabilityToggles.setLocalCheckMode(LocalCheckMode.DEREFERENCING);
+            CapabilityToggles.printCurrentSettings();
+            System.out.println();
+            runProgram(filename, null); // Run test with this configuration
+            System.out.println(); 
+            System.out.println(); 
+
+            System.out.println("===== Running Late Enforcement =====");
+            CapabilityToggles.setIsoCheckMode(IsoCheckMode.ASSIGNMENT);
+            CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
+            CapabilityToggles.setLocalCheckMode(LocalCheckMode.DEREFERENCING);
+            CapabilityToggles.printCurrentSettings();
+            System.out.println();
+            runProgram(filename, null); // Run test with this configuration
+            System.out.println(); 
+            System.out.println(); 
+
+            System.out.println("===== Running Thread Enforcement =====");
+            CapabilityToggles.setIsoCheckMode(IsoCheckMode.ASSIGNMENT);
+            CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
+            CapabilityToggles.setLocalCheckMode(LocalCheckMode.DEREFERENCING);
+            CapabilityToggles.printCurrentSettings();
+            System.out.println();
+            runProgram(filename, null); // Run test with this configuration
+            System.out.println(); 
+            System.out.println(); 
+
+            System.out.println("===== Running Borrowing =====");
+            CapabilityToggles.setIsoCheckMode(IsoCheckMode.ASSIGNMENT);
+            CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
+            CapabilityToggles.setLocalCheckMode(LocalCheckMode.DEREFERENCING);
+            CapabilityToggles.printCurrentSettings();
+            System.out.println();
+            runProgram(filename, null); // Run test with this configuration
+            System.out.println(); 
+            System.out.println(); 
+
         } else {
             for (IsoCheckMode icm : IsoCheckMode.values()) {
                 for (IsoMoveMode imm : IsoMoveMode.values()) {
