@@ -1,10 +1,10 @@
-// this shows the local account object holding the account name object and amount object failing in four different ways. 
+// this shows the iso account object holding the account name object and amount object failing in four different ways. 
 
 
 // Account factory
 var makeAccount := object {
     method new(accountNameValue, initialBalance) {
-        object is loc {
+        object is iso {
             var accountName := object is imm {
                 var name := accountNameValue
             }
@@ -55,6 +55,8 @@ def channel1 = spawn { channel2 ->
 // Send the local object to another thread.
 // This should trigger a runtime error or failure due to the "local" constraint.
 channel1.send(account2)
+sleep()
+account1.withdraw(1000, "Old thread late withdrawal")
 
 print(" main end ")
 print ""

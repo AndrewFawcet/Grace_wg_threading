@@ -118,7 +118,9 @@ public class Start {
         // String filename = "blockTest18.grace"; // blocks  -notok
 
         // String filename = "test/caseStudies/bankCaseStudy.grace"; //case stuy bank with iso 
-        String filename = "test/caseStudies/bankCaseStudy1.grace"; //case stuy bank with iso 
+        // String filename = "test/caseStudies/bankCaseStudy1.grace"; //case stuy bank with iso 
+        // String filename = "test/caseStudies/bankCaseStudy2.grace"; //case study bank for four types of checks, shows local failures
+        String filename = "test/caseStudies/bankCaseStudy3.grace"; //case study bank for four types of checks, shows local failures
         
         // String filename = "testSpawnLocal1.grace"; //case stuy bank with iso 
         
@@ -140,41 +142,56 @@ public class Start {
             runProgram(filename, null);
         } else if (fourTests) {
             // for running the four tests in the Dala paper.
-            System.out.println("===== Running Dala Vanilla =====");
-            CapabilityToggles.setIsoCheckMode(IsoCheckMode.ASSIGNMENT);
-            CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
-            CapabilityToggles.setLocalCheckMode(LocalCheckMode.DEREFERENCING);
-            CapabilityToggles.printCurrentSettings();
-            System.out.println();
-            runProgram(filename, null); // Run test with this configuration
-            System.out.println(); 
-            System.out.println(); 
+            // System.out.println("===== Running Dala Vanilla =====");
+            // CapabilityToggles.setIsoCheckMode(IsoCheckMode.ASSIGNMENT);
+            // CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
+            // CapabilityToggles.setLocalCheckMode(LocalCheckMode.DEREFERENCING);
+            // // CapabilityToggles.printCurrentSettings();
+            // System.out.println();
+            // runProgram(filename, null); // Run test with this configuration
+            // System.out.println(); 
+            // System.out.println();
+            // try {
+            //     Thread.sleep(100);
+            // } catch (InterruptedException e) {
+            //     e.printStackTrace();
+            // }
 
-            System.out.println("===== Running Late Enforcement =====");
-            CapabilityToggles.setIsoCheckMode(IsoCheckMode.ASSIGNMENT);
-            CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
-            CapabilityToggles.setLocalCheckMode(LocalCheckMode.DEREFERENCING);
-            CapabilityToggles.printCurrentSettings();
-            System.out.println();
-            runProgram(filename, null); // Run test with this configuration
-            System.out.println(); 
-            System.out.println(); 
+            // System.out.println("===== Running Late Enforcement =====");
+            // CapabilityToggles.setIsoCheckMode(IsoCheckMode.DEREFERENCING);
+            // CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
+            // CapabilityToggles.setLocalCheckMode(LocalCheckMode.DEREFERENCING);
+            // // CapabilityToggles.printCurrentSettings();
+            // System.out.println();
+            // runProgram(filename, null); // Run test with this configuration
+            // System.out.println(); 
+            // System.out.println();
+            // try {
+            //     Thread.sleep(100);
+            // } catch (InterruptedException e) {
+            //     e.printStackTrace();
+            // }
 
-            System.out.println("===== Running Thread Enforcement =====");
-            CapabilityToggles.setIsoCheckMode(IsoCheckMode.ASSIGNMENT);
-            CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
-            CapabilityToggles.setLocalCheckMode(LocalCheckMode.DEREFERENCING);
-            CapabilityToggles.printCurrentSettings();
-            System.out.println();
-            runProgram(filename, null); // Run test with this configuration
-            System.out.println(); 
-            System.out.println(); 
+            // System.out.println("===== Running Thread Enforcement =====");
+            // CapabilityToggles.setIsoCheckMode(IsoCheckMode.THREAD_BOUNDARY);
+            // CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
+            // CapabilityToggles.setLocalCheckMode(LocalCheckMode.THREAD_BOUNDARY);
+            // // CapabilityToggles.printCurrentSettings();
+            // System.out.println();
+            // runProgram(filename, null); // Run test with this configuration
+            // System.out.println(); 
+            // System.out.println(); 
+            // try {
+            //     Thread.sleep(100);
+            // } catch (InterruptedException e) {
+            //     e.printStackTrace();
+            // }
 
-            System.out.println("===== Running Borrowing =====");
-            CapabilityToggles.setIsoCheckMode(IsoCheckMode.ASSIGNMENT);
+            System.out.println("===== Running Borrowing (LATEST_REFERENCE_ONLY_DEREFERENCING for iso)=====");
+            CapabilityToggles.setIsoCheckMode(IsoCheckMode.LATEST_REFERENCE_ONLY_DEREFERENCING);
             CapabilityToggles.setIsoMoveMode(IsoMoveMode.OFF);
             CapabilityToggles.setLocalCheckMode(LocalCheckMode.DEREFERENCING);
-            CapabilityToggles.printCurrentSettings();
+            // CapabilityToggles.printCurrentSettings();
             System.out.println();
             runProgram(filename, null); // Run test with this configuration
             System.out.println(); 

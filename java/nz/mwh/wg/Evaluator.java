@@ -520,6 +520,15 @@ public class Evaluator extends ASTConstructors implements Visitor<GraceObject> {
     static BaseObject basePrelude() {
 
         BaseObject lexicalParent = new BaseObject(null);
+
+        lexicalParent.addMethod("sleep(0)", request -> {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return done;
+        });
         lexicalParent.addMethod("getRefCount(1)", request -> {
             Object o = request.getParts().get(0).getArgs().get(0);
             int count = -1;
