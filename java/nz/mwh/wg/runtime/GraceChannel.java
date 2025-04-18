@@ -44,7 +44,8 @@ public class GraceChannel implements GraceObject {
             }
             if (baseObject.isIsolated()) { //TODO change to a iso reference count check
                 if (CapabilityToggles.isThreadBoundaryIsoCheckEnabled()) {
-                    if (baseObject.getRefCount() > 1) {
+                    if (baseObject.getRefCount() >= 1 && !baseObject.getNotionalRef() ) {
+                        // indicates it has been recieved on a new thread with one or more references already 
                         throw new RuntimeException(
                                 "Capability Violation: Isolated object received on a different thread with more than one reference");
                     }

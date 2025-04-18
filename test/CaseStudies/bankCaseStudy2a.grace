@@ -1,0 +1,47 @@
+// this shows the local account object holding the account name object and amount object failing in four different ways. 
+
+
+def makeAccount := object {
+    method new(accountNameValue, initialBalance) {
+        object is local {
+            def accountName := object is imm {
+                var name := accountNameValue
+            }
+            def balance := object is iso {
+                var amount := initialBalance
+            }
+            method deposit(amount, description) {
+                balance.amount := balance.amount + amount
+            }
+            method withdraw(amount, description) {
+                if (balance.amount >= amount) then {
+                    balance.amount := balance.amount - amount
+                }
+            }
+        }
+    }
+}
+var account1 := makeAccount.new("Alice's Savings Account", 1000)
+print "Account Name: {account1.accountName.name} ."
+print "Account Balance: {account1.balance.amount} ."
+account1.deposit(2000, "Salary payment")
+account1.withdraw(1000, "Grocery shopping")
+print "Balance after transactions: {account1.balance.amount} ."
+
+var account2 := account1 // make an alias to the account.  Dala vanilla will fail here. !!
+
+def channel1 = spawn { channel2 ->
+    var account3 := channel2.receive   // local thread boundry failure
+    print "Account Name: {account3.accountName.name} ." // Dala vanilla failure & Dala late referencing failure
+    account3.withdraw(1000, "New thread shopping")
+    print "Reference Count account3.balance: {getRefCount(account3.balance)} ..."
+    print(" thread end ")
+    print ""
+}
+
+// Send the local object to another thread.
+// This should trigger a runtime error or failure due to the "local" constraint.
+channel1.send(account2)
+
+print(" main end ")
+print ""

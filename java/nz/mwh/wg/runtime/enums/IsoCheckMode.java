@@ -5,6 +5,5 @@ public enum IsoCheckMode {
     ASSIGNMENT,   // assignmentIsoCheck = true, dereferencingIsoCheck = false
     DEREFERENCING,  // assignmentIsoCheck = false, dereferencingIsoCheck = true
     THREAD_BOUNDARY,
-    DEREFERENCING_AND_THREAD_BOUNDARY, 
-    LATEST_REFERENCE_ONLY_DEREFERENCING
+    DEREFERENCING_AND_THREAD_BOUNDARY
 }

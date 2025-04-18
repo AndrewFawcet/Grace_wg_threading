@@ -49,7 +49,7 @@ public class CapabilityToggles {
     }
 
     public static boolean isLatestIsoReferenceOnlyDereferencing() {
-        return isoCheckMode == IsoCheckMode.LATEST_REFERENCE_ONLY_DEREFERENCING;
+        return isoMoveMode == IsoMoveMode.LATEST_REFERENCE_ONLY_DEREFERENCING;
     }
 
     // Iso Move Checks
@@ -93,10 +93,10 @@ public class CapabilityToggles {
         System.out.println("  - Assignment Check: " + isAssignmentIsoCheckEnabled());
         System.out.println("  - Dereferencing Check: " + isDereferencingIsoCheckEnabled());
         System.out.println("  - Thread Boundary Check: " + isThreadBoundaryIsoCheckEnabled());
-        System.out.println("  - Latest Iso Only Dereferencing Check: " + isLatestIsoReferenceOnlyDereferencing());
         System.out.println("Iso Move Mode: " + isoMoveMode);
         System.out.println("  - Using Iso Wrapper: " + isUsingIsoWrapper());
         System.out.println("  - Auto-Unlink Moves: " + isAutoUnlinkingIsoMoves());
+        System.out.println("  - Latest Iso Only Dereferencing Check: " + isLatestIsoReferenceOnlyDereferencing());
         System.out.println("Local Check Mode: " + localCheckMode);
         System.out.println("  - Thread Boundary Check: " + isThreadBoundaryLocalCheckingEnabled());
         System.out.println("  - Dereferencing Check: " + isDereferencingLocalCheckEnabled());
